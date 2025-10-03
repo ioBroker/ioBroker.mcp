@@ -41,6 +41,38 @@ The server provides the following endpoints:
 - `GET /status` - Server status and uptime
 - `GET /api/info` - Adapter information
 - `GET /api/capabilities` - List of supported MCP capabilities
+- `POST /api/list_adapters` - List all adapter instances with their status
+
+### List Adapters
+
+Request:
+```json
+{
+  "method": "list_adapters",
+  "params": {}
+}
+```
+
+Response:
+```json
+{
+  "ok": true,
+  "data": {
+    "adapters": [
+      {
+        "id": "zigbee.0",
+        "name": "zigbee",
+        "version": "2.0.1",
+        "enabled": true,
+        "alive": true,
+        "connected": true,
+        "uptime": 86400,
+        "loglevel": "info"
+      }
+    ]
+  }
+}
+```
 
 ## Installation
 
