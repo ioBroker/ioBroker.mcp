@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from 'express';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
+import os from 'node:os';
 import type { McpAdapter } from './types';
 
 type Server = HttpServer | HttpsServer;
@@ -108,6 +109,8 @@ export default class McpServer {
                     await this.handleGetStates(params, res);
                 } else if (method === 'list_adapters') {
                     await this.handleListAdapters(params, res);
+                } else if (method === 'system_info') {
+                    await this.handleSystemInfo(params, res);
                 } else {
                     res.status(400).json({
                         ok: false,
@@ -245,6 +248,62 @@ export default class McpServer {
                 ok: false,
                 error: 'Internal Server Error',
                 message: error instanceof Error ? error.message : String(error),
+            });
+        }
+    }
+
+    private async handleSystemInfo(_params: any, res: Response): Promise<void> {
+        try {
+            // Get js-controller version
+            const hostObj = await this.adapter.getForeignObjectAsync(`system.host.${this.adapter.host}`);
+            const jsControllerVersion = hostObj?.common?.installedVersion || 'unknown';
+
+            // Get hostname
+            const hostname = os.hostname();
+
+            // Get platform
+            const platform = os.platform();
+
+            // Get Node.js version
+            const nodeVersion = process.version.substring(1); // Remove 'v' prefix
+
+            // Get CPU load (1 minute average)
+            const loadAvg = os.loadavg();
+            const cpuLoad = loadAvg[0]; // 1 minute average
+
+            // Get memory information
+            const totalMem = Math.round(os.totalmem() / (1024 * 1024)); // Convert to MB
+            const freeMem = Math.round(os.freemem() / (1024 * 1024)); // Convert to MB
+            const usedMem = totalMem - freeMem;
+
+            // Get system uptime in seconds
+            const uptimeSec = Math.round(os.uptime());
+
+            // Get number of instances
+            const instanceObjs = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
+            const instances = Object.keys(instanceObjs || {}).length;
+
+            res.json({
+                ok: true,
+                data: {
+                    js_controller: jsControllerVersion,
+                    hostname,
+                    platform,
+                    node: nodeVersion,
+                    cpu_load: parseFloat(cpuLoad.toFixed(2)),
+                    mem: {
+                        total_mb: totalMem,
+                        used_mb: usedMem,
+                    },
+                    uptime_sec: uptimeSec,
+                    instances,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error getting system info: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to get system information',
             });
         }
     }
