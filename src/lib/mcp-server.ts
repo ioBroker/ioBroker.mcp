@@ -109,6 +109,8 @@ export default class McpServer {
                     await this.handleGetStates(params, res);
                 } else if (method === 'system_info') {
                     await this.handleSystemInfo(params, res);
+                } else if (method === 'search_objects') {
+                    await this.handleSearchObjects(params, res);
                 } else {
                     res.status(400).json({
                         ok: false,
@@ -249,6 +251,85 @@ export default class McpServer {
             res.status(500).json({
                 ok: false,
                 error: 'Failed to get system information',
+            });
+        }
+    }
+
+    private async handleSearchObjects(params: any, res: Response): Promise<void> {
+        try {
+            const query = params?.query || '';
+            const role = params?.role;
+            const room = params?.room;
+            const limit = params?.limit || 100;
+
+            // Get all objects of type 'state' and 'channel'
+            const allObjects = await this.adapter.getForeignObjectsAsync('*', 'state');
+
+            // Get room enums if room filter is specified
+            let roomObjects: string[] = [];
+            if (room) {
+                const enums = await this.adapter.getForeignObjectsAsync('enum.rooms.*', 'enum');
+                for (const [, enumObj] of Object.entries(enums || {})) {
+                    if (
+                        enumObj?.common?.name &&
+                        (typeof enumObj.common.name === 'string'
+                            ? enumObj.common.name.toLowerCase() === room.toLowerCase()
+                            : Object.values(enumObj.common.name).some(
+                                  (n: any) => typeof n === 'string' && n.toLowerCase() === room.toLowerCase(),
+                              ))
+                    ) {
+                        roomObjects = enumObj.common?.members || [];
+                        break;
+                    }
+                }
+            }
+
+            const results = [];
+            for (const [id, obj] of Object.entries(allObjects || {})) {
+                // Apply query filter (search in object ID)
+                if (query && !id.toLowerCase().includes(query.toLowerCase())) {
+                    continue;
+                }
+
+                // Apply role filter
+                if (role && obj?.common?.role !== role) {
+                    continue;
+                }
+
+                // Apply room filter
+                if (room && !roomObjects.includes(id)) {
+                    continue;
+                }
+
+                // Extract adapter name from object ID (e.g., "alias.0" from "alias.0.rooms.bedroom.temperature")
+                const adapterMatch = id.match(/^([^.]+\.\d+)/);
+                const adapter = adapterMatch ? adapterMatch[1] : '';
+
+                results.push({
+                    id: id,
+                    type: obj?.type || 'state',
+                    role: obj?.common?.role || '',
+                    path: id,
+                    adapter: adapter,
+                });
+
+                // Apply limit
+                if (results.length >= limit) {
+                    break;
+                }
+            }
+
+            res.json({
+                ok: true,
+                data: {
+                    results: results,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error searching objects: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to search objects',
             });
         }
     }
