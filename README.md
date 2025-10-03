@@ -41,11 +41,11 @@ The server provides the following endpoints:
 - `GET /status` - Server status and uptime
 - `GET /api/info` - Adapter information
 - `GET /api/capabilities` - List of supported MCP capabilities
-- `POST /api/list_adapters` - List all adapter instances with their status
+- `POST /api/rpc` - RPC endpoint for method-based API calls
 
 ### List Adapters
 
-Request:
+Request to `/api/rpc`:
 ```json
 {
   "method": "list_adapters",
