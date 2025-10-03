@@ -1,4 +1,4 @@
-import express, { type Express, type Request, type Response, type NextFunction } from 'express';
+import type { Express, Request, Response, NextFunction } from 'express';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import type { McpAdapter } from './types';
@@ -20,7 +20,24 @@ export default class McpServer {
 
     private initRoutes(): void {
         // Add JSON body parser
-        this.app.use(express.json());
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            if (req.method === 'POST' && req.headers['content-type']?.includes('application/json')) {
+                let body = '';
+                req.on('data', chunk => {
+                    body += chunk.toString();
+                });
+                req.on('end', () => {
+                    try {
+                        (req as any).body = JSON.parse(body);
+                    } catch {
+                        (req as any).body = {};
+                    }
+                    next();
+                });
+            } else {
+                next();
+            }
+        });
 
         // Add request logging
         this.app.use((req: Request, res: Response, next: NextFunction) => {
@@ -74,66 +91,34 @@ export default class McpServer {
             });
         });
 
-        this.app.post('/api/get_logs', (req: Request, res: Response) => {
+        // RPC endpoint for method-based API calls
+        this.app.post('/api/rpc', async (req: Request, res: Response) => {
             try {
-                const { level, from_ts, limit, adapter } = req.body;
+                const { method, params } = (req as any).body;
 
-                // Prepare the message for sendToHost
-                const message: any = {
-                    data: {
-                        size: limit || 200,
-                    },
-                };
-
-                // Add timestamp filter if provided
-                if (from_ts !== undefined) {
-                    message.data.from_ts = from_ts;
-                }
-
-                // Add adapter filter if provided
-                if (adapter !== undefined) {
-                    message.data.source = adapter;
-                }
-
-                // Use sendToHost to get logs from the host
-                this.adapter.sendToHost(this.adapter.host || null, 'getLogs', message, (result: any) => {
-                    if (!result || result.error) {
-                        res.status(500).json({
-                            ok: false,
-                            error: result?.error || 'Failed to retrieve logs',
-                        });
-                        return;
-                    }
-
-                    // Filter and format the logs
-                    let logs = result.list || [];
-
-                    // Filter by level if specified
-                    if (level && Array.isArray(level) && level.length > 0) {
-                        logs = logs.filter((log: any) => level.includes(log.severity));
-                    }
-
-                    // Map to the required format
-                    const formattedLogs = logs.map((log: any) => ({
-                        ts: log.ts,
-                        level: log.severity,
-                        source: log.from,
-                        message: log.message,
-                        host: this.adapter.host,
-                    }));
-
-                    res.json({
-                        ok: true,
-                        data: {
-                            logs: formattedLogs,
-                        },
+                if (!method) {
+                    res.status(400).json({
+                        ok: false,
+                        error: 'Method is required',
                     });
-                });
+                    return;
+                }
+
+                if (method === 'get_states') {
+                    await this.handleGetStates(params, res);
+                } else if (method === 'get_logs') {
+                    this.handleGetLogs(params, res);
+                } else {
+                    res.status(400).json({
+                        ok: false,
+                        error: `Unknown method: ${method}`,
+                    });
+                }
             } catch (error: any) {
-                this.adapter.log.error(`Error in get_logs: ${error.message}`);
+                this.adapter.log.error(`RPC error: ${error.message}`);
                 res.status(500).json({
                     ok: false,
-                    error: error.message || 'Internal server error',
+                    error: error.message,
                 });
             }
         });
@@ -154,6 +139,125 @@ export default class McpServer {
                 message: err.message,
             });
         });
+    }
+
+    private async handleGetStates(params: any, res: Response): Promise<void> {
+        if (!params || !params.ids || !Array.isArray(params.ids)) {
+            res.status(400).json({
+                ok: false,
+                error: 'Invalid params: ids array is required',
+            });
+            return;
+        }
+
+        const states = [];
+        for (const id of params.ids) {
+            try {
+                const state = await this.adapter.getForeignStateAsync(id);
+                if (state) {
+                    const stateData: any = {
+                        id: id,
+                        value: state.val,
+                        ack: state.ack,
+                        ts: state.ts,
+                    };
+                    // Only include lc if it's different from ts
+                    if (state.lc !== state.ts) {
+                        stateData.lc = state.lc;
+                    }
+                    states.push(stateData);
+                } else {
+                    // State doesn't exist, but we can still include it with null value
+                    states.push({
+                        id: id,
+                        value: null,
+                        ack: false,
+                        ts: Date.now(),
+                    });
+                }
+            } catch (error: any) {
+                this.adapter.log.error(`Error getting state ${id}: ${error.message}`);
+                // Include the state with error info
+                states.push({
+                    id: id,
+                    value: null,
+                    ack: false,
+                    ts: Date.now(),
+                    error: error.message,
+                });
+            }
+        }
+
+        res.json({
+            ok: true,
+            data: {
+                states: states,
+            },
+        });
+    }
+
+    private handleGetLogs(params: any, res: Response): void {
+        try {
+            const { level, from_ts, limit, adapter } = params || {};
+
+            // Prepare the message for sendToHost
+            const message: any = {
+                data: {
+                    size: limit || 200,
+                },
+            };
+
+            // Add timestamp filter if provided
+            if (from_ts !== undefined) {
+                message.data.from_ts = from_ts;
+            }
+
+            // Add adapter filter if provided
+            if (adapter !== undefined) {
+                message.data.source = adapter;
+            }
+
+            // Use sendToHost to get logs from the host
+            this.adapter.sendToHost(this.adapter.host || null, 'getLogs', message, (result: any) => {
+                if (!result || result.error) {
+                    res.status(500).json({
+                        ok: false,
+                        error: result?.error || 'Failed to retrieve logs',
+                    });
+                    return;
+                }
+
+                // Filter and format the logs
+                let logs = result.list || [];
+
+                // Filter by level if specified
+                if (level && Array.isArray(level) && level.length > 0) {
+                    logs = logs.filter((log: any) => level.includes(log.severity));
+                }
+
+                // Map to the required format
+                const formattedLogs = logs.map((log: any) => ({
+                    ts: log.ts,
+                    level: log.severity,
+                    source: log.from,
+                    message: log.message,
+                    host: this.adapter.host,
+                }));
+
+                res.json({
+                    ok: true,
+                    data: {
+                        logs: formattedLogs,
+                    },
+                });
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error in get_logs: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: error.message || 'Internal server error',
+            });
+        }
     }
 
     unload(): void {
