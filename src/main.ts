@@ -1,200 +1,157 @@
-import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
-import express, { type Express, type Request, type Response, type NextFunction } from 'express';
+import { EXIT_CODES, Adapter, type AdapterOptions } from '@iobroker/adapter-core';
+import { WebServer } from '@iobroker/webserver';
+import express, { type Express } from 'express';
 import type { Server as HttpServer } from 'node:http';
-import { createServer as createHttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
-import { createServer as createHttpsServer } from 'node:https';
-import { readFileSync } from 'node:fs';
+import McpServer from './lib/mcp-server';
+import type { McpAdapterConfig } from './lib/types';
 
 type Server = HttpServer | HttpsServer;
 
-interface McpAdapterConfig extends ioBroker.AdapterConfig {
-    port: number;
-    bind: string;
-    auth: boolean;
-    username: string;
-    password: string;
-    secure: boolean;
-    certPublic: string;
-    certPrivate: string;
-    certChained: string;
-}
-
 class Mcp extends Adapter {
     declare config: McpAdapterConfig;
-    private app: Express | null = null;
-    private server: Server | null = null;
+    private readonly webServer: {
+        mcpServer: McpServer | null;
+        server: Server | null;
+        app: Express | null;
+    };
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
             ...options,
             name: 'mcp',
+            ready: () => this.main(),
         });
-        this.on('ready', this.onReady.bind(this));
-        this.on('unload', this.onUnload.bind(this));
+
+        this.webServer = {
+            app: null,
+            server: null,
+            mcpServer: null,
+        };
     }
 
-    /**
-     * Is called when databases are connected and adapter received configuration.
-     */
-    private async onReady(): Promise<void> {
-        // Initialize the adapter
-        this.log.info('Starting MCP server adapter');
-
-        // Create Express app
-        this.app = express();
-
-        // Basic middleware
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true }));
-
-        // Authentication middleware
-        if (this.config.auth) {
-            this.app.use((req: Request, res: Response, next: NextFunction) => {
-                const auth = req.headers.authorization;
-
-                if (!auth) {
-                    res.setHeader('WWW-Authenticate', 'Basic realm="MCP Server"');
-                    return res.status(401).send('Authentication required');
-                }
-
-                const credentials = Buffer.from(auth.split(' ')[1], 'base64').toString().split(':');
-                const username = credentials[0];
-                const password = credentials[1];
-
-                if (username === this.config.username && password === this.config.password) {
-                    next();
-                } else {
-                    res.setHeader('WWW-Authenticate', 'Basic realm="MCP Server"');
-                    return res.status(401).send('Invalid credentials');
-                }
-            });
-        }
-
-        // Add request logging
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
-            this.log.debug(`${req.method} ${req.url} from ${req.ip}`);
-            next();
-        });
-
-        // Basic routes
-        this.app.get('/', (req: Request, res: Response) => {
-            res.json({
-                name: 'ioBroker MCP Server',
-                version: '0.0.1',
-                status: 'running',
-            });
-        });
-
-        this.app.get('/status', (req: Request, res: Response) => {
-            res.json({
-                status: 'ok',
-                uptime: process.uptime(),
-                timestamp: Date.now(),
-            });
-        });
-
-        this.app.get('/api/info', (req: Request, res: Response) => {
-            res.json({
-                adapter: 'mcp',
-                version: '0.0.1',
-                secure: this.config.secure,
-                auth: this.config.auth,
-            });
-        });
-
-        // 404 handler
-        this.app.use((req: Request, res: Response) => {
-            res.status(404).json({
-                error: 'Not Found',
-                path: req.url,
-            });
-        });
-
-        // Error handler
-        this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-            this.log.error(`Server error: ${err.message}`);
-            res.status(500).json({
-                error: 'Internal Server Error',
-                message: err.message,
-            });
-        });
-
-        // Start the server
+    onUnload(callback: () => void): void {
         try {
-            await this.startServer();
-        } catch (err) {
-            this.log.error(`Failed to start server: ${err instanceof Error ? err.message : String(err)}`);
-        }
-    }
+            void this.setState('info.connection', false, true);
 
-    /**
-     * Start HTTP or HTTPS server
-     */
-    private async startServer(): Promise<void> {
-        const port = this.config.port || 8093;
-        const bind = this.config.bind || '0.0.0.0';
-
-        return new Promise((resolve, reject) => {
-            if (this.config.secure) {
-                // HTTPS server
-                let options: { key: Buffer; cert: Buffer; ca?: Buffer };
+            this.log.info(`terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`);
+            if (this.webServer?.mcpServer) {
+                this.webServer.mcpServer.unload();
                 try {
-                    options = {
-                        key: readFileSync(this.config.certPrivate),
-                        cert: readFileSync(this.config.certPublic),
-                    };
-
-                    if (this.config.certChained) {
-                        options.ca = readFileSync(this.config.certChained);
+                    if (this.webServer.server) {
+                        this.webServer.server.close();
+                        this.webServer.server = null;
                     }
-                } catch (err) {
-                    this.log.error(
-                        `Failed to read SSL certificates: ${err instanceof Error ? err.message : String(err)}`,
-                    );
-                    return reject(new Error(err instanceof Error ? err.message : String(err)));
+                } catch (error) {
+                    // ignore
+                    console.error(`Cannot close server: ${error}`);
                 }
-
-                this.server = createHttpsServer(options, this.app!);
-                this.server.listen(port, bind, () => {
-                    this.log.info(`HTTPS server listening on https://${bind}:${port}`);
-                    resolve();
-                });
+                callback();
             } else {
-                // HTTP server
-                this.server = createHttpServer(this.app!);
-                this.server.listen(port, bind, () => {
-                    this.log.info(`HTTP server listening on http://${bind}:${port}`);
-                    resolve();
-                });
-            }
-
-            this.server.on('error', (err: NodeJS.ErrnoException) => {
-                if (err.code === 'EADDRINUSE') {
-                    this.log.error(`Port ${port} is already in use`);
-                } else {
-                    this.log.error(`Server error: ${err.message}`);
+                if (this.webServer?.server) {
+                    this.webServer.server.close();
+                    this.webServer.server = null;
                 }
-                reject(err);
-            });
-        });
-    }
-
-    /**
-     * Is called when adapter shuts down - callback has to be called under any circumstances!
-     */
-    private onUnload(callback: () => void): void {
-        try {
-            if (this.server) {
-                this.server.close(() => {
-                    this.log.info('Server closed');
-                    callback();
-                });
-            } else {
                 callback();
             }
-        } catch {
+        } catch (error) {
+            console.error(`Cannot close server: ${error}`);
             callback();
+        }
+    }
+
+    async initWebServer(): Promise<void> {
+        this.config.port = parseInt(this.config.port as string, 10);
+
+        this.webServer.app = express();
+
+        this.webServer.mcpServer = new McpServer(this.webServer.server!, this as any, this.webServer.app);
+
+        if (this.config.port) {
+            if (this.config.secure && !this.config.certificates) {
+                return;
+            }
+
+            try {
+                const webserver = new WebServer({
+                    app: this.webServer.app,
+                    adapter: this,
+                    secure: this.config.secure,
+                });
+
+                this.webServer.server = await webserver.init();
+            } catch (err) {
+                this.log.error(`Cannot create webserver: ${err}`);
+                this.terminate ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(1);
+                return;
+            }
+        } else {
+            this.log.error('port missing');
+            process.exit(1);
+        }
+
+        if (this.webServer.server) {
+            let serverListening = false;
+            let serverPort = this.config.port;
+
+            this.webServer.server.on('error', e => {
+                if (e.toString().includes('EACCES') && serverPort <= 1024) {
+                    this.log.error(
+                        `node.js process has no rights to start server on the port ${serverPort}.\n` +
+                            `Do you know that on linux you need special permissions for ports under 1024?\n` +
+                            `You can call in shell following script to allow it for node.js: "iobroker fix"`,
+                    );
+                } else {
+                    this.log.error(`Cannot start server on ${this.config.bind || '0.0.0.0'}:${serverPort}: ${e}`);
+                }
+                if (!serverListening) {
+                    this.terminate ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(1);
+                }
+            });
+
+            this.getPort(
+                this.config.port,
+                !this.config.bind || this.config.bind === '0.0.0.0' ? undefined : this.config.bind || undefined,
+                port => {
+                    if (port !== this.config.port) {
+                        this.log.error(`port ${this.config.port} already in use`);
+                        process.exit(1);
+                    }
+                    serverPort = port;
+
+                    this.webServer.server!.listen(
+                        port,
+                        !this.config.bind || this.config.bind === '0.0.0.0' ? undefined : this.config.bind || undefined,
+                        async () => {
+                            await this.setStateAsync('info.connection', true, true);
+                            this.log.info(`http${this.config.secure ? 's' : ''} server listening on port ${port}`);
+                            serverListening = true;
+                        },
+                    );
+                },
+            );
+        }
+    }
+
+    main(): void {
+        if (this.config.secure) {
+            // Load certificates
+            this.getCertificates(
+                undefined,
+                undefined,
+                undefined,
+                (
+                    err: Error | null | undefined,
+                    certificates: ioBroker.Certificates | undefined,
+                    leConfig: boolean | undefined,
+                ): void => {
+                    this.config.certificates = certificates;
+                    this.config.leConfig = leConfig;
+                    void this.initWebServer();
+                },
+            );
+        } else {
+            void this.initWebServer();
         }
     }
 }

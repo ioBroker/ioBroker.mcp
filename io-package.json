@@ -81,13 +81,34 @@
     "port": 8093,
     "bind": "0.0.0.0",
     "auth": false,
-    "username": "",
-    "password": "",
     "secure": false,
     "certPublic": "",
     "certPrivate": "",
-    "certChained": ""
+    "certChained": "",
+    "defaultUser": "admin"
   },
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If server started",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }

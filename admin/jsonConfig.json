@@ -29,19 +29,14 @@
           "type": "checkbox",
           "label": "Enable Authentication",
           "default": false,
-          "help": "Enable basic authentication for the web server"
+          "help": "Enable ioBroker user authentication for the web server"
         },
-        "username": {
+        "defaultUser": {
           "type": "text",
-          "label": "Username",
+          "label": "Default User",
+          "default": "admin",
           "hidden": "!data.auth",
-          "help": "Username for basic authentication"
-        },
-        "password": {
-          "type": "password",
-          "label": "Password",
-          "hidden": "!data.auth",
-          "help": "Password for basic authentication"
+          "help": "Default user for authentication (e.g., 'admin')"
         }
       }
     },
