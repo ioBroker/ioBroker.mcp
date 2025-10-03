@@ -51,6 +51,26 @@ export default class McpServer {
             });
         });
 
+        this.app.get('/api/capabilities', (_req: Request, res: Response) => {
+            res.json({
+                server: 'iobroker-mcp',
+                version: '1.0.0',
+                capabilities: [
+                    'list_devices',
+                    'get_states',
+                    'set_state',
+                    'history_query',
+                    'list_instances',
+                    'list_hosts',
+                    'get_logs',
+                    'system_info',
+                    'search_objects',
+                    'list_rooms',
+                    'list_functions',
+                ],
+            });
+        });
+
         // 404 handler
         this.app.use((req: Request, res: Response) => {
             res.status(404).json({

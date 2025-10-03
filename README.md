@@ -40,6 +40,7 @@ The server provides the following endpoints:
 - `GET /` - Basic server information
 - `GET /status` - Server status and uptime
 - `GET /api/info` - Adapter information
+- `GET /api/capabilities` - List of supported MCP capabilities
 
 ## Installation
 
