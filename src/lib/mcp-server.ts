@@ -71,6 +71,59 @@ export default class McpServer {
             });
         });
 
+        this.app.post('/api/list_adapters', async (_req: Request, res: Response) => {
+            try {
+                // Get all adapter instances
+                const objects = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
+
+                const adapters = [];
+                for (const [id, obj] of Object.entries(objects)) {
+                    if (!obj || obj.type !== 'instance') {
+                        continue;
+                    }
+
+                    // Get the instance state to check if it's alive
+                    const aliveId = `${id}.alive`;
+                    const connectedId = `${id}.connected`;
+                    const uptimeId = `${id}.uptime`;
+
+                    const [aliveState, connectedState, uptimeState] = await Promise.all([
+                        this.adapter.getForeignStateAsync(aliveId).catch(() => null),
+                        this.adapter.getForeignStateAsync(connectedId).catch(() => null),
+                        this.adapter.getForeignStateAsync(uptimeId).catch(() => null),
+                    ]);
+
+                    // Extract adapter name and instance number from id (e.g., "system.adapter.zigbee.0" -> "zigbee.0")
+                    const instanceId = id.replace('system.adapter.', '');
+
+                    adapters.push({
+                        id: instanceId,
+                        name: obj.common.name,
+                        version: obj.common.version || '0.0.0',
+                        enabled: obj.common.enabled === true,
+                        alive: aliveState?.val === true,
+                        connected: connectedState?.val === true,
+                        uptime: typeof uptimeState?.val === 'number' ? uptimeState.val : 0,
+                        loglevel: obj.common.loglevel || 'info',
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    data: {
+                        adapters,
+                    },
+                });
+            } catch (error) {
+                this.adapter.log.error(`Error getting adapters: ${error}`);
+                res.status(500).json({
+                    ok: false,
+                    error: 'Internal Server Error',
+                    message: error instanceof Error ? error.message : String(error),
+                });
+            }
+        });
+
         // 404 handler
         this.app.use((req: Request, res: Response) => {
             res.status(404).json({
