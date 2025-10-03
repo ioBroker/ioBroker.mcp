@@ -1,0 +1,79 @@
+{
+  "type": "panel",
+  "items": {
+    "_server": {
+      "type": "panel",
+      "label": "Server Configuration",
+      "items": {
+        "port": {
+          "type": "number",
+          "label": "Port",
+          "min": 1,
+          "max": 65535,
+          "default": 8093,
+          "help": "Port on which the web server will listen"
+        },
+        "bind": {
+          "type": "text",
+          "label": "Bind Address",
+          "default": "0.0.0.0",
+          "help": "IP address to bind the server to (0.0.0.0 for all interfaces)"
+        }
+      }
+    },
+    "_auth": {
+      "type": "panel",
+      "label": "Authentication",
+      "items": {
+        "auth": {
+          "type": "checkbox",
+          "label": "Enable Authentication",
+          "default": false,
+          "help": "Enable basic authentication for the web server"
+        },
+        "username": {
+          "type": "text",
+          "label": "Username",
+          "hidden": "!data.auth",
+          "help": "Username for basic authentication"
+        },
+        "password": {
+          "type": "password",
+          "label": "Password",
+          "hidden": "!data.auth",
+          "help": "Password for basic authentication"
+        }
+      }
+    },
+    "_ssl": {
+      "type": "panel",
+      "label": "SSL/TLS Configuration",
+      "items": {
+        "secure": {
+          "type": "checkbox",
+          "label": "Enable HTTPS",
+          "default": false,
+          "help": "Enable HTTPS/SSL for secure connections"
+        },
+        "certPublic": {
+          "type": "certificate",
+          "label": "Public Certificate",
+          "hidden": "!data.secure",
+          "help": "Path to the public certificate file"
+        },
+        "certPrivate": {
+          "type": "certificate",
+          "label": "Private Key",
+          "hidden": "!data.secure",
+          "help": "Path to the private key file"
+        },
+        "certChained": {
+          "type": "certificate",
+          "label": "Chained Certificate",
+          "hidden": "!data.secure",
+          "help": "Path to the chained certificate file (optional)"
+        }
+      }
+    }
+  }
+}

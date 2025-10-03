@@ -1,0 +1,48 @@
+{
+  "name": "iobroker.mcp",
+  "version": "0.0.1",
+  "description": "MCP server for ioBroker",
+  "author": {
+    "name": "ioBroker",
+    "email": "info@iobroker.net"
+  },
+  "homepage": "https://github.com/ioBroker/ioBroker.mcp",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "mcp",
+    "server",
+    "web",
+    "rest"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.mcp"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.2.2",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@iobroker/testing": "^5.0.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1"
+  },
+  "main": "main.js",
+  "files": [
+    "admin/",
+    "main.js",
+    "io-package.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.mcp/issues"
+  },
+  "readmeFilename": "README.md"
+}

@@ -1,0 +1,17 @@
+node_modules/
+.idea/
+.DS_Store
+*.log
+*.pid
+*.gz
+*.lock
+package-lock.json
+.vscode/
+tmp/
+temp/
+dist/
+build/
+coverage/
+.nyc_output/
+*.tgz
+.env
