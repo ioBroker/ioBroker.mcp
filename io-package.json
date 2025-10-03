@@ -1,0 +1,114 @@
+{
+  "common": {
+    "name": "mcp",
+    "version": "0.0.1",
+    "news": {
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版"
+      }
+    },
+    "title": "MCP Server",
+    "titleLang": {
+      "en": "MCP Server",
+      "de": "MCP-Server",
+      "ru": "MCP-сервер",
+      "pt": "Servidor MCP",
+      "nl": "MCP-server",
+      "fr": "Serveur MCP",
+      "it": "Server MCP",
+      "es": "Servidor MCP",
+      "pl": "Serwer MCP",
+      "zh-cn": "MCP服务器"
+    },
+    "desc": {
+      "en": "MCP server for ioBroker",
+      "de": "MCP-Server für ioBroker",
+      "ru": "MCP-сервер для ioBroker",
+      "pt": "Servidor MCP para ioBroker",
+      "nl": "MCP-server voor ioBroker",
+      "fr": "Serveur MCP pour ioBroker",
+      "it": "Server MCP per ioBroker",
+      "es": "Servidor MCP para ioBroker",
+      "pl": "Serwer MCP dla ioBroker",
+      "zh-cn": "ioBroker的MCP服务器"
+    },
+    "authors": [
+      "ioBroker <info@iobroker.net>"
+    ],
+    "keywords": [
+      "mcp",
+      "server",
+      "web",
+      "rest"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "dist/main.js",
+    "icon": "mcp.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.mcp/main/admin/mcp.png",
+    "readme": "https://github.com/ioBroker/ioBroker.mcp/blob/main/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "infrastructure",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.0.0"
+      }
+    ]
+  },
+  "native": {
+    "port": 8093,
+    "bind": "0.0.0.0",
+    "auth": false,
+    "secure": false,
+    "certPublic": "",
+    "certPrivate": "",
+    "certChained": "",
+    "defaultUser": "admin"
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If server started",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}
