@@ -65,6 +65,8 @@ export default class McpServer {
                     'get_logs',
                     'system_info',
                     'search_objects',
+                    'list_rooms',
+                    'list_functions',
                 ],
             });
         });
