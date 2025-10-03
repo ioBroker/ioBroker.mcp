@@ -43,7 +43,8 @@
     "admin/",
     "dist/",
     "io-package.json",
-    "LICENSE"
+    "LICENSE",
+    "manifest.json"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

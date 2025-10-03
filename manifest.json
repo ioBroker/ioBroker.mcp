@@ -1,0 +1,152 @@
+{
+  "server": "iobroker-mcp",
+  "version": "1.0.0",
+  "methods": [
+    {
+      "name": "list_devices",
+      "description": "List all devices with their states and metadata",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "room": { "type": "string", "description": "Filter by room" },
+          "type": { "type": "string", "description": "Device type, e.g. sensor | actor | media | cover" },
+          "role": { "type": "string", "description": "Filter by role (e.g. value.temperature)" },
+          "adapter": { "type": "string", "description": "Filter by adapter (e.g. zigbee.0)" },
+          "limit": { "type": "integer", "default": 100 },
+          "offset": { "type": "integer", "default": 0 }
+        }
+      }
+    },
+    {
+      "name": "get_states",
+      "description": "Retrieve the current value of one or multiple states",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Array of state IDs"
+          }
+        },
+        "required": ["ids"]
+      }
+    },
+    {
+      "name": "set_state",
+      "description": "Set the value of a state",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "State ID" },
+          "value": { "description": "New value (type depends on the state)" },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expire": { "type": ["integer", "null"], "description": "Expiration time in ms" },
+              "ack": { "type": "boolean", "default": false }
+            }
+          }
+        },
+        "required": ["id", "value"]
+      }
+    },
+    {
+      "name": "history_query",
+      "description": "Query historical values of a state",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "from": { "type": "string", "description": "Start time (ISO8601)" },
+          "to": { "type": "string", "description": "End time (ISO8601)" },
+          "agg": {
+            "type": "string",
+            "enum": ["raw", "min", "max", "avg", "sum"],
+            "default": "raw"
+          },
+          "interval": { "type": "string", "description": "Aggregation interval, e.g. 15m, 1h" },
+          "limit": { "type": "integer", "default": 1000 }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "list_instances",
+      "description": "List all adapters with their status"
+    },
+    {
+      "name": "get_logs",
+      "description": "Retrieve system logs",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["error", "warn", "info", "debug"] }
+          },
+          "from_ts": { "type": "integer" },
+          "limit": { "type": "integer", "default": 200 },
+          "adapter": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "system_info",
+      "description": "Get system and js-controller information"
+    },
+    {
+      "name": "search_objects",
+      "description": "Search objects and states by keywords",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Keyword to search for" },
+          "role": { "type": "string", "description": "Filter by role" },
+          "room": { "type": "string", "description": "Filter by room" },
+          "limit": { "type": "integer", "default": 50 },
+          "offset": { "type": "integer", "default": 0 }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "list_rooms",
+      "description": "List all rooms (enum.rooms.*)",
+      "returns": {
+        "type": "object",
+        "properties": {
+          "rooms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "list_functions",
+      "description": "List all functions (enum.functions.*)",
+      "returns": {
+        "type": "object",
+        "properties": {
+          "functions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
