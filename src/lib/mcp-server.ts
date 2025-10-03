@@ -1,4 +1,4 @@
-import type { Express, Request, Response, NextFunction } from 'express';
+import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import type { McpAdapter } from './types';
@@ -19,6 +19,9 @@ export default class McpServer {
     }
 
     private initRoutes(): void {
+        // Add JSON body parser
+        this.app.use(express.json());
+
         // Add request logging
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             this.adapter.log.debug(`${req.method} ${req.url} from ${req.ip}`);
@@ -49,6 +52,90 @@ export default class McpServer {
                 secure: this.adapter.config.secure,
                 auth: this.adapter.config.auth,
             });
+        });
+
+        this.app.get('/api/capabilities', (_req: Request, res: Response) => {
+            res.json({
+                server: 'iobroker-mcp',
+                version: '1.0.0',
+                capabilities: [
+                    'list_devices',
+                    'get_states',
+                    'set_state',
+                    'history_query',
+                    'list_instances',
+                    'list_hosts',
+                    'get_logs',
+                    'system_info',
+                    'search_objects',
+                    'list_rooms',
+                    'list_functions',
+                ],
+            });
+        });
+
+        this.app.post('/api/get_logs', (req: Request, res: Response) => {
+            try {
+                const { level, from_ts, limit, adapter } = req.body;
+
+                // Prepare the message for sendToHost
+                const message: any = {
+                    data: {
+                        size: limit || 200,
+                    },
+                };
+
+                // Add timestamp filter if provided
+                if (from_ts !== undefined) {
+                    message.data.from_ts = from_ts;
+                }
+
+                // Add adapter filter if provided
+                if (adapter !== undefined) {
+                    message.data.source = adapter;
+                }
+
+                // Use sendToHost to get logs from the host
+                this.adapter.sendToHost(this.adapter.host || null, 'getLogs', message, (result: any) => {
+                    if (!result || result.error) {
+                        res.status(500).json({
+                            ok: false,
+                            error: result?.error || 'Failed to retrieve logs',
+                        });
+                        return;
+                    }
+
+                    // Filter and format the logs
+                    let logs = result.list || [];
+
+                    // Filter by level if specified
+                    if (level && Array.isArray(level) && level.length > 0) {
+                        logs = logs.filter((log: any) => level.includes(log.severity));
+                    }
+
+                    // Map to the required format
+                    const formattedLogs = logs.map((log: any) => ({
+                        ts: log.ts,
+                        level: log.severity,
+                        source: log.from,
+                        message: log.message,
+                        host: this.adapter.host,
+                    }));
+
+                    res.json({
+                        ok: true,
+                        data: {
+                            logs: formattedLogs,
+                        },
+                    });
+                });
+            } catch (error: any) {
+                this.adapter.log.error(`Error in get_logs: ${error.message}`);
+                res.status(500).json({
+                    ok: false,
+                    error: error.message || 'Internal server error',
+                });
+            }
         });
 
         // 404 handler
