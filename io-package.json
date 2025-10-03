@@ -52,7 +52,7 @@
     ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
-    "main": "main.js",
+    "main": "dist/main.js",
     "icon": "mcp.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.mcp/main/admin/mcp.png",
