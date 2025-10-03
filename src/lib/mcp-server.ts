@@ -20,6 +20,26 @@ export default class McpServer {
     }
 
     private initRoutes(): void {
+        // Add JSON body parser
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            if (req.method === 'POST' && req.headers['content-type']?.includes('application/json')) {
+                let body = '';
+                req.on('data', chunk => {
+                    body += chunk.toString();
+                });
+                req.on('end', () => {
+                    try {
+                        (req as any).body = JSON.parse(body);
+                    } catch {
+                        (req as any).body = {};
+                    }
+                    next();
+                });
+            } else {
+                next();
+            }
+        });
+
         // Add request logging
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             this.adapter.log.debug(`${req.method} ${req.url} from ${req.ip}`);
@@ -72,58 +92,34 @@ export default class McpServer {
             });
         });
 
-        this.app.post('/api/system_info', async (_req: Request, res: Response) => {
+        // RPC endpoint for method-based API calls
+        this.app.post('/api/rpc', async (req: Request, res: Response) => {
             try {
-                // Get js-controller version
-                const hostObj = await this.adapter.getForeignObjectAsync(`system.host.${this.adapter.host}`);
-                const jsControllerVersion = hostObj?.common?.installedVersion || 'unknown';
+                const { method, params } = (req as any).body;
 
-                // Get hostname
-                const hostname = os.hostname();
+                if (!method) {
+                    res.status(400).json({
+                        ok: false,
+                        error: 'Method is required',
+                    });
+                    return;
+                }
 
-                // Get platform
-                const platform = os.platform();
-
-                // Get Node.js version
-                const nodeVersion = process.version.substring(1); // Remove 'v' prefix
-
-                // Get CPU load (1 minute average)
-                const loadAvg = os.loadavg();
-                const cpuLoad = loadAvg[0]; // 1 minute average
-
-                // Get memory information
-                const totalMem = Math.round(os.totalmem() / (1024 * 1024)); // Convert to MB
-                const freeMem = Math.round(os.freemem() / (1024 * 1024)); // Convert to MB
-                const usedMem = totalMem - freeMem;
-
-                // Get system uptime in seconds
-                const uptimeSec = Math.round(os.uptime());
-
-                // Get number of instances
-                const instanceObjs = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
-                const instances = Object.keys(instanceObjs || {}).length;
-
-                res.json({
-                    ok: true,
-                    data: {
-                        js_controller: jsControllerVersion,
-                        hostname,
-                        platform,
-                        node: nodeVersion,
-                        cpu_load: parseFloat(cpuLoad.toFixed(2)),
-                        mem: {
-                            total_mb: totalMem,
-                            used_mb: usedMem,
-                        },
-                        uptime_sec: uptimeSec,
-                        instances,
-                    },
-                });
-            } catch (error) {
-                this.adapter.log.error(`Error getting system info: ${error}`);
+                if (method === 'get_states') {
+                    await this.handleGetStates(params, res);
+                } else if (method === 'system_info') {
+                    await this.handleSystemInfo(params, res);
+                } else {
+                    res.status(400).json({
+                        ok: false,
+                        error: `Unknown method: ${method}`,
+                    });
+                }
+            } catch (error: any) {
+                this.adapter.log.error(`RPC error: ${error.message}`);
                 res.status(500).json({
                     ok: false,
-                    error: 'Failed to get system information',
+                    error: error.message,
                 });
             }
         });
@@ -144,6 +140,117 @@ export default class McpServer {
                 message: err.message,
             });
         });
+    }
+
+    private async handleGetStates(params: any, res: Response): Promise<void> {
+        if (!params || !params.ids || !Array.isArray(params.ids)) {
+            res.status(400).json({
+                ok: false,
+                error: 'Invalid params: ids array is required',
+            });
+            return;
+        }
+
+        const states = [];
+        for (const id of params.ids) {
+            try {
+                const state = await this.adapter.getForeignStateAsync(id);
+                if (state) {
+                    const stateData: any = {
+                        id: id,
+                        value: state.val,
+                        ack: state.ack,
+                        ts: state.ts,
+                    };
+                    // Only include lc if it's different from ts
+                    if (state.lc !== state.ts) {
+                        stateData.lc = state.lc;
+                    }
+                    states.push(stateData);
+                } else {
+                    // State doesn't exist, but we can still include it with null value
+                    states.push({
+                        id: id,
+                        value: null,
+                        ack: false,
+                        ts: Date.now(),
+                    });
+                }
+            } catch (error: any) {
+                this.adapter.log.error(`Error getting state ${id}: ${error.message}`);
+                // Include the state with error info
+                states.push({
+                    id: id,
+                    value: null,
+                    ack: false,
+                    ts: Date.now(),
+                    error: error.message,
+                });
+            }
+        }
+
+        res.json({
+            ok: true,
+            data: {
+                states: states,
+            },
+        });
+    }
+
+    private async handleSystemInfo(_params: any, res: Response): Promise<void> {
+        try {
+            // Get js-controller version
+            const hostObj = await this.adapter.getForeignObjectAsync(`system.host.${this.adapter.host}`);
+            const jsControllerVersion = hostObj?.common?.installedVersion || 'unknown';
+
+            // Get hostname
+            const hostname = os.hostname();
+
+            // Get platform
+            const platform = os.platform();
+
+            // Get Node.js version
+            const nodeVersion = process.version.substring(1); // Remove 'v' prefix
+
+            // Get CPU load (1 minute average)
+            const loadAvg = os.loadavg();
+            const cpuLoad = loadAvg[0]; // 1 minute average
+
+            // Get memory information
+            const totalMem = Math.round(os.totalmem() / (1024 * 1024)); // Convert to MB
+            const freeMem = Math.round(os.freemem() / (1024 * 1024)); // Convert to MB
+            const usedMem = totalMem - freeMem;
+
+            // Get system uptime in seconds
+            const uptimeSec = Math.round(os.uptime());
+
+            // Get number of instances
+            const instanceObjs = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
+            const instances = Object.keys(instanceObjs || {}).length;
+
+            res.json({
+                ok: true,
+                data: {
+                    js_controller: jsControllerVersion,
+                    hostname,
+                    platform,
+                    node: nodeVersion,
+                    cpu_load: parseFloat(cpuLoad.toFixed(2)),
+                    mem: {
+                        total_mb: totalMem,
+                        used_mb: usedMem,
+                    },
+                    uptime_sec: uptimeSec,
+                    instances,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error getting system info: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to get system information',
+            });
+        }
     }
 
     unload(): void {
