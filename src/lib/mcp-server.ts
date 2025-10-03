@@ -21,22 +21,18 @@ export default class McpServer {
     private initRoutes(): void {
         // Add JSON body parser
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+            if (req.method === 'POST' && req.headers['content-type']?.includes('application/json')) {
                 let body = '';
                 req.on('data', chunk => {
                     body += chunk.toString();
                 });
                 req.on('end', () => {
                     try {
-                        if (body) {
-                            (req as any).body = JSON.parse(body);
-                        } else {
-                            (req as any).body = {};
-                        }
-                        next();
+                        (req as any).body = JSON.parse(body);
                     } catch {
-                        res.status(400).json({ error: 'Invalid JSON' });
+                        (req as any).body = {};
                     }
+                    next();
                 });
             } else {
                 next();
@@ -95,40 +91,34 @@ export default class McpServer {
             });
         });
 
-        // Set state endpoint
-        this.app.post('/api/set_state', async (req: Request, res: Response) => {
+        // RPC endpoint for method-based API calls
+        this.app.post('/api/rpc', async (req: Request, res: Response) => {
             try {
-                const body = (req as any).body;
-                const { method, params } = body;
+                const { method, params } = (req as any).body;
 
-                if (method !== 'set_state') {
-                    res.status(400).json({ error: 'Invalid method', expected: 'set_state' });
+                if (!method) {
+                    res.status(400).json({
+                        ok: false,
+                        error: 'Method is required',
+                    });
                     return;
                 }
 
-                if (!params || !params.id) {
-                    res.status(400).json({ error: 'Missing required parameter: id' });
-                    return;
+                if (method === 'get_states') {
+                    await this.handleGetStates(params, res);
+                } else if (method === 'set_state') {
+                    await this.handleSetState(params, res);
+                } else {
+                    res.status(400).json({
+                        ok: false,
+                        error: `Unknown method: ${method}`,
+                    });
                 }
-
-                const { id, value, options } = params;
-                const ack = options?.ack !== undefined ? options.ack : false;
-
-                // Set the state using ioBroker adapter
-                await this.adapter.setForeignStateAsync(id, value, ack);
-
-                res.json({
-                    ok: true,
-                    data: {
-                        id,
-                        value,
-                    },
-                });
-            } catch (error) {
-                this.adapter.log.error(`Error setting state: ${error}`);
+            } catch (error: any) {
+                this.adapter.log.error(`RPC error: ${error.message}`);
                 res.status(500).json({
-                    error: 'Failed to set state',
-                    message: error instanceof Error ? error.message : String(error),
+                    ok: false,
+                    error: error.message,
                 });
             }
         });
@@ -149,6 +139,94 @@ export default class McpServer {
                 message: err.message,
             });
         });
+    }
+
+    private async handleGetStates(params: any, res: Response): Promise<void> {
+        if (!params || !params.ids || !Array.isArray(params.ids)) {
+            res.status(400).json({
+                ok: false,
+                error: 'Invalid params: ids array is required',
+            });
+            return;
+        }
+
+        const states = [];
+        for (const id of params.ids) {
+            try {
+                const state = await this.adapter.getForeignStateAsync(id);
+                if (state) {
+                    const stateData: any = {
+                        id: id,
+                        value: state.val,
+                        ack: state.ack,
+                        ts: state.ts,
+                    };
+                    // Only include lc if it's different from ts
+                    if (state.lc !== state.ts) {
+                        stateData.lc = state.lc;
+                    }
+                    states.push(stateData);
+                } else {
+                    // State doesn't exist, but we can still include it with null value
+                    states.push({
+                        id: id,
+                        value: null,
+                        ack: false,
+                        ts: Date.now(),
+                    });
+                }
+            } catch (error: any) {
+                this.adapter.log.error(`Error getting state ${id}: ${error.message}`);
+                // Include the state with error info
+                states.push({
+                    id: id,
+                    value: null,
+                    ack: false,
+                    ts: Date.now(),
+                    error: error.message,
+                });
+            }
+        }
+
+        res.json({
+            ok: true,
+            data: {
+                states: states,
+            },
+        });
+    }
+
+    private async handleSetState(params: any, res: Response): Promise<void> {
+        if (!params || !params.id) {
+            res.status(400).json({
+                ok: false,
+                error: 'Missing required parameter: id',
+            });
+            return;
+        }
+
+        const { id, value, options } = params;
+        const ack = options?.ack !== undefined ? options.ack : false;
+
+        try {
+            // Set the state using ioBroker adapter
+            await this.adapter.setForeignStateAsync(id, value, ack);
+
+            res.json({
+                ok: true,
+                data: {
+                    id,
+                    value,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error setting state: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to set state',
+                message: error.message,
+            });
+        }
     }
 
     unload(): void {
