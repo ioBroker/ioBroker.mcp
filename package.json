@@ -32,7 +32,7 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/eslint-config": "^2.0.2",
-    "@iobroker/testing": "^5.0.4",
+    "@iobroker/testing": "^5.1.1",
     "@iobroker/types": "^7.0.7",
     "@types/express": "^4.17.22",
     "@types/node": "^24.6.2",
