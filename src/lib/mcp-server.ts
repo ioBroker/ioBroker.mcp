@@ -3,6 +3,7 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import os from 'node:os';
 import type { McpAdapter } from './types';
+import { listDevices } from './devices-utils';
 
 type Server = HttpServer | HttpsServer;
 
@@ -115,6 +116,8 @@ export default class McpServer {
                     await this.handleSystemInfo(params, res);
                 } else if (method === 'search_objects') {
                     await this.handleSearchObjects(params, res);
+                } else if (method === 'list_devices') {
+                    await this.handleListDevices(params, res);
                 } else {
                     res.status(400).json({
                         ok: false,
@@ -431,6 +434,27 @@ export default class McpServer {
             res.status(500).json({
                 ok: false,
                 error: 'Failed to search objects',
+            });
+        }
+    }
+
+    private async handleListDevices(params: any, res: Response): Promise<void> {
+        try {
+            const room = params?.room;
+            const limit = params?.limit || 100;
+            const offset = params?.offset || 0;
+
+            const result = await listDevices(this.adapter, { room, limit, offset });
+
+            res.json({
+                ok: true,
+                data: result,
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error listing devices: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to list devices',
             });
         }
     }
