@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from 'express';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
+import os from 'node:os';
 import type { McpAdapter } from './types';
 
 type Server = HttpServer | HttpsServer;
@@ -108,6 +109,12 @@ export default class McpServer {
                     await this.handleGetStates(params, res);
                 } else if (method === 'get_logs') {
                     this.handleGetLogs(params, res);
+                } else if (method === 'set_state') {
+                    await this.handleSetState(params, res);
+                } else if (method === 'system_info') {
+                    await this.handleSystemInfo(params, res);
+                } else if (method === 'search_objects') {
+                    await this.handleSearchObjects(params, res);
                 } else {
                     res.status(400).json({
                         ok: false,
@@ -256,6 +263,170 @@ export default class McpServer {
             res.status(500).json({
                 ok: false,
                 error: error.message || 'Internal server error',
+    private async handleSetState(params: any, res: Response): Promise<void> {
+        if (!params || !params.id) {
+            res.status(400).json({
+                ok: false,
+                error: 'Missing required parameter: id',
+            });
+            return;
+        }
+
+        const { id, value, options } = params;
+        const ack = options?.ack !== undefined ? options.ack : false;
+
+        try {
+            // Set the state using ioBroker adapter
+            await this.adapter.setForeignStateAsync(id, value, ack);
+
+            res.json({
+                ok: true,
+                data: {
+                    id,
+                    value,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error setting state: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to set state',
+                message: error.message,
+            });
+        }
+    }
+
+    private async handleSystemInfo(_params: any, res: Response): Promise<void> {
+        try {
+            // Get js-controller version
+            const hostObj = await this.adapter.getForeignObjectAsync(`system.host.${this.adapter.host}`);
+            const jsControllerVersion = hostObj?.common?.installedVersion || 'unknown';
+
+            // Get hostname
+            const hostname = os.hostname();
+
+            // Get platform
+            const platform = os.platform();
+
+            // Get Node.js version
+            const nodeVersion = process.version.substring(1); // Remove 'v' prefix
+
+            // Get CPU load (1 minute average)
+            const loadAvg = os.loadavg();
+            const cpuLoad = loadAvg[0]; // 1 minute average
+
+            // Get memory information
+            const totalMem = Math.round(os.totalmem() / (1024 * 1024)); // Convert to MB
+            const freeMem = Math.round(os.freemem() / (1024 * 1024)); // Convert to MB
+            const usedMem = totalMem - freeMem;
+
+            // Get system uptime in seconds
+            const uptimeSec = Math.round(os.uptime());
+
+            // Get number of instances
+            const instanceObjs = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
+            const instances = Object.keys(instanceObjs || {}).length;
+
+            res.json({
+                ok: true,
+                data: {
+                    js_controller: jsControllerVersion,
+                    hostname,
+                    platform,
+                    node: nodeVersion,
+                    cpu_load: parseFloat(cpuLoad.toFixed(2)),
+                    mem: {
+                        total_mb: totalMem,
+                        used_mb: usedMem,
+                    },
+                    uptime_sec: uptimeSec,
+                    instances,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error getting system info: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to get system information',
+            });
+        }
+    }
+
+    private async handleSearchObjects(params: any, res: Response): Promise<void> {
+        try {
+            const query = params?.query || '';
+            const role = params?.role;
+            const room = params?.room;
+            const limit = params?.limit || 100;
+
+            // Get all objects of type 'state' and 'channel'
+            const allObjects = await this.adapter.getForeignObjectsAsync('*', 'state');
+
+            // Get room enums if room filter is specified
+            let roomObjects: string[] = [];
+            if (room) {
+                const enums = await this.adapter.getForeignObjectsAsync('enum.rooms.*', 'enum');
+                for (const [, enumObj] of Object.entries(enums || {})) {
+                    if (
+                        enumObj?.common?.name &&
+                        (typeof enumObj.common.name === 'string'
+                            ? enumObj.common.name.toLowerCase() === room.toLowerCase()
+                            : Object.values(enumObj.common.name).some(
+                                  (n: any) => typeof n === 'string' && n.toLowerCase() === room.toLowerCase(),
+                              ))
+                    ) {
+                        roomObjects = enumObj.common?.members || [];
+                        break;
+                    }
+                }
+            }
+
+            const results = [];
+            for (const [id, obj] of Object.entries(allObjects || {})) {
+                // Apply query filter (search in object ID)
+                if (query && !id.toLowerCase().includes(query.toLowerCase())) {
+                    continue;
+                }
+
+                // Apply role filter
+                if (role && obj?.common?.role !== role) {
+                    continue;
+                }
+
+                // Apply room filter
+                if (room && !roomObjects.includes(id)) {
+                    continue;
+                }
+
+                // Extract adapter name from object ID (e.g., "alias.0" from "alias.0.rooms.bedroom.temperature")
+                const adapterMatch = id.match(/^([^.]+\.\d+)/);
+                const adapter = adapterMatch ? adapterMatch[1] : '';
+
+                results.push({
+                    id: id,
+                    type: obj?.type || 'state',
+                    role: obj?.common?.role || '',
+                    path: id,
+                    adapter: adapter,
+                });
+
+                // Apply limit
+                if (results.length >= limit) {
+                    break;
+                }
+            }
+
+            res.json({
+                ok: true,
+                data: {
+                    results: results,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error searching objects: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to search objects',
             });
         }
     }
