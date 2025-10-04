@@ -115,6 +115,8 @@ export default class McpServer {
                     await this.handleSystemInfo(params, res);
                 } else if (method === 'search_objects') {
                     await this.handleSearchObjects(params, res);
+                } else if (method === 'list_instances') {
+                    await this.handleListInstances(params, res);
                 } else {
                     res.status(400).json({
                         ok: false,
@@ -431,6 +433,60 @@ export default class McpServer {
             res.status(500).json({
                 ok: false,
                 error: 'Failed to search objects',
+            });
+        }
+    }
+
+    private async handleListInstances(_params: any, res: Response): Promise<void> {
+        try {
+            // Get all instance objects
+            const instanceObjs = await this.adapter.getForeignObjectsAsync('system.adapter.*', 'instance');
+
+            const instances = [];
+            for (const [id, obj] of Object.entries(instanceObjs || {})) {
+                // Extract instance name and number from ID (e.g., "system.adapter.zigbee.0" -> "zigbee.0")
+                const match = id.match(/^system\.adapter\.(.+)$/);
+                if (!match) {
+                    continue;
+                }
+                const instanceId = match[1]; // e.g., "zigbee.0"
+
+                // Get instance states
+                const aliveState = await this.adapter.getForeignStateAsync(`${id}.alive`);
+                const connectedState = await this.adapter.getForeignStateAsync(`${id}.connected`);
+
+                // Calculate uptime from the alive state timestamp
+                let uptime = 0;
+                if (aliveState?.val === true && aliveState?.lc) {
+                    uptime = Math.floor((Date.now() - aliveState.lc) / 1000);
+                }
+
+                // Extract adapter name (without instance number)
+                const adapterName = instanceId.replace(/\.\d+$/, '');
+
+                instances.push({
+                    id: instanceId,
+                    name: adapterName,
+                    version: obj?.common?.version || 'unknown',
+                    enabled: obj?.common?.enabled || false,
+                    alive: aliveState?.val === true,
+                    connected: connectedState?.val === true,
+                    uptime: uptime,
+                    loglevel: obj?.common?.loglevel || 'info',
+                });
+            }
+
+            res.json({
+                ok: true,
+                data: {
+                    instances: instances,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error listing instances: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to list instances',
             });
         }
     }
