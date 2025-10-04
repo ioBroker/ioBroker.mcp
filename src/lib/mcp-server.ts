@@ -263,6 +263,10 @@ export default class McpServer {
             res.status(500).json({
                 ok: false,
                 error: error.message || 'Internal server error',
+            });
+        }
+    }
+
     private async handleSetState(params: any, res: Response): Promise<void> {
         if (!params || !params.id) {
             res.status(400).json({
