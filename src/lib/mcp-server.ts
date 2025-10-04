@@ -107,6 +107,8 @@ export default class McpServer {
 
                 if (method === 'get_states') {
                     await this.handleGetStates(params, res);
+                } else if (method === 'set_state') {
+                    await this.handleSetState(params, res);
                 } else if (method === 'system_info') {
                     await this.handleSystemInfo(params, res);
                 } else if (method === 'search_objects') {
@@ -197,6 +199,39 @@ export default class McpServer {
                 states: states,
             },
         });
+    }
+
+    private async handleSetState(params: any, res: Response): Promise<void> {
+        if (!params || !params.id) {
+            res.status(400).json({
+                ok: false,
+                error: 'Missing required parameter: id',
+            });
+            return;
+        }
+
+        const { id, value, options } = params;
+        const ack = options?.ack !== undefined ? options.ack : false;
+
+        try {
+            // Set the state using ioBroker adapter
+            await this.adapter.setForeignStateAsync(id, value, ack);
+
+            res.json({
+                ok: true,
+                data: {
+                    id,
+                    value,
+                },
+            });
+        } catch (error: any) {
+            this.adapter.log.error(`Error setting state: ${error.message}`);
+            res.status(500).json({
+                ok: false,
+                error: 'Failed to set state',
+                message: error.message,
+            });
+        }
     }
 
     private async handleSystemInfo(_params: any, res: Response): Promise<void> {
