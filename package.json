@@ -35,7 +35,7 @@
     "@iobroker/testing": "^5.1.1",
     "@iobroker/types": "^7.0.7",
     "@types/express": "^4.17.22",
-    "@types/node": "^24.6.2",
+    "@types/node": "^24.9.2",
     "typescript": "^5.9.3"
   },
   "main": "dist/main.js",
