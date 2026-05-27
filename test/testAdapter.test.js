@@ -2,11 +2,16 @@ const path = require('node:path');
 const assert = require('node:assert');
 const { tests } = require('@iobroker/testing');
 
-// The MCP SDK ships a CommonJS build (dist/cjs/**), so it can be required directly from these
-// CommonJS test files. We use the real MCP client + Streamable HTTP transport to talk to the
-// adapter exactly like a production client would.
-const { Client } = require('@modelcontextprotocol/sdk/client/index');
-const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp');
+// The MCP SDK ships a CommonJS build (dist/cjs/**) so it can be required from these CommonJS test
+// files; we drive the adapter with the real MCP client + Streamable HTTP transport.
+//
+// IMPORTANT: keep the exact specifiers below. `Client` uses the dedicated "./client" export. The
+// transport has no dedicated export, so it resolves through the SDK's "./*" -> "./dist/cjs/*" map,
+// which is a literal substitution. Node's "exports" resolution does NOT append ".js", so dropping
+// the extension makes it look for ".../dist/cjs/client/streamableHttp" and fail with
+// "Cannot find module". The ".js" suffix is therefore mandatory here.
+const { Client } = require('@modelcontextprotocol/sdk/client');
+const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
 
 const HOST = '127.0.0.1';
 
