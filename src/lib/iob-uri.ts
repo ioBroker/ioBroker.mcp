@@ -70,9 +70,7 @@ export function iobUriParse(uri: string): IobUriParsed {
             if (result.path.includes('.')) {
                 result.type = 'object';
             } else if (result.path) {
-                if (
-                    ['val', 'q', 'ack', 'ts', 'lc', 'from', 'user', 'expire', 'c'].includes(result.path)
-                ) {
+                if (['val', 'q', 'ack', 'ts', 'lc', 'from', 'user', 'expire', 'c'].includes(result.path)) {
                     result.type = 'state';
                 } else if (['common', 'native', 'from', 'acl', 'type'].includes(result.path)) {
                     result.type = 'object';

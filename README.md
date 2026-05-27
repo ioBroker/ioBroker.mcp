@@ -67,24 +67,24 @@ state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 
 ### Available tools
 
-| Tool | Description |
-| --- | --- |
-| `get_states` | Retrieve the current value of one or multiple states |
-| `get_object` | Read a single object by its ID |
-| `search_objects` | Search objects/states by keyword, role or room |
-| `list_devices` | List detected devices grouped by room (uses the ioBroker type-detector to expose functional devices with named controls); optional `language` and `room` filter |
-| `list_instances` | List adapter instances with their status |
-| `list_hosts` | List ioBroker hosts with their status |
-| `list_rooms` | List rooms (`enum.rooms.*`) with localized names and member details; optional `language` and `withIcons` |
-| `list_functions` | List functions (`enum.functions.*`) with localized names and member details; optional `language` and `withIcons` |
-| `history_query` | Query historical values (requires a history adapter) |
-| `read_file` | Read a file from an adapter file storage (optional base64) |
-| `get_logs` | Retrieve system logs |
-| `write_log` | Write a message to the ioBroker log |
-| `system_info` | Get system and js-controller information |
-| `set_state` | Set the value of a state (value coerced to the state type) — requires *Allow setting states* |
-| `set_object` | Create/update an object (merges common/native) — requires *Allow object/file changes* |
-| `write_file` | Write a file to an adapter file storage — requires *Allow object/file changes* |
+| Tool             | Description                                                                                                                                                     |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `get_states`     | Retrieve the current value of one or multiple states                                                                                                            |
+| `get_object`     | Read a single object by its ID                                                                                                                                  |
+| `search_objects` | Search objects/states by keyword, role or room                                                                                                                  |
+| `list_devices`   | List detected devices grouped by room (uses the ioBroker type-detector to expose functional devices with named controls); optional `language` and `room` filter |
+| `list_instances` | List adapter instances with their status                                                                                                                        |
+| `list_hosts`     | List ioBroker hosts with their status                                                                                                                           |
+| `list_rooms`     | List rooms (`enum.rooms.*`) with localized names and member details; optional `language` and `withIcons`                                                        |
+| `list_functions` | List functions (`enum.functions.*`) with localized names and member details; optional `language` and `withIcons`                                                |
+| `history_query`  | Query historical values (requires a history adapter)                                                                                                            |
+| `read_file`      | Read a file from an adapter file storage (optional base64)                                                                                                      |
+| `get_logs`       | Retrieve system logs                                                                                                                                            |
+| `write_log`      | Write a message to the ioBroker log                                                                                                                             |
+| `system_info`    | Get system and js-controller information                                                                                                                        |
+| `set_state`      | Set the value of a state (value coerced to the state type) — requires *Allow setting states*                                                                    |
+| `set_object`     | Create/update an object (merges common/native) — requires *Allow object/file changes*                                                                           |
+| `write_file`     | Write a file to an adapter file storage — requires *Allow object/file changes*                                                                                  |
 
 All object/state access runs with the permissions of the configured **Default User**. The write tools
 (`set_state`, `set_object`, `write_file`) are only registered when their respective permission option is enabled.
@@ -121,7 +121,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 0.1.0 (2026-05-27)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Initial development
 
 ### 0.0.1 (2025-01-03)

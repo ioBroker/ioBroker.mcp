@@ -3,19 +3,6 @@
     "name": "mcp",
     "version": "0.1.0",
     "news": {
-      "0.1.0": {
-        "en": "Initial development",
-        "de": "Entwicklung",
-        "ru": "Начальное развитие",
-        "pt": "Desenvolvimento inicial",
-        "nl": "Eerste ontwikkeling",
-        "fr": "Développement initial",
-        "it": "Sviluppo iniziale",
-        "es": "Desarrollo inicial",
-        "pl": "Początkowy rozwój",
-        "uk": "Початковий розвиток",
-        "zh-cn": "初步发展"
-      },
       "0.0.1": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
@@ -68,7 +55,6 @@
       "rest"
     ],
     "webExtension": "dist/lib/mcp-server.js",
-    "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "dist/main.js",
     "icon": "mcp.png",

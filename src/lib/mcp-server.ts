@@ -4,7 +4,11 @@ import os from 'node:os';
 import { z } from 'zod';
 import { McpServer as McpSdkServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { isInitializeRequest, SubscribeRequestSchema, UnsubscribeRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import {
+    isInitializeRequest,
+    SubscribeRequestSchema,
+    UnsubscribeRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import { getAiFriendlyStructure, type Room } from './devices';
 import { iobUriParse } from './iob-uri';
 import type { McpAdapter, McpAdapterConfig } from './types';
@@ -452,7 +456,8 @@ export default class McpServer {
             server.registerTool(
                 'set_state',
                 {
-                    description: 'Set the value of a state. The value is coerced to the state type (boolean/number/string).',
+                    description:
+                        'Set the value of a state. The value is coerced to the state type (boolean/number/string).',
                     inputSchema: {
                         id: z.string().describe('State ID'),
                         value: z.any().describe('New value (type depends on the state)'),
@@ -604,10 +609,16 @@ export default class McpServer {
 
         server.registerTool(
             'list_functions',
-            { description: 'List all functions (enum.functions.*) with their members and metadata', inputSchema: enumInput },
+            {
+                description: 'List all functions (enum.functions.*) with their members and metadata',
+                inputSchema: enumInput,
+            },
             async ({ language, withIcons }) => {
                 try {
-                    return ok({ ok: true, data: { functions: await this.readEnums('functions', language, withIcons) } });
+                    return ok({
+                        ok: true,
+                        data: { functions: await this.readEnums('functions', language, withIcons) },
+                    });
                 } catch (e) {
                     return fail(e);
                 }
@@ -658,12 +669,12 @@ export default class McpServer {
                     level: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
                 },
             },
-            async ({ message, level }) => {
+            ({ message, level }): Promise<ToolResult> => {
                 try {
                     this.adapter.log[level](message);
-                    return ok({ ok: true, data: { message, level } });
+                    return Promise.resolve(ok({ ok: true, data: { message, level } }));
                 } catch (e) {
-                    return fail(e);
+                    return Promise.resolve(fail(e));
                 }
             },
         );
@@ -746,7 +757,9 @@ export default class McpServer {
             async (uri, variables) => {
                 const id = decodeURIComponent(String(variables.id));
                 const obj = await this.adapter.getForeignObjectAsync(id, { user: this.defaultUser });
-                return { contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(obj ?? null) }] };
+                return {
+                    contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify(obj ?? null) }],
+                };
             },
         );
 
@@ -760,14 +773,14 @@ export default class McpServer {
                 description: 'Recent log lines, addressed as ioblog://all or ioblog://<source>',
                 mimeType: 'application/json',
             },
-            async (uri, variables) => {
+            (uri, variables) => {
                 const source = decodeURIComponent(String(variables.source)) || 'all';
                 const logs = this.logBuffer
                     .filter(m => source === 'all' || m.from === source)
                     .map(m => ({ ts: m.ts, level: m.severity, source: m.from, message: m.message }));
-                return {
+                return Promise.resolve({
                     contents: [{ uri: uri.href, mimeType: 'application/json', text: JSON.stringify({ source, logs }) }],
-                };
+                });
             },
         );
 
@@ -1026,7 +1039,7 @@ export default class McpServer {
         const cache: Record<string, ioBroker.Object | null | false> = {};
 
         for (const row of enums.rows) {
-            const enumObj = row.value as ioBroker.EnumObject;
+            const enumObj = row.value;
             const common = (enumObj.common || {}) as AnyCommon;
             const oneEnum: EnumResponse = {
                 id: enumObj._id,
@@ -1092,7 +1105,7 @@ export default class McpServer {
             }
             if (typeof value === 'string') {
                 const n = parseFloat(value);
-                return isNaN(n) ? (value as ioBroker.StateValue) : n;
+                return isNaN(n) ? value : n;
             }
             return value as ioBroker.StateValue;
         }
@@ -1130,7 +1143,12 @@ export default class McpServer {
         const file = (data as { file: string | Buffer })?.file;
         const mimeType = (data as { mimeType?: string })?.mimeType;
         if (base64 || typeof file !== 'string') {
-            return { path, mimeType, encoding: 'base64', content: Buffer.from(file as Buffer | string).toString('base64') };
+            return {
+                path,
+                mimeType,
+                encoding: 'base64',
+                content: Buffer.from(file).toString('base64'),
+            };
         }
         return { path, mimeType, encoding: 'utf8', content: file };
     }
