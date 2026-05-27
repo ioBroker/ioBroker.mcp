@@ -90,18 +90,21 @@
                 "certPublic": {
                     "type": "certificate",
                     "label": "Public Certificate",
+                    "certType": "public",
                     "hidden": "!data.secure",
                     "help": "Path to the public certificate file"
                 },
                 "certPrivate": {
                     "type": "certificate",
                     "label": "Private Key",
+                    "certType": "private",
                     "hidden": "!data.secure",
                     "help": "Path to the private key file"
                 },
                 "certChained": {
                     "type": "certificate",
                     "label": "Chained Certificate",
+                    "certType": "chained",
                     "hidden": "!data.secure",
                     "help": "Path to the chained certificate file (optional)"
                 }

@@ -144,7 +144,7 @@ class Mcp extends Adapter {
             console.log('Adapter runs as a part of web service');
             this.log.warn('Adapter runs as a part of web service');
             this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                setTimeout(() => process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION), 1000),
+                setTimeout(() => this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION), 1000),
             );
         } else {
             if (this.config.secure) {

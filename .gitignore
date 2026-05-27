@@ -8,8 +8,6 @@ node_modules/
 .vscode/
 tmp/
 temp/
-dist/
-build/
 coverage/
 .nyc_output/
 *.tgz
