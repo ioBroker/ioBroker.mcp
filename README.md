@@ -117,10 +117,16 @@ tools rather than as subscribable resources.)
 - `GET /api/info` - Adapter information
 
 ## Changelog
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Initial development
 
 ### 0.0.1 (2025-01-03)
-- Initial release with basic web server functionality
-- Configurable port, bind address, authentication, and SSL
+* Initial release with basic web server functionality
+*Configurable port, bind address, authentication, and SSL
 
 ## License
 
