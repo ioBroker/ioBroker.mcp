@@ -162,7 +162,9 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('get_states reads the adapter connection state', async function () {
                 this.timeout(15000);
-                const id = `system.adapter.${harness.adapterName}.0.info.connection`;
+                // info.connection lives under the adapter namespace (mcp.0.info.connection), NOT under
+                // the controller-managed instance object (system.adapter.mcp.0.* holds .alive etc.).
+                const id = `${harness.adapterName}.0.info.connection`;
                 const res = parseToolResult(await client.callTool({ name: 'get_states', arguments: { ids: [id] } }));
                 assert.strictEqual(res.ok, true);
                 const state = res.data.states[0];
@@ -172,7 +174,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('get_object reads the connection state object', async function () {
                 this.timeout(15000);
-                const id = `system.adapter.${harness.adapterName}.0.info.connection`;
+                const id = `${harness.adapterName}.0.info.connection`;
                 const res = parseToolResult(await client.callTool({ name: 'get_object', arguments: { id } }));
                 assert.strictEqual(res.ok, true);
                 assert.strictEqual(res.data.object._id, id);
@@ -251,7 +253,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('exposes an iobstate resource that can be read', async function () {
                 this.timeout(15000);
-                const id = `system.adapter.${harness.adapterName}.0.info.connection`;
+                const id = `${harness.adapterName}.0.info.connection`;
                 const res = await client.readResource({ uri: `iobstate://${id}` });
                 const body = JSON.parse(res.contents[0].text);
                 assert.strictEqual(body.id, id);
@@ -260,7 +262,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('exposes an iobobject resource that can be read', async function () {
                 this.timeout(15000);
-                const id = `system.adapter.${harness.adapterName}.0.info.connection`;
+                const id = `${harness.adapterName}.0.info.connection`;
                 const res = await client.readResource({ uri: `iobobject://${id}` });
                 const body = JSON.parse(res.contents[0].text);
                 assert.strictEqual(body._id, id);
@@ -347,7 +349,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('still serves read tools', async function () {
                 this.timeout(15000);
-                const id = `system.adapter.${harness.adapterName}.0.info.connection`;
+                const id = `${harness.adapterName}.0.info.connection`;
                 const res = parseToolResult(await client.callTool({ name: 'get_states', arguments: { ids: [id] } }));
                 assert.strictEqual(res.ok, true);
                 assert.strictEqual(res.data.states[0].value, true);
