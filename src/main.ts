@@ -20,6 +20,9 @@ class Mcp extends Adapter {
         super({
             ...options,
             name: 'mcp',
+            logTransporter: true,
+            stateChange: (id, state) => this.webServer?.mcpServer?.stateChange(id, state),
+            objectChange: (id, obj) => this.webServer?.mcpServer?.objectChange(id, obj),
             ready: () => this.main(),
         });
 
@@ -65,7 +68,10 @@ class Mcp extends Adapter {
 
         this.webServer.app = express();
 
-        this.webServer.mcpServer = new McpServer(this.webServer.server!, this as any, this.webServer.app);
+        // Standalone mode: we own the web server. Pass `null` as instanceSettings so the
+        // McpServer runs in standalone mode (as a web extension the web adapter passes the
+        // instance object here instead).
+        this.webServer.mcpServer = new McpServer(this.webServer.server!, this.config, this, null, this.webServer.app);
 
         if (this.config.port) {
             if (this.config.secure && !this.config.certificates) {
@@ -134,24 +140,32 @@ class Mcp extends Adapter {
     }
 
     main(): void {
-        if (this.config.secure) {
-            // Load certificates
-            this.getCertificates(
-                undefined,
-                undefined,
-                undefined,
-                (
-                    err: Error | null | undefined,
-                    certificates: ioBroker.Certificates | undefined,
-                    leConfig: boolean | undefined,
-                ): void => {
-                    this.config.certificates = certificates;
-                    this.config.leConfig = leConfig;
-                    void this.initWebServer();
-                },
+        if (this.config.webInstance) {
+            console.log('Adapter runs as a part of web service');
+            this.log.warn('Adapter runs as a part of web service');
+            this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
+                setTimeout(() => process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION), 1000),
             );
         } else {
-            void this.initWebServer();
+            if (this.config.secure) {
+                // Load certificates
+                this.getCertificates(
+                    undefined,
+                    undefined,
+                    undefined,
+                    (
+                        err: Error | null | undefined,
+                        certificates: ioBroker.Certificates | undefined,
+                        leConfig: boolean | undefined,
+                    ): void => {
+                        this.config.certificates = certificates;
+                        this.config.leConfig = leConfig;
+                        void this.initWebServer();
+                    },
+                );
+            } else {
+                void this.initWebServer();
+            }
         }
     }
 }

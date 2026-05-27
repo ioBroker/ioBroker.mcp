@@ -1,74 +1,111 @@
 {
-  "type": "panel",
-  "items": {
-    "_server": {
-      "type": "panel",
-      "label": "Server Configuration",
-      "items": {
-        "port": {
-          "type": "number",
-          "label": "Port",
-          "min": 1,
-          "max": 65535,
-          "default": 8093,
-          "help": "Port on which the web server will listen"
+    "type": "tabs",
+    "i18n": true,
+    "items": {
+        "_server": {
+            "type": "panel",
+            "label": "Server Configuration",
+            "items": {
+                "webInstance": {
+                    "type": "instance",
+                    "label": "Extend WEB adapter",
+                    "all": true,
+                    "sm": 12,
+                    "adapter": "web"
+                },
+                "bind": {
+                    "newLine": true,
+                    "type": "text",
+                    "label": "Bind Address",
+                    "default": "0.0.0.0",
+                    "hidden": "!!data.webInstance",
+                    "help": "IP address to bind the server to (0.0.0.0 for all interfaces)",
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 4
+                },
+                "port": {
+                    "type": "number",
+                    "label": "Port",
+                    "min": 1,
+                    "max": 65535,
+                    "default": 8093,
+                    "hidden": "!!data.webInstance",
+                    "help": "Port on which the web server will listen",
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 2
+                }
+            }
         },
-        "bind": {
-          "type": "text",
-          "label": "Bind Address",
-          "default": "0.0.0.0",
-          "help": "IP address to bind the server to (0.0.0.0 for all interfaces)"
+        "_auth": {
+            "type": "panel",
+            "label": "Authentication",
+            "hidden": "!!data.webInstance",
+            "items": {
+                "auth": {
+                    "type": "checkbox",
+                    "label": "Enable Authentication",
+                    "default": false,
+                    "help": "Enable ioBroker user authentication for the web server"
+                },
+                "defaultUser": {
+                    "type": "text",
+                    "label": "Default User",
+                    "default": "admin",
+                    "hidden": "!data.auth",
+                    "help": "Default user for authentication (e.g., 'admin')"
+                }
+            }
+        },
+        "_permissions": {
+            "type": "panel",
+            "label": "Permissions",
+            "items": {
+                "allowSetState": {
+                    "type": "checkbox",
+                    "label": "Allow setting states",
+                    "default": true,
+                    "help": "Allow MCP clients to write state values (set_state tool)"
+                },
+                "allowObjectChange": {
+                    "type": "checkbox",
+                    "label": "Allow object/file changes",
+                    "default": false,
+                    "help": "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default."
+                }
+            }
+        },
+        "_ssl": {
+            "type": "panel",
+            "label": "SSL/TLS Configuration",
+            "hidden": "!!data.webInstance",
+            "items": {
+                "secure": {
+                    "type": "checkbox",
+                    "label": "Enable HTTPS",
+                    "default": false,
+                    "help": "Enable HTTPS/SSL for secure connections"
+                },
+                "certPublic": {
+                    "type": "certificate",
+                    "label": "Public Certificate",
+                    "hidden": "!data.secure",
+                    "help": "Path to the public certificate file"
+                },
+                "certPrivate": {
+                    "type": "certificate",
+                    "label": "Private Key",
+                    "hidden": "!data.secure",
+                    "help": "Path to the private key file"
+                },
+                "certChained": {
+                    "type": "certificate",
+                    "label": "Chained Certificate",
+                    "hidden": "!data.secure",
+                    "help": "Path to the chained certificate file (optional)"
+                }
+            }
         }
-      }
-    },
-    "_auth": {
-      "type": "panel",
-      "label": "Authentication",
-      "items": {
-        "auth": {
-          "type": "checkbox",
-          "label": "Enable Authentication",
-          "default": false,
-          "help": "Enable ioBroker user authentication for the web server"
-        },
-        "defaultUser": {
-          "type": "text",
-          "label": "Default User",
-          "default": "admin",
-          "hidden": "!data.auth",
-          "help": "Default user for authentication (e.g., 'admin')"
-        }
-      }
-    },
-    "_ssl": {
-      "type": "panel",
-      "label": "SSL/TLS Configuration",
-      "items": {
-        "secure": {
-          "type": "checkbox",
-          "label": "Enable HTTPS",
-          "default": false,
-          "help": "Enable HTTPS/SSL for secure connections"
-        },
-        "certPublic": {
-          "type": "certificate",
-          "label": "Public Certificate",
-          "hidden": "!data.secure",
-          "help": "Path to the public certificate file"
-        },
-        "certPrivate": {
-          "type": "certificate",
-          "label": "Private Key",
-          "hidden": "!data.secure",
-          "help": "Path to the private key file"
-        },
-        "certChained": {
-          "type": "certificate",
-          "label": "Chained Certificate",
-          "hidden": "!data.secure",
-          "help": "Path to the chained certificate file (optional)"
-        }
-      }
     }
-  }
 }
