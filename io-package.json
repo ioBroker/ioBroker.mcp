@@ -3,19 +3,6 @@
     "name": "mcp",
     "version": "0.1.3",
     "news": {
-      "0.1.3": {
-        "en": "Initial development",
-        "de": "Entwicklung",
-        "ru": "Начальное развитие",
-        "pt": "Desenvolvimento inicial",
-        "nl": "Eerste ontwikkeling",
-        "fr": "Développement initial",
-        "it": "Sviluppo iniziale",
-        "es": "Desarrollo inicial",
-        "pl": "Początkowy rozwój",
-        "uk": "Початковий розвиток",
-        "zh-cn": "初步发展"
-      },
       "0.1.1": {
         "en": "Initial development",
         "de": "Entwicklung",

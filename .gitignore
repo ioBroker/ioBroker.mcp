@@ -15,3 +15,4 @@ coverage/
 *.js.map
 *.d.ts
 src/**/*.js
+.commitinfo

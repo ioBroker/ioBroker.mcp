@@ -15,6 +15,8 @@ class Mcp extends Adapter {
         server: Server | null;
         app: Express | null;
     };
+    /** Pending self-terminate timer used when running embedded in a web instance. */
+    private terminateTimer?: ioBroker.Timeout;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -35,6 +37,10 @@ class Mcp extends Adapter {
 
     onUnload(callback: () => void): void {
         try {
+            if (this.terminateTimer) {
+                this.clearTimeout(this.terminateTimer);
+                this.terminateTimer = undefined;
+            }
             void this.setState('info.connection', false, true);
 
             this.log.info(`terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`);
@@ -111,7 +117,7 @@ class Mcp extends Adapter {
                     this.log.error(`Cannot start server on ${this.config.bind || '0.0.0.0'}:${serverPort}: ${e}`);
                 }
                 if (!serverListening) {
-                    this.terminate ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(1);
+                    this.terminate?.(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 }
             });
 
@@ -121,7 +127,8 @@ class Mcp extends Adapter {
                 port => {
                     if (port !== this.config.port) {
                         this.log.error(`port ${this.config.port} already in use`);
-                        process.exit(1);
+                        this.terminate?.(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                        return;
                     }
                     serverPort = port;
 
@@ -143,9 +150,14 @@ class Mcp extends Adapter {
         if (this.config.webInstance) {
             console.log('Adapter runs as a part of web service');
             this.log.warn('Adapter runs as a part of web service');
-            this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                setTimeout(() => this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION), 1000),
-            );
+            this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () => {
+                // Tracked timer so onUnload can cancel it; otherwise an early unload would
+                // race with terminate() and leave a dangling timer behind.
+                this.terminateTimer = this.setTimeout(
+                    () => this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION),
+                    1000,
+                );
+            });
         } else {
             if (this.config.secure) {
                 // Load certificates

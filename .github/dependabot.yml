@@ -15,3 +15,12 @@ updates:
           timezone: Europe/Berlin
       open-pull-requests-limit: 5
       versioning-strategy: increase
+      # Hold new releases for a week before opening a PR — reduces supply-chain risk
+      # from compromised packages that get yanked shortly after publication.
+      cooldown:
+          default-days: 7
+      ignore:
+          # Pin @types/node to the installed Node.js major; major bumps require a
+          # matching js-controller / engines change and shouldn't be automated.
+          - dependency-name: '@types/node'
+            update-types: ['version-update:semver-major']
