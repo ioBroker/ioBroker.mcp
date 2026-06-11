@@ -130,9 +130,12 @@ export default class McpServer {
     constructor(
         server: HttpServer | HttpsServer | null,
         webSettings: {
-            secure: boolean;
-            port: number | string;
-            defaultUser?: `system.user.${string}`;
+            // `secure`/`port`/`auth` are accepted for backwards compatibility but not read here;
+            // the HTTP specifics come from the adapter config. `defaultUser` accepts a plain user
+            // name or a fully qualified `system.user.*` id — it is normalized below either way.
+            secure?: boolean;
+            port?: number | string;
+            defaultUser?: string;
             auth?: boolean;
             language?: ioBroker.Languages;
             /** Explicit override for the `set_state`/`set_states` permission (embedded mode). */
@@ -160,7 +163,7 @@ export default class McpServer {
         // Determine the ioBroker user whose permissions all MCP requests run with.
         // Prefer this adapter's own setting; when embedded, fall back to the host web server's
         // default user; finally to "admin". Always normalize to the "system.user." prefix.
-        const rawUser = (this.config.defaultUser || webSettings.defaultUser || 'admin') as string;
+        const rawUser = this.config.defaultUser || webSettings.defaultUser || 'admin';
         this.defaultUser = (
             rawUser.startsWith('system.user.') ? rawUser : `system.user.${rawUser}`
         ) as `system.user.${string}`;

@@ -78,7 +78,7 @@ class McpServer {
         // Determine the ioBroker user whose permissions all MCP requests run with.
         // Prefer this adapter's own setting; when embedded, fall back to the host web server's
         // default user; finally to "admin". Always normalize to the "system.user." prefix.
-        const rawUser = (this.config.defaultUser || webSettings.defaultUser || 'admin');
+        const rawUser = this.config.defaultUser || webSettings.defaultUser || 'admin';
         this.defaultUser = (rawUser.startsWith('system.user.') ? rawUser : `system.user.${rawUser}`);
         this.config.defaultUser = this.defaultUser;
         this.language = webSettings.language || 'en';

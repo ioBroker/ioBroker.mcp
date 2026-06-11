@@ -8,6 +8,7 @@ import type { McpAdapterConfig } from './lib/types';
 import { createInProcessMcp } from './lib/inProcessClient';
 
 export { McpServer, createInProcessMcp };
+export type { McpAdapterConfig } from './lib/types';
 export type { InProcessMcp, InProcessMcpOptions, InProcessToolInfo, InProcessToolResult } from './lib/inProcessClient';
 
 type Server = HttpServer | HttpsServer;
