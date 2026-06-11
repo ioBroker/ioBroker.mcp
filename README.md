@@ -133,7 +133,11 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
 ### **WORK IN PROGRESS**
+* (@GermanBluefox) Many changes: see the previous changelog entry
+
+### 0.1.4 (2026-06-11)
 * (@GermanBluefox) Added wildcard support to `get_states` (e.g. `hue.0.*.brightness`)
 * (@GermanBluefox) Added `set_states` for writing multiple states in one call (scenes/group actions)
 * (@GermanBluefox) Added `delete_object` and `create_state` tools (gated by *Allow object/file changes*)
