@@ -133,7 +133,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.2.5 (2026-06-11)
 * (@GermanBluefox) Supported direct import of MCP server
 
 ### 0.2.0 (2026-06-11)
