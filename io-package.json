@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "Many changes: see the previous changelog entry",
+        "de": "Viele Änderungen: siehe den vorherigen Changelog-Eintrag",
+        "ru": "Много изменений: см. предыдущую запись Changelog",
+        "pt": "Muitas alterações: veja o item anterior do changelog",
+        "nl": "Veel wijzigingen: zie het vorige wijzigingslog-item",
+        "fr": "Nombreux changements : voir l'entrée précédente du journal des changements",
+        "it": "Molte modifiche: vedi la precedente voce changelog",
+        "es": "Muchos cambios: ver la entrada de cambio anterior",
+        "pl": "Wiele zmian: zobacz poprzedni wpis changelog",
+        "uk": "Багато змін: див. запис попередньої зміни",
+        "zh-cn": "许多更改: 参见上一个更改日志条目"
+      },
       "0.1.4": {
         "en": "Initial development",
         "de": "Entwicklung",

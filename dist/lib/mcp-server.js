@@ -64,7 +64,9 @@ class McpServer {
     constructor(server, webSettings, adapter, instanceSettings, app) {
         this.app = app;
         this.adapter = adapter;
-        this.config = instanceSettings ? instanceSettings.native : adapter.config;
+        this.config = instanceSettings
+            ? instanceSettings.native
+            : adapter.config;
         this.namespace = instanceSettings
             ? instanceSettings._id.substring('system.adapter.'.length)
             : this.adapter.namespace;
