@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "news": {
+      "0.2.4": {
+        "en": "Supported direct import of MCP server",
+        "de": "Unterstützter Direktimport von MCP Server",
+        "ru": "Поддержка прямого импорта MCP-сервера",
+        "pt": "Importação direta suportada do servidor MCP",
+        "nl": "Ondersteunde directe import van MCP-server",
+        "fr": "Prise en charge de l'importation directe du serveur MCP",
+        "it": "Importazione diretta supportata del server MCP",
+        "es": "Importación directa del servidor MCP",
+        "pl": "Obsługiwane bezpośrednie importowanie serwera MCP",
+        "uk": "Підтримує прямий імпорт сервера MCP",
+        "zh-cn": "支持直接导入 MCP 服务器"
+      },
       "0.2.0": {
         "en": "Many changes: see the previous changelog entry",
         "de": "Viele Änderungen: siehe den vorherigen Changelog-Eintrag",
