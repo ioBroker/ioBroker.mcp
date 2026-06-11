@@ -202,6 +202,11 @@ export default class McpServer {
      * {@link createInProcessServer} and connect it to an in-memory transport.
      *
      * @param options embedding options (host adapter, default user, language, permission toggles)
+     * @param options.adapter The host adapter into which the MCP server is embedded. Used for receiving state/object changes and logs, and for performing actions with the host adapter's permissions.
+     * @param options.defaultUser Default user
+     * @param options.language Language
+     * @param options.allowSetState Is the state creation available
+     * @param options.allowObjectChange If the object change available
      */
     static createEmbedded(options: {
         adapter: ioBroker.Adapter;

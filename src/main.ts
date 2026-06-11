@@ -8,12 +8,7 @@ import type { McpAdapterConfig } from './lib/types';
 import { createInProcessMcp } from './lib/inProcessClient';
 
 export { McpServer, createInProcessMcp };
-export type {
-    InProcessMcp,
-    InProcessMcpOptions,
-    InProcessToolInfo,
-    InProcessToolResult,
-} from './lib/inProcessClient';
+export type { InProcessMcp, InProcessMcpOptions, InProcessToolInfo, InProcessToolResult } from './lib/inProcessClient';
 
 type Server = HttpServer | HttpsServer;
 
@@ -86,7 +81,7 @@ class Mcp extends Adapter {
         // Standalone mode: we own the web server. Pass `null` as instanceSettings so the
         // McpServer runs in standalone mode (as a web extension the web adapter passes the
         // instance object here instead).
-        this.webServer.mcpServer = new McpServer(this.webServer.server!, this.config, this, null, this.webServer.app);
+        this.webServer.mcpServer = new McpServer(this.webServer.server, this.config, this, null, this.webServer.app);
 
         if (this.config.port) {
             if (this.config.secure && !this.config.certificates) {
