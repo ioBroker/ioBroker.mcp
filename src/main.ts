@@ -6,6 +6,8 @@ import type { Server as HttpsServer } from 'node:https';
 import McpServer from './lib/mcp-server';
 import type { McpAdapterConfig } from './lib/types';
 
+export { McpServer };
+
 type Server = HttpServer | HttpsServer;
 
 class Mcp extends Adapter {
@@ -185,6 +187,7 @@ class Mcp extends Adapter {
 if (require.main !== module) {
     // Export the constructor in compact mode
     module.exports = (options: Partial<AdapterOptions> | undefined) => new Mcp(options);
+    module.exports.McpServer = McpServer;
 } else {
     // otherwise start the instance directly
     (() => new Mcp())();
