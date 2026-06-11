@@ -47,9 +47,11 @@ The adapter can be configured through the ioBroker admin interface using JSONCon
   When running as a web extension and no user is set here, the host `web` instance's default user is used.
 
 ### Permissions
-- **Allow setting states**: Allow MCP clients to write state values (the `set_state` tool). Default: **on**.
-- **Allow object/file changes**: Allow MCP clients to create/modify objects and write files (the `set_object`
-  and `write_file` tools). Default: **off**. When off, these tools are not exposed at all.
+- **Allow setting states**: Allow MCP clients to write state values (the `set_state` and `set_states` tools).
+  Default: **on**.
+- **Allow object/file changes**: Allow MCP clients to create/modify/delete objects and files (the `set_object`,
+  `delete_object`, `create_state`, `create_scene`, `write_file`, `delete_file`, `rename_file` and `mkdir`
+  tools). Default: **off**. When off, these tools are not exposed at all.
 
 ### SSL/TLS Configuration
 - **Enable HTTPS**: Enable HTTPS/SSL for secure connections
@@ -67,27 +69,37 @@ state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 
 ### Available tools
 
-| Tool             | Description                                                                                                                                                     |
-|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `get_states`     | Retrieve the current value of one or multiple states                                                                                                            |
-| `get_object`     | Read a single object by its ID                                                                                                                                  |
-| `search_objects` | Search objects/states by keyword, role or room                                                                                                                  |
-| `list_devices`   | List detected devices grouped by room (uses the ioBroker type-detector to expose functional devices with named controls); optional `language` and `room` filter |
-| `list_instances` | List adapter instances with their status                                                                                                                        |
-| `list_hosts`     | List ioBroker hosts with their status                                                                                                                           |
-| `list_rooms`     | List rooms (`enum.rooms.*`) with localized names and member details; optional `language` and `withIcons`                                                        |
-| `list_functions` | List functions (`enum.functions.*`) with localized names and member details; optional `language` and `withIcons`                                                |
-| `history_query`  | Query historical values (requires a history adapter)                                                                                                            |
-| `read_file`      | Read a file from an adapter file storage (optional base64)                                                                                                      |
-| `get_logs`       | Retrieve system logs                                                                                                                                            |
-| `write_log`      | Write a message to the ioBroker log                                                                                                                             |
-| `system_info`    | Get system and js-controller information                                                                                                                        |
-| `set_state`      | Set the value of a state (value coerced to the state type) — requires *Allow setting states*                                                                    |
-| `set_object`     | Create/update an object (merges common/native) — requires *Allow object/file changes*                                                                           |
-| `write_file`     | Write a file to an adapter file storage — requires *Allow object/file changes*                                                                                  |
+| Tool             | Description                                                                                                                                                      |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `get_states`     | Retrieve the current value of one or multiple states; IDs may contain wildcards (e.g. `hue.0.*.brightness`)                                                      |
+| `get_object`     | Read a single object by its ID                                                                                                                                   |
+| `search_objects` | Search objects/states by keyword (matched against ID and name); optional filters for object `type`, `role`, `room` and source `adapter` instance                 |
+| `list_devices`   | List detected devices grouped by room (uses the ioBroker type-detector to expose functional devices with named controls); optional `language` and `room` filter  |
+| `list_instances` | List adapter instances with their status                                                                                                                         |
+| `list_adapters`  | List installed adapters with metadata (version, title, description, keywords)                                                                                    |
+| `list_hosts`     | List ioBroker hosts with their status                                                                                                                            |
+| `list_rooms`     | List rooms (`enum.rooms.*`) with localized names and member details; optional `language` and `withIcons`                                                         |
+| `list_functions` | List functions (`enum.functions.*`) with localized names and member details; optional `language` and `withIcons`                                                 |
+| `history_query`  | Query historical values (requires a history adapter); aggregations: `raw`, `min`, `max`, `avg`, `sum`, `count`, `minmax`, `percentile`, `quantile`, `integral`   |
+| `read_file`      | Read a file from an adapter file storage (optional base64)                                                                                                       |
+| `list_files`     | List a directory in an adapter file storage                                                                                                                      |
+| `file_exists`    | Check whether a file exists in an adapter file storage                                                                                                           |
+| `get_logs`       | Retrieve system logs                                                                                                                                             |
+| `write_log`      | Write a message to the ioBroker log                                                                                                                              |
+| `system_info`    | Get system and js-controller information                                                                                                                         |
+| `set_state`      | Set the value of a state (value coerced to the state type) — requires *Allow setting states*                                                                     |
+| `set_states`     | Set multiple states in one call (for scenes/group actions like "all lights off") — requires *Allow setting states*                                               |
+| `set_object`     | Create/update an object (merges common/native) — requires *Allow object/file changes*                                                                            |
+| `delete_object`  | Delete an object, optionally with all children — requires *Allow object/file changes*                                                                            |
+| `create_state`   | Create a new state object with type/role/unit/min/max and optional initial value — requires *Allow object/file changes*                                          |
+| `create_scene`   | Create or update a scene for the ioBroker `scenes` adapter (state/value pairs applied together) — requires *Allow object/file changes*                           |
+| `write_file`     | Write a file to an adapter file storage — requires *Allow object/file changes*                                                                                   |
+| `delete_file`    | Delete a file from an adapter file storage — requires *Allow object/file changes*                                                                                |
+| `rename_file`    | Rename/move a file within the same adapter file storage — requires *Allow object/file changes*                                                                   |
+| `mkdir`          | Create a directory in an adapter file storage — requires *Allow object/file changes*                                                                             |
 
-All object/state access runs with the permissions of the configured **Default User**. The write tools
-(`set_state`, `set_object`, `write_file`) are only registered when their respective permission option is enabled.
+All object/state access runs with the permissions of the configured **Default User**. The write tools are only
+registered when their respective permission option is enabled.
 
 ### Resources & live updates (SSE)
 
@@ -121,6 +133,16 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added wildcard support to `get_states` (e.g. `hue.0.*.brightness`)
+* (@GermanBluefox) Added `set_states` for writing multiple states in one call (scenes/group actions)
+* (@GermanBluefox) Added `delete_object` and `create_state` tools (gated by *Allow object/file changes*)
+* (@GermanBluefox) Added `create_scene` tool that creates scenes for the ioBroker `scenes` adapter
+* (@GermanBluefox) Added file management tools: `list_files`, `file_exists`, `delete_file`, `rename_file`, `mkdir`
+* (@GermanBluefox) Added `list_adapters` to list installed adapters with metadata
+* (@GermanBluefox) Extended `search_objects` with `type` and `adapter` filters; the keyword now also matches object names
+* (@GermanBluefox) Extended `history_query` with the aggregations `count`, `minmax`, `percentile`, `quantile` and `integral`
+
 ### 0.1.4 (2026-05-28)
 * (@GermanBluefox) Initial development
 

@@ -4,9 +4,9 @@ export interface McpAdapterConfig extends ioBroker.AdapterConfig {
     bind: string;
     auth: boolean;
     secure: boolean;
-    /** Allow the `set_state` tool to write states (default: true). */
+    /** Allow the `set_state`/`set_states` tools to write states (default: true). */
     allowSetState: boolean;
-    /** Allow the `set_object`/`write_file` tools to change objects/files (default: false). */
+    /** Allow the object/file changing tools (`set_object`, `delete_object`, `create_state`, `create_scene`, `write_file`, `delete_file`, `rename_file`, `mkdir`) (default: false). */
     allowObjectChange: boolean;
     certPublic: string;
     certPrivate: string;

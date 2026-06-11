@@ -116,20 +116,30 @@ tests.integration(path.join(__dirname, '..'), {
                     [
                         'get_states',
                         'set_state',
+                        'set_states',
                         'get_logs',
                         'system_info',
                         'search_objects',
                         'list_devices',
                         'history_query',
                         'list_instances',
+                        'list_adapters',
                         'list_hosts',
                         'list_rooms',
                         'list_functions',
                         'get_object',
                         'read_file',
+                        'list_files',
+                        'file_exists',
                         'write_log',
                         'set_object',
+                        'delete_object',
+                        'create_state',
+                        'create_scene',
                         'write_file',
+                        'delete_file',
+                        'rename_file',
+                        'mkdir',
                     ],
                     'tool list',
                 );
@@ -224,6 +234,187 @@ tests.integration(path.join(__dirname, '..'), {
                     await client.callTool({ name: 'set_state', arguments: { id: TEST_STATE, value: 'false' } }),
                 );
                 assert.strictEqual(written.data.value, false, 'string "false" coerced to boolean false');
+            });
+
+            it('get_states expands wildcard patterns', async function () {
+                this.timeout(15000);
+                const pattern = `${harness.adapterName}.0.info.*`;
+                const res = parseToolResult(
+                    await client.callTool({ name: 'get_states', arguments: { ids: [pattern] } }),
+                );
+                assert.strictEqual(res.ok, true);
+                const ids = res.data.states.map(s => s.id);
+                assert.ok(
+                    ids.includes(`${harness.adapterName}.0.info.connection`),
+                    `wildcard expanded to info.connection (got ${ids.join(', ')})`,
+                );
+            });
+
+            it('set_states writes multiple states in one call', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(
+                    await client.callTool({
+                        name: 'set_states',
+                        arguments: { states: [{ id: TEST_STATE, value: true }] },
+                    }),
+                );
+                assert.strictEqual(res.ok, true);
+                assert.strictEqual(res.data.results[0].id, TEST_STATE);
+                assert.strictEqual(res.data.results[0].value, true, 'bulk write echoes the coerced value');
+
+                const read = parseToolResult(
+                    await client.callTool({ name: 'get_states', arguments: { ids: [TEST_STATE] } }),
+                );
+                assert.strictEqual(read.data.states[0].value, true, 'state was persisted');
+            });
+
+            it('set_states reports per-item errors without aborting the rest', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(
+                    await client.callTool({
+                        name: 'set_states',
+                        arguments: {
+                            states: [
+                                { id: TEST_STATE, value: false },
+                                { id: 'this.state.does.not.exist', value: 1 },
+                            ],
+                        },
+                    }),
+                );
+                assert.strictEqual(res.ok, true);
+                assert.strictEqual(res.data.results.length, 2, 'one result per requested state');
+                assert.strictEqual(res.data.results[0].value, false, 'valid state written');
+            });
+
+            it('create_state + delete_object round-trip', async function () {
+                this.timeout(15000);
+                const id = '0_userdata.0.mcpCreateStateTest';
+                const created = parseToolResult(
+                    await client.callTool({
+                        name: 'create_state',
+                        arguments: { id, type: 'number', role: 'value.temperature', unit: '°C', def: 21.5 },
+                    }),
+                );
+                assert.strictEqual(created.ok, true, 'state created');
+
+                const obj = parseToolResult(await client.callTool({ name: 'get_object', arguments: { id } }));
+                assert.strictEqual(obj.data.object.common.type, 'number');
+                assert.strictEqual(obj.data.object.common.unit, '°C');
+
+                const value = parseToolResult(
+                    await client.callTool({ name: 'get_states', arguments: { ids: [id] } }),
+                );
+                assert.strictEqual(value.data.states[0].value, 21.5, 'initial value written');
+
+                // Creating the same state again must fail (use set_object to modify).
+                const again = parseToolResult(
+                    await client.callTool({ name: 'create_state', arguments: { id, type: 'number' } }),
+                );
+                assert.strictEqual(again.ok, false, 'duplicate create rejected');
+
+                const deleted = parseToolResult(
+                    await client.callTool({ name: 'delete_object', arguments: { id } }),
+                );
+                assert.strictEqual(deleted.ok, true, 'object deleted');
+
+                const gone = parseToolResult(await client.callTool({ name: 'get_object', arguments: { id } }));
+                assert.strictEqual(gone.data.object, null, 'object no longer exists');
+            });
+
+            it('delete_object reports an error for an unknown object', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(
+                    await client.callTool({ name: 'delete_object', arguments: { id: 'no.such.object.here' } }),
+                );
+                assert.strictEqual(res.ok, false, 'deleting a missing object fails');
+            });
+
+            it('create_scene fails with a helpful error when no scene adapter is installed', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(
+                    await client.callTool({
+                        name: 'create_scene',
+                        arguments: { name: 'test_scene', members: [{ id: TEST_STATE, value: true }] },
+                    }),
+                );
+                assert.strictEqual(res.ok, false, 'scene creation fails without the scenes adapter');
+                assert.ok(/scene/i.test(res.error), 'error mentions the scene adapter');
+            });
+
+            it('file tools: mkdir, write, list, exists, rename, read, delete', async function () {
+                this.timeout(15000);
+                const dir = '0_userdata.0/mcp-test';
+
+                const mk = parseToolResult(await client.callTool({ name: 'mkdir', arguments: { path: dir } }));
+                assert.strictEqual(mk.ok, true, 'mkdir succeeded');
+
+                const written = parseToolResult(
+                    await client.callTool({
+                        name: 'write_file',
+                        arguments: { path: `${dir}/hello.txt`, content: 'hello mcp' },
+                    }),
+                );
+                assert.strictEqual(written.ok, true, 'file written');
+
+                const listed = parseToolResult(
+                    await client.callTool({ name: 'list_files', arguments: { path: dir } }),
+                );
+                assert.strictEqual(listed.ok, true);
+                const names = listed.data.files.map(f => f.file);
+                assert.ok(names.includes('hello.txt'), `directory listing contains hello.txt (got ${names.join(', ')})`);
+
+                const exists = parseToolResult(
+                    await client.callTool({ name: 'file_exists', arguments: { path: `${dir}/hello.txt` } }),
+                );
+                assert.strictEqual(exists.data.exists, true, 'file_exists finds the file');
+
+                const renamed = parseToolResult(
+                    await client.callTool({
+                        name: 'rename_file',
+                        arguments: { path: `${dir}/hello.txt`, new_path: `${dir}/renamed.txt` },
+                    }),
+                );
+                assert.strictEqual(renamed.ok, true, 'file renamed');
+
+                const read = parseToolResult(
+                    await client.callTool({ name: 'read_file', arguments: { path: `${dir}/renamed.txt` } }),
+                );
+                assert.strictEqual(read.data.content, 'hello mcp', 'renamed file keeps its content');
+
+                const deleted = parseToolResult(
+                    await client.callTool({ name: 'delete_file', arguments: { path: `${dir}/renamed.txt` } }),
+                );
+                assert.strictEqual(deleted.ok, true, 'file deleted');
+
+                const goneCheck = parseToolResult(
+                    await client.callTool({ name: 'file_exists', arguments: { path: `${dir}/renamed.txt` } }),
+                );
+                assert.strictEqual(goneCheck.data.exists, false, 'file no longer exists');
+            });
+
+            it('list_adapters includes this adapter', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(await client.callTool({ name: 'list_adapters', arguments: {} }));
+                assert.strictEqual(res.ok, true);
+                const entry = res.data.adapters.find(a => a.name === harness.adapterName);
+                assert.ok(entry, `${harness.adapterName} present in adapter list`);
+                assert.ok(typeof entry.version === 'string' && entry.version.length > 0, 'version present');
+            });
+
+            it('search_objects filters by object type', async function () {
+                this.timeout(15000);
+                const res = parseToolResult(
+                    await client.callTool({
+                        name: 'search_objects',
+                        arguments: { query: harness.adapterName, type: 'instance' },
+                    }),
+                );
+                assert.strictEqual(res.ok, true);
+                assert.ok(res.data.results.length >= 1, 'at least the mcp instance found');
+                assert.ok(
+                    res.data.results.every(r => r.type === 'instance'),
+                    'all results are instances',
+                );
             });
 
             it('search_objects finds the created test state', async function () {
@@ -339,12 +530,27 @@ tests.integration(path.join(__dirname, '..'), {
                 const names = tools.map(t => t.name);
 
                 // Read-only and always-on tools remain available.
-                assertIncludesAll(names, ['get_states', 'get_object', 'search_objects', 'write_log'], 'read tools');
+                assertIncludesAll(
+                    names,
+                    ['get_states', 'get_object', 'search_objects', 'write_log', 'list_files', 'file_exists'],
+                    'read tools',
+                );
 
                 // Mutating tools must be gated off.
-                assert.ok(!names.includes('set_state'), 'set_state hidden when allowSetState=false');
-                assert.ok(!names.includes('set_object'), 'set_object hidden when allowObjectChange=false');
-                assert.ok(!names.includes('write_file'), 'write_file hidden when allowObjectChange=false');
+                for (const tool of [
+                    'set_state',
+                    'set_states',
+                    'set_object',
+                    'delete_object',
+                    'create_state',
+                    'create_scene',
+                    'write_file',
+                    'delete_file',
+                    'rename_file',
+                    'mkdir',
+                ]) {
+                    assert.ok(!names.includes(tool), `${tool} hidden when writing is disabled`);
+                }
             });
 
             it('still serves read tools', async function () {

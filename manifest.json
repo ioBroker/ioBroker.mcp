@@ -19,14 +19,14 @@
     },
     {
       "name": "get_states",
-      "description": "Retrieve the current value of one or multiple states",
+      "description": "Retrieve the current value of one or multiple states. IDs may contain wildcards (e.g. hue.0.*.brightness)",
       "parameters": {
         "type": "object",
         "properties": {
           "ids": {
             "type": "array",
             "items": { "type": "string" },
-            "description": "Array of state IDs"
+            "description": "Array of state IDs (wildcards \"*\" allowed)"
           }
         },
         "required": ["ids"]
@@ -52,6 +52,28 @@
       }
     },
     {
+      "name": "set_states",
+      "description": "Set multiple states in one call (e.g. for scenes or group actions)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string", "description": "State ID" },
+                "value": { "description": "New value (type depends on the state)" },
+                "ack": { "type": "boolean", "default": false }
+              },
+              "required": ["id", "value"]
+            }
+          }
+        },
+        "required": ["states"]
+      }
+    },
+    {
       "name": "history_query",
       "description": "Query historical values of a state",
       "parameters": {
@@ -62,9 +84,11 @@
           "to": { "type": "string", "description": "End time (ISO8601)" },
           "agg": {
             "type": "string",
-            "enum": ["raw", "min", "max", "avg", "sum"],
+            "enum": ["raw", "min", "max", "avg", "sum", "count", "minmax", "percentile", "quantile", "integral"],
             "default": "raw"
           },
+          "percentile": { "type": "number", "description": "Percentile (0-100), only with agg=percentile" },
+          "quantile": { "type": "number", "description": "Quantile (0-1), only with agg=quantile" },
           "interval": { "type": "string", "description": "Aggregation interval, e.g. 15m, 1h" },
           "limit": { "type": "integer", "default": 1000 }
         },
@@ -73,7 +97,21 @@
     },
     {
       "name": "list_instances",
-      "description": "List all adapters with their status"
+      "description": "List all adapter instances with their status"
+    },
+    {
+      "name": "list_adapters",
+      "description": "List all installed adapters with metadata (version, title, description, keywords)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "language": { "type": "string", "description": "Language for title/description" }
+        }
+      }
+    },
+    {
+      "name": "list_hosts",
+      "description": "List all ioBroker hosts with their status"
     },
     {
       "name": "get_logs",
@@ -92,22 +130,202 @@
       }
     },
     {
+      "name": "write_log",
+      "description": "Write a message to the ioBroker log",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "level": { "type": "string", "enum": ["error", "warn", "info", "debug"], "default": "info" }
+        },
+        "required": ["message"]
+      }
+    },
+    {
       "name": "system_info",
       "description": "Get system and js-controller information"
     },
     {
       "name": "search_objects",
-      "description": "Search objects and states by keywords",
+      "description": "Search objects and states by keyword (matched against ID and name) with optional filters",
       "parameters": {
         "type": "object",
         "properties": {
-          "query": { "type": "string", "description": "Keyword to search for" },
+          "query": { "type": "string", "description": "Keyword to search for in object IDs and names" },
+          "type": { "type": "string", "description": "Filter by object type, e.g. state, channel, device, script" },
           "role": { "type": "string", "description": "Filter by role" },
           "room": { "type": "string", "description": "Filter by room" },
+          "adapter": { "type": "string", "description": "Filter by source adapter instance, e.g. hue.0" },
           "limit": { "type": "integer", "default": 50 },
           "offset": { "type": "integer", "default": 0 }
         },
         "required": ["query"]
+      }
+    },
+    {
+      "name": "get_object",
+      "description": "Read a single ioBroker object by its ID",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Object ID" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "set_object",
+      "description": "Create or update an ioBroker object (merges common/native) - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Object ID" },
+          "obj": { "type": "object", "description": "Partial object with type/common/native" }
+        },
+        "required": ["id", "obj"]
+      }
+    },
+    {
+      "name": "delete_object",
+      "description": "Delete an ioBroker object (optionally with all children) - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Object ID" },
+          "recursive": { "type": "boolean", "description": "Also delete all child objects" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "create_state",
+      "description": "Create a new state object - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Full state ID, e.g. 0_userdata.0.myState" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["boolean", "number", "string", "array", "object", "mixed"],
+            "default": "mixed"
+          },
+          "role": { "type": "string", "default": "state" },
+          "read": { "type": "boolean", "default": true },
+          "write": { "type": "boolean", "default": true },
+          "unit": { "type": "string" },
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "step": { "type": "number" },
+          "def": { "description": "Initial value (written with ack=true)" },
+          "desc": { "type": "string" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "create_scene",
+      "description": "Create or update a scene for the ioBroker scenes adapter - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Scene name, becomes part of the ID" },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string", "description": "State ID to set" },
+                "value": { "description": "Value applied when the scene is activated" }
+              },
+              "required": ["id", "value"]
+            }
+          },
+          "instance": { "type": "string", "description": "Scene adapter instance (default scene.0)" },
+          "description": { "type": "string" }
+        },
+        "required": ["name", "members"]
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file from an adapter file storage",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>/<dir>/<file>" },
+          "base64": { "type": "boolean", "description": "Return binary content base64-encoded" }
+        },
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "Write a file to an adapter file storage - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>/<dir>/<file>" },
+          "content": { "type": "string", "description": "File content (UTF-8, or base64 when base64=true)" },
+          "base64": { "type": "boolean", "description": "Treat content as base64-encoded binary" }
+        },
+        "required": ["path", "content"]
+      }
+    },
+    {
+      "name": "list_files",
+      "description": "List a directory in an adapter file storage",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>[/<dir>]" }
+        },
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "file_exists",
+      "description": "Check whether a file exists in an adapter file storage",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>/<dir>/<file>" }
+        },
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "delete_file",
+      "description": "Delete a file from an adapter file storage - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>/<dir>/<file>" }
+        },
+        "required": ["path"]
+      }
+    },
+    {
+      "name": "rename_file",
+      "description": "Rename or move a file within the same adapter file storage - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Current path as <adapter>/<dir>/<file>" },
+          "new_path": { "type": "string", "description": "New path as <adapter>/<dir>/<file> (same adapter)" }
+        },
+        "required": ["path", "new_path"]
+      }
+    },
+    {
+      "name": "mkdir",
+      "description": "Create a directory in an adapter file storage - requires object change permission",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Path as <adapter>/<dir>" }
+        },
+        "required": ["path"]
       }
     },
     {

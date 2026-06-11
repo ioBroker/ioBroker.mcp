@@ -11,7 +11,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { getAiFriendlyStructure, type Room } from './devices';
 import { iobUriParse } from './iob-uri';
-import type { McpAdapter, McpAdapterConfig } from './types';
+import type { McpAdapterConfig } from './types';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 
@@ -31,6 +31,11 @@ const AGG_MAP: Record<string, ioBroker.GetHistoryOptions['aggregate']> = {
     max: 'max',
     avg: 'average',
     sum: 'total',
+    count: 'count',
+    minmax: 'minmax',
+    percentile: 'percentile',
+    quantile: 'quantile',
+    integral: 'integral',
 };
 const WEB_EXTENSION_PREFIX = 'mcp/';
 
@@ -104,7 +109,7 @@ const LOG_URI_PREFIX = 'ioblog://';
 const LOG_BUFFER_SIZE = 200;
 
 export default class McpServer {
-    private readonly adapter: McpAdapter;
+    private readonly adapter: ioBroker.Adapter;
     private readonly app: Express;
     /** Active sessions keyed by session id. */
     private readonly sessions: Record<string, SessionContext> = {};
@@ -130,13 +135,15 @@ export default class McpServer {
             auth?: boolean;
             language?: ioBroker.Languages;
         },
-        adapter: McpAdapter,
+        adapter: ioBroker.Adapter,
         instanceSettings: ioBroker.InstanceObject | null,
         app: Express,
     ) {
         this.app = app;
         this.adapter = adapter;
-        this.config = instanceSettings ? (instanceSettings.native as McpAdapterConfig) : adapter.config;
+        this.config = instanceSettings
+            ? (instanceSettings.native as McpAdapterConfig)
+            : (adapter.config as McpAdapterConfig);
         this.namespace = instanceSettings
             ? instanceSettings._id.substring('system.adapter.'.length)
             : this.adapter.namespace;
@@ -440,8 +447,10 @@ export default class McpServer {
         server.registerTool(
             'get_states',
             {
-                description: 'Retrieve the current value of one or multiple states',
-                inputSchema: { ids: z.array(z.string()).describe('Array of state IDs') },
+                description:
+                    'Retrieve the current value of one or multiple states. IDs may contain wildcards, ' +
+                    'e.g. "hue.0.*.brightness" expands to all matching states.',
+                inputSchema: { ids: z.array(z.string()).describe('Array of state IDs (wildcards "*" allowed)') },
             },
             async ({ ids }) => {
                 try {
@@ -470,6 +479,33 @@ export default class McpServer {
                     try {
                         const written = await this.setState(id, value, options?.ack ?? false);
                         return ok({ ok: true, data: { id, value: written } });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'set_states',
+                {
+                    description:
+                        'Set multiple states in one call (e.g. for scenes or group actions like "all lights off"). ' +
+                        'Each value is coerced to its state type. Failures of single states do not abort the rest.',
+                    inputSchema: {
+                        states: z
+                            .array(
+                                z.object({
+                                    id: z.string().describe('State ID'),
+                                    value: z.any().describe('New value (type depends on the state)'),
+                                    ack: z.boolean().optional().describe('Acknowledge flag (default false)'),
+                                }),
+                            )
+                            .describe('Array of state/value pairs to write'),
+                    },
+                },
+                async ({ states }) => {
+                    try {
+                        return ok({ ok: true, data: { results: await this.setStates(states) } });
                     } catch (e) {
                         return fail(e);
                     }
@@ -508,11 +544,18 @@ export default class McpServer {
         server.registerTool(
             'search_objects',
             {
-                description: 'Search objects and states by keywords',
+                description:
+                    'Search objects and states by keyword (matched against ID and name) with optional ' +
+                    'filters for object type, role, room and source adapter instance',
                 inputSchema: {
-                    query: z.string().describe('Keyword to search for'),
+                    query: z.string().describe('Keyword to search for in object IDs and names'),
+                    type: z
+                        .string()
+                        .optional()
+                        .describe('Filter by object type, e.g. state, channel, device, enum, script, instance'),
                     role: z.string().optional(),
                     room: z.string().optional(),
+                    adapter: z.string().optional().describe('Filter by source adapter instance, e.g. "hue.0"'),
                     limit: z.number().int().default(50),
                 },
             },
@@ -556,7 +599,32 @@ export default class McpServer {
                     id: z.string(),
                     from: z.string().optional().describe('Start time (ISO8601)'),
                     to: z.string().optional().describe('End time (ISO8601)'),
-                    agg: z.enum(['raw', 'min', 'max', 'avg', 'sum']).default('raw'),
+                    agg: z
+                        .enum([
+                            'raw',
+                            'min',
+                            'max',
+                            'avg',
+                            'sum',
+                            'count',
+                            'minmax',
+                            'percentile',
+                            'quantile',
+                            'integral',
+                        ])
+                        .default('raw'),
+                    percentile: z
+                        .number()
+                        .min(0)
+                        .max(100)
+                        .optional()
+                        .describe('Percentile (0-100), only used with agg=percentile'),
+                    quantile: z
+                        .number()
+                        .min(0)
+                        .max(1)
+                        .optional()
+                        .describe('Quantile (0-1), only used with agg=quantile'),
                     interval: z.string().optional().describe('Aggregation interval, e.g. 15m, 1h'),
                     limit: z.number().int().default(1000),
                 },
@@ -589,6 +657,28 @@ export default class McpServer {
                 return fail(e);
             }
         });
+
+        server.registerTool(
+            'list_adapters',
+            {
+                description:
+                    'List all installed adapters with metadata (version, title, description, keywords). ' +
+                    'Unlike list_instances this lists what is installed, not what is running.',
+                inputSchema: {
+                    language: z
+                        .enum(LANGUAGES)
+                        .optional()
+                        .describe('Language for title/description (defaults to the adapter language)'),
+                },
+            },
+            async ({ language }) => {
+                try {
+                    return ok({ ok: true, data: { adapters: await this.listAdapters(language) } });
+                } catch (e) {
+                    return fail(e);
+                }
+            },
+        );
 
         const enumInput = {
             language: z.enum(LANGUAGES).optional().describe('Language for names (defaults to the adapter language)'),
@@ -659,6 +749,40 @@ export default class McpServer {
             },
         );
 
+        server.registerTool(
+            'list_files',
+            {
+                description: 'List a directory in an adapter file storage, e.g. "vis-2.0/main" or "0_userdata.0"',
+                inputSchema: { path: z.string().describe('Path as "<adapter>[/<dir>]"') },
+            },
+            async ({ path }) => {
+                try {
+                    return ok({ ok: true, data: { path, files: await this.listFiles(path) } });
+                } catch (e) {
+                    return fail(e);
+                }
+            },
+        );
+
+        server.registerTool(
+            'file_exists',
+            {
+                description: 'Check whether a file exists in an adapter file storage',
+                inputSchema: { path: z.string().describe('Path as "<adapter>/<dir>/<file>"') },
+            },
+            async ({ path }) => {
+                try {
+                    const { adapterName, fileName } = McpServer.parseFilePath(path);
+                    const exists = await this.adapter.fileExistsAsync(adapterName, fileName, {
+                        user: this.defaultUser,
+                    });
+                    return ok({ ok: true, data: { path, exists: !!exists } });
+                } catch (e) {
+                    return fail(e);
+                }
+            },
+        );
+
         // Always-on log writing (does not change states or objects).
         server.registerTool(
             'write_log',
@@ -705,6 +829,90 @@ export default class McpServer {
             );
 
             server.registerTool(
+                'delete_object',
+                {
+                    description:
+                        'Delete an ioBroker object (and optionally all its children). ' +
+                        'Be careful: deleting objects that were not created by the user can break adapters.',
+                    inputSchema: {
+                        id: z.string().describe('Object ID'),
+                        recursive: z.boolean().optional().describe('Also delete all child objects'),
+                    },
+                },
+                async ({ id, recursive }) => {
+                    try {
+                        await this.deleteObject(id, recursive);
+                        return ok({ ok: true, data: { id, deleted: true } });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'create_state',
+                {
+                    description:
+                        'Create a new state object (e.g. under "0_userdata.0."). Fails if the object already ' +
+                        'exists - use set_object to modify existing objects.',
+                    inputSchema: {
+                        id: z.string().describe('Full state ID, e.g. "0_userdata.0.myState"'),
+                        name: z.string().optional().describe('Display name (defaults to the last ID segment)'),
+                        type: z
+                            .enum(['boolean', 'number', 'string', 'array', 'object', 'mixed'])
+                            .default('mixed')
+                            .describe('Value type of the state'),
+                        role: z.string().default('state').describe('Role, e.g. switch.light, value.temperature'),
+                        read: z.boolean().default(true),
+                        write: z.boolean().default(true),
+                        unit: z.string().optional(),
+                        min: z.number().optional(),
+                        max: z.number().optional(),
+                        step: z.number().optional(),
+                        def: z.any().optional().describe('Initial value (written with ack=true)'),
+                        desc: z.string().optional().describe('Description'),
+                    },
+                },
+                async args => {
+                    try {
+                        return ok({ ok: true, data: await this.createState(args) });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'create_scene',
+                {
+                    description:
+                        'Create or update a scene for the ioBroker "scenes" adapter: a named collection of ' +
+                        'state/value pairs applied together (e.g. "movie night" dims lights and closes blinds). ' +
+                        'Activate the scene by setting its state to true. Requires an installed scene instance.',
+                    inputSchema: {
+                        name: z.string().describe('Scene name, becomes part of the ID (e.g. "movie_night")'),
+                        members: z
+                            .array(
+                                z.object({
+                                    id: z.string().describe('State ID to set'),
+                                    value: z.any().describe('Value applied when the scene is activated'),
+                                }),
+                            )
+                            .describe('State/value pairs that define the scene'),
+                        instance: z.string().optional().describe('Scene adapter instance (default "scene.0")'),
+                        description: z.string().optional(),
+                    },
+                },
+                async args => {
+                    try {
+                        return ok({ ok: true, data: await this.createScene(args) });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
                 'write_file',
                 {
                     description: 'Write a file to an adapter file storage, e.g. "vis-2.0/main/vis-views.json"',
@@ -717,6 +925,66 @@ export default class McpServer {
                 async ({ path, content, base64 }) => {
                     try {
                         await this.writeFile(path, content, base64);
+                        return ok({ ok: true, data: { path } });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'delete_file',
+                {
+                    description: 'Delete a file from an adapter file storage',
+                    inputSchema: { path: z.string().describe('Path as "<adapter>/<dir>/<file>"') },
+                },
+                async ({ path }) => {
+                    try {
+                        const { adapterName, fileName } = McpServer.parseFilePath(path);
+                        await this.adapter.delFileAsync(adapterName, fileName, { user: this.defaultUser });
+                        return ok({ ok: true, data: { path, deleted: true } });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'rename_file',
+                {
+                    description:
+                        'Rename or move a file/directory within the same adapter file storage, ' +
+                        'e.g. "vis-2.0/main/a.json" -> "vis-2.0/backup/a.json"',
+                    inputSchema: {
+                        path: z.string().describe('Current path as "<adapter>/<dir>/<file>"'),
+                        new_path: z.string().describe('New path as "<adapter>/<dir>/<file>" (same adapter)'),
+                    },
+                },
+                async ({ path, new_path }) => {
+                    try {
+                        await this.renameFile(path, new_path);
+                        return ok({ ok: true, data: { path: new_path } });
+                    } catch (e) {
+                        return fail(e);
+                    }
+                },
+            );
+
+            server.registerTool(
+                'mkdir',
+                {
+                    description: 'Create a directory in an adapter file storage, e.g. "0_userdata.0/my-folder"',
+                    inputSchema: { path: z.string().describe('Path as "<adapter>/<dir>"') },
+                },
+                async ({ path }) => {
+                    try {
+                        const { adapterName, dirName } = McpServer.parseDirPath(path);
+                        if (!dirName) {
+                            throw new Error(
+                                'Path must contain a directory after the adapter, e.g. "0_userdata.0/my-folder"',
+                            );
+                        }
+                        await this.adapter.mkdirAsync(adapterName, dirName, { user: this.defaultUser });
                         return ok({ ok: true, data: { path } });
                     } catch (e) {
                         return fail(e);
@@ -810,19 +1078,31 @@ export default class McpServer {
     // Tool implementations (return plain data; the wrappers serialize them)
     // ---------------------------------------------------------------------
 
+    /** Build the result entry for one state. */
+    private static stateEntry(id: string, state: ioBroker.State | null | undefined): Record<string, unknown> {
+        if (!state) {
+            return { id, value: null, ack: false, ts: Date.now() };
+        }
+        const entry: Record<string, unknown> = { id, value: state.val, ack: state.ack, ts: state.ts };
+        if (state.lc !== state.ts) {
+            entry.lc = state.lc;
+        }
+        return entry;
+    }
+
     private async getStates(ids: string[]): Promise<Record<string, unknown>[]> {
         const states: Record<string, unknown>[] = [];
         for (const id of ids) {
             try {
-                const state = await this.adapter.getForeignStateAsync(id, { user: this.defaultUser });
-                if (state) {
-                    const entry: Record<string, unknown> = { id, value: state.val, ack: state.ack, ts: state.ts };
-                    if (state.lc !== state.ts) {
-                        entry.lc = state.lc;
+                if (id.includes('*')) {
+                    // Wildcard pattern: expand to all matching states.
+                    const matches = await this.adapter.getForeignStatesAsync(id, { user: this.defaultUser });
+                    for (const matchId of Object.keys(matches || {})) {
+                        states.push(McpServer.stateEntry(matchId, matches[matchId]));
                     }
-                    states.push(entry);
                 } else {
-                    states.push({ id, value: null, ack: false, ts: Date.now() });
+                    const state = await this.adapter.getForeignStateAsync(id, { user: this.defaultUser });
+                    states.push(McpServer.stateEntry(id, state));
                 }
             } catch (e) {
                 states.push({
@@ -835,6 +1115,22 @@ export default class McpServer {
             }
         }
         return states;
+    }
+
+    /** Write multiple states; failures of single states are reported per item and do not abort the rest. */
+    private async setStates(
+        items: { id: string; value: unknown; ack?: boolean }[],
+    ): Promise<Record<string, unknown>[]> {
+        const results: Record<string, unknown>[] = [];
+        for (const item of items) {
+            try {
+                const written = await this.setState(item.id, item.value, item.ack ?? false);
+                results.push({ id: item.id, value: written });
+            } catch (e) {
+                results.push({ id: item.id, error: e instanceof Error ? e.message : String(e) });
+            }
+        }
+        return results;
     }
 
     private getLogs(params: {
@@ -899,11 +1195,13 @@ export default class McpServer {
 
     private async searchObjects(params: {
         query?: string;
+        type?: string;
         role?: string;
         room?: string;
+        adapter?: string;
         limit?: number;
     }): Promise<Record<string, unknown>[]> {
-        const { query = '', role, room, limit = 100 } = params;
+        const { query = '', type, role, room, adapter, limit = 100 } = params;
         const result = await this.adapter.getObjectListAsync(
             {
                 startkey: '',
@@ -913,11 +1211,16 @@ export default class McpServer {
         );
         const allObjects = result.rows;
         const roomMembers = room ? await this.getEnumMembers('enum.rooms.', room) : null;
+        const needle = query.toLowerCase();
 
         const results: Record<string, unknown>[] = [];
         for (const obj of allObjects) {
             const o = obj.value;
-            if (query && !obj.value._id.toLowerCase().includes(query.toLowerCase())) {
+            const name = this.getName(o?.common?.name);
+            if (needle && !obj.value._id.toLowerCase().includes(needle) && !name.toLowerCase().includes(needle)) {
+                continue;
+            }
+            if (type && o?.type !== type) {
                 continue;
             }
             if (role && o?.common?.role !== role) {
@@ -926,12 +1229,16 @@ export default class McpServer {
             if (roomMembers && !roomMembers.includes(obj.value._id)) {
                 continue;
             }
+            const sourceAdapter = obj.value._id.match(/^([^.]+\.\d+)/)?.[1] || '';
+            if (adapter && sourceAdapter !== adapter) {
+                continue;
+            }
             results.push({
                 id: obj.value._id,
                 type: o?.type || 'state',
                 role: o?.common?.role || '',
-                name: this.getName(o?.common?.name),
-                adapter: obj.value._id.match(/^([^.]+\.\d+)/)?.[1] || '',
+                name,
+                adapter: sourceAdapter,
             });
             if (results.length >= limit) {
                 break;
@@ -955,6 +1262,8 @@ export default class McpServer {
         from?: string;
         to?: string;
         agg?: string;
+        percentile?: number;
+        quantile?: number;
         interval?: string;
         limit?: number;
     }): Promise<Record<string, unknown>> {
@@ -968,6 +1277,12 @@ export default class McpServer {
         }
         if (params.to) {
             options.end = new Date(params.to).getTime();
+        }
+        if (params.percentile !== undefined) {
+            (options as Record<string, unknown>).percentile = params.percentile;
+        }
+        if (params.quantile !== undefined) {
+            (options as Record<string, unknown>).quantile = params.quantile;
         }
         const step = params.interval ? this.parseInterval(params.interval) : undefined;
         if (step) {
@@ -1001,6 +1316,28 @@ export default class McpServer {
             });
         }
         return result;
+    }
+
+    /** List installed adapters (system.adapter.<name> objects, no instances). */
+    private async listAdapters(language?: ioBroker.Languages): Promise<Record<string, unknown>[]> {
+        const lang = language || this.language;
+        const view = await this.adapter.getObjectViewAsync(
+            'system',
+            'adapter',
+            { startkey: 'system.adapter.', endkey: 'system.adapter.香' },
+            { user: this.defaultUser },
+        );
+        return view.rows.map(row => {
+            const common = (row.value?.common || {}) as Record<string, any>;
+            return {
+                name: common.name || row.id.replace('system.adapter.', ''),
+                version: common.version || '',
+                title: getText(common.titleLang || common.title, lang),
+                description: getText(common.desc, lang),
+                keywords: common.keywords || [],
+                mode: common.mode || '',
+            };
+        });
     }
 
     private async listHosts(): Promise<Record<string, unknown>[]> {
@@ -1160,6 +1497,28 @@ export default class McpServer {
         await this.adapter.writeFileAsync(adapterName, fileName, data, { user: this.defaultUser });
     }
 
+    /** List a directory in an adapter file storage. */
+    private async listFiles(path: string): Promise<Record<string, unknown>[]> {
+        const { adapterName, dirName } = McpServer.parseDirPath(path);
+        const entries = await this.adapter.readDirAsync(adapterName, dirName, { user: this.defaultUser });
+        return (entries || []).map(entry => ({
+            file: entry.file,
+            isDir: !!entry.isDir,
+            size: entry.stats?.size,
+            modified: entry.modifiedAt,
+        }));
+    }
+
+    /** Rename/move a file within the same adapter file storage. */
+    private async renameFile(path: string, newPath: string): Promise<void> {
+        const from = McpServer.parseFilePath(path);
+        const to = McpServer.parseFilePath(newPath);
+        if (from.adapterName !== to.adapterName) {
+            throw new Error('Renaming across adapter storages is not supported; both paths must share the adapter');
+        }
+        await this.adapter.renameAsync(from.adapterName, from.fileName, to.fileName, { user: this.defaultUser });
+    }
+
     /** Create or update an object, merging common/native into an existing object (n8n `setIobObject`). */
     private async setObject(id: string, obj: Partial<ioBroker.Object>): Promise<{ id: string }> {
         let existing = await this.adapter.getForeignObjectAsync(id, { user: this.defaultUser });
@@ -1187,6 +1546,128 @@ export default class McpServer {
             throw new Error('Path must contain a file name after the adapter, e.g. "vis-2.0/main/vis-views.json"');
         }
         return { adapterName, fileName };
+    }
+
+    /** Split a directory path "<adapter>[/<dir>]" into adapter name and (possibly empty) directory. */
+    private static parseDirPath(path: string): { adapterName: string; dirName: string } {
+        const [adapterName, ...rest] = path.replace(/^\//, '').replace(/\/$/, '').split('/');
+        if (!adapterName) {
+            throw new Error('Path must start with an adapter name, e.g. "vis-2.0/main" or "0_userdata.0"');
+        }
+        return { adapterName, dirName: rest.join('/') };
+    }
+
+    /** Delete an object, optionally with all its children. */
+    private async deleteObject(id: string, recursive?: boolean): Promise<void> {
+        const existing = await this.adapter.getForeignObjectAsync(id, { user: this.defaultUser });
+        if (!existing) {
+            throw new Error(`Object "${id}" does not exist`);
+        }
+        await this.adapter.delForeignObjectAsync(id, { user: this.defaultUser, recursive: !!recursive });
+    }
+
+    /** Create a new state object; refuses to overwrite an existing object. */
+    private async createState(params: {
+        id: string;
+        name?: string;
+        type?: ioBroker.CommonType;
+        role?: string;
+        read?: boolean;
+        write?: boolean;
+        unit?: string;
+        min?: number;
+        max?: number;
+        step?: number;
+        def?: unknown;
+        desc?: string;
+    }): Promise<{ id: string }> {
+        const existing = await this.adapter.getForeignObjectAsync(params.id, { user: this.defaultUser });
+        if (existing) {
+            throw new Error(`Object "${params.id}" already exists - use set_object to modify it`);
+        }
+        const common: ioBroker.StateCommon = {
+            name: params.name || params.id.split('.').pop() || params.id,
+            type: params.type || 'mixed',
+            role: params.role || 'state',
+            read: params.read !== false,
+            write: params.write !== false,
+        };
+        if (params.unit !== undefined) {
+            common.unit = params.unit;
+        }
+        if (params.min !== undefined) {
+            common.min = params.min;
+        }
+        if (params.max !== undefined) {
+            common.max = params.max;
+        }
+        if (params.step !== undefined) {
+            common.step = params.step;
+        }
+        if (params.desc !== undefined) {
+            common.desc = params.desc;
+        }
+        await this.adapter.setForeignObjectAsync(
+            params.id,
+            { type: 'state', common, native: {} },
+            { user: this.defaultUser },
+        );
+        if (params.def !== undefined) {
+            const coerced = McpServer.coerceValue(params.def, common.type);
+            await this.adapter.setForeignStateAsync(params.id, coerced, true, { user: this.defaultUser });
+        }
+        return { id: params.id };
+    }
+
+    /** Create or update a scene object for the ioBroker "scenes" adapter. */
+    private async createScene(params: {
+        name: string;
+        members: { id: string; value: unknown }[];
+        instance?: string;
+        description?: string;
+    }): Promise<{ id: string; members: number }> {
+        const instance = params.instance || 'scene.0';
+        const instanceObj = await this.adapter.getForeignObjectAsync(`system.adapter.${instance}`, {
+            user: this.defaultUser,
+        });
+        if (!instanceObj) {
+            throw new Error(
+                `Scene adapter instance "${instance}" is not installed. Install the ioBroker "scenes" adapter first.`,
+            );
+        }
+        // Scene IDs may not contain the characters that are forbidden in ioBroker IDs.
+        const sceneName = params.name.replace(/[\s.*?"'[\]]/g, '_');
+        const id = `${instance}.${sceneName}`;
+
+        const sceneObj: ioBroker.SettableObject = {
+            type: 'state',
+            common: {
+                name: params.name,
+                type: 'boolean',
+                role: 'scene.state',
+                desc: params.description || '',
+                read: true,
+                write: true,
+                def: false,
+                engine: `system.adapter.${instance}`,
+                enabled: true,
+            } as ioBroker.StateCommon,
+            native: {
+                onTrue: { trigger: {}, cron: null, astro: null },
+                onFalse: { enabled: false, trigger: {}, cron: null, astro: null },
+                members: params.members.map(member => ({
+                    id: member.id,
+                    setIfTrue: member.value,
+                    setIfFalse: null,
+                    stopAllDelays: true,
+                    delay: 0,
+                    disabled: false,
+                })),
+                burstInterval: 0,
+            },
+        };
+        await this.adapter.setForeignObjectAsync(id, sceneObj, { user: this.defaultUser });
+        return { id, members: params.members.length };
     }
 
     // --- helpers ---
