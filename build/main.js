@@ -3,12 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpServer = void 0;
+exports.createInProcessMcp = exports.McpServer = void 0;
 const adapter_core_1 = require("@iobroker/adapter-core");
 const webserver_1 = require("@iobroker/webserver");
 const express_1 = __importDefault(require("express"));
 const mcp_server_1 = __importDefault(require("./lib/mcp-server"));
 exports.McpServer = mcp_server_1.default;
+const inProcessClient_1 = require("./lib/inProcessClient");
+Object.defineProperty(exports, "createInProcessMcp", { enumerable: true, get: function () { return inProcessClient_1.createInProcessMcp; } });
 class Mcp extends adapter_core_1.Adapter {
     webServer;
     /** Pending self-terminate timer used when running embedded in a web instance. */
@@ -149,9 +151,11 @@ class Mcp extends adapter_core_1.Adapter {
     }
 }
 if (require.main !== module) {
-    // Export the constructor in compact mode
+    // Export the constructor in compact mode. Assigning `module.exports` replaces the exports object,
+    // so every additional named export must be re-attached here (see `McpServer` / `createInProcessMcp`).
     module.exports = (options) => new Mcp(options);
     module.exports.McpServer = mcp_server_1.default;
+    module.exports.createInProcessMcp = inProcessClient_1.createInProcessMcp;
 }
 else {
     // otherwise start the instance directly

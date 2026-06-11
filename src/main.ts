@@ -5,8 +5,15 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import McpServer from './lib/mcp-server';
 import type { McpAdapterConfig } from './lib/types';
+import { createInProcessMcp } from './lib/inProcessClient';
 
-export { McpServer };
+export { McpServer, createInProcessMcp };
+export type {
+    InProcessMcp,
+    InProcessMcpOptions,
+    InProcessToolInfo,
+    InProcessToolResult,
+} from './lib/inProcessClient';
 
 type Server = HttpServer | HttpsServer;
 
@@ -185,9 +192,11 @@ class Mcp extends Adapter {
 }
 
 if (require.main !== module) {
-    // Export the constructor in compact mode
+    // Export the constructor in compact mode. Assigning `module.exports` replaces the exports object,
+    // so every additional named export must be re-attached here (see `McpServer` / `createInProcessMcp`).
     module.exports = (options: Partial<AdapterOptions> | undefined) => new Mcp(options);
     module.exports.McpServer = McpServer;
+    module.exports.createInProcessMcp = createInProcessMcp;
 } else {
     // otherwise start the instance directly
     (() => new Mcp())();

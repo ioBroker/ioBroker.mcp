@@ -110,7 +110,8 @@ const LOG_BUFFER_SIZE = 200;
 
 export default class McpServer {
     private readonly adapter: ioBroker.Adapter;
-    private readonly app: Express;
+    /** The Express app we attach routes to. Undefined in embedded in-process mode (no HTTP). */
+    private readonly app?: Express;
     /** Active sessions keyed by session id. */
     private readonly sessions: Record<string, SessionContext> = {};
     /** Ref-count of adapter-level subscriptions across all sessions, keyed by "<type>:<address>" or "log". */
@@ -127,23 +128,29 @@ export default class McpServer {
     private readonly language: ioBroker.Languages;
 
     constructor(
-        server: HttpServer | HttpsServer,
+        server: HttpServer | HttpsServer | null,
         webSettings: {
             secure: boolean;
             port: number | string;
             defaultUser?: `system.user.${string}`;
             auth?: boolean;
             language?: ioBroker.Languages;
+            /** Explicit override for the `set_state`/`set_states` permission (embedded mode). */
+            allowSetState?: boolean;
+            /** Explicit override for the object/file-changing tool permission (embedded mode). */
+            allowObjectChange?: boolean;
         },
         adapter: ioBroker.Adapter,
         instanceSettings: ioBroker.InstanceObject | null,
-        app: Express,
+        app?: Express,
     ) {
         this.app = app;
         this.adapter = adapter;
-        this.config = instanceSettings
-            ? (instanceSettings.native as McpAdapterConfig)
-            : (adapter.config as McpAdapterConfig);
+        // Clone the source config so we never mutate the host adapter's config object — important in
+        // embedded in-process mode, where `adapter` is a foreign adapter (e.g. admin), not mcp itself.
+        this.config = {
+            ...((instanceSettings ? instanceSettings.native : adapter.config) as McpAdapterConfig),
+        };
         this.namespace = instanceSettings
             ? instanceSettings._id.substring('system.adapter.'.length)
             : this.adapter.namespace;
@@ -151,7 +158,7 @@ export default class McpServer {
         this.routerPrefix = this.extension ? `/${WEB_EXTENSION_PREFIX}` : '/';
 
         // Determine the ioBroker user whose permissions all MCP requests run with.
-        // Prefer this adapter's own setting; when embedded fall back to the host web server's
+        // Prefer this adapter's own setting; when embedded, fall back to the host web server's
         // default user; finally to "admin". Always normalize to the "system.user." prefix.
         const rawUser = (this.config.defaultUser || webSettings.defaultUser || 'admin') as string;
         this.defaultUser = (
@@ -160,6 +167,13 @@ export default class McpServer {
         this.config.defaultUser = this.defaultUser;
         this.language = webSettings.language || 'en';
 
+        // Embedded callers may set the permission toggles explicitly (they don't read the mcp config).
+        if (webSettings.allowSetState !== undefined) {
+            this.config.allowSetState = webSettings.allowSetState;
+        }
+        if (webSettings.allowObjectChange !== undefined) {
+            this.config.allowObjectChange = webSettings.allowObjectChange;
+        }
         // Permission toggles: state writes are allowed by default, object/file changes are not.
         this.config.allowSetState = this.config.allowSetState !== false;
         this.config.allowObjectChange = this.config.allowObjectChange === true;
@@ -167,10 +181,56 @@ export default class McpServer {
         // Receive ioBroker log messages (only forwarded once a session subscribes via requireLog).
         this.adapter.on('log', this.onLog);
 
+        // Wire HTTP routes only when we own/share an Express app. In embedded in-process mode (no app)
+        // the server is reached over an in-memory transport instead, see createInProcessServer().
         this.initRoutes();
     }
 
+    /**
+     * Build a fresh MCP SDK server with all ioBroker tools registered, ready to be connected to an
+     * arbitrary transport. Used for in-process embedding (e.g. by ioBroker.admin) over an
+     * InMemoryTransport, where there is no HTTP server/session layer. The caller owns the lifecycle
+     * of the returned server (connect it to a transport, and `close()` it when done).
+     */
+    createInProcessServer(): McpSdkServer {
+        return this.createServer(new Set<string>());
+    }
+
+    /**
+     * Convenience factory for embedding the MCP server inside another adapter's process (no HTTP).
+     * The returned instance is not wired to any Express app; obtain a tool server via
+     * {@link createInProcessServer} and connect it to an in-memory transport.
+     *
+     * @param options embedding options (host adapter, default user, language, permission toggles)
+     */
+    static createEmbedded(options: {
+        adapter: ioBroker.Adapter;
+        defaultUser?: `system.user.${string}`;
+        language?: ioBroker.Languages;
+        allowSetState?: boolean;
+        allowObjectChange?: boolean;
+    }): McpServer {
+        return new McpServer(
+            null,
+            {
+                secure: false,
+                port: 0,
+                defaultUser: options.defaultUser,
+                language: options.language,
+                allowSetState: options.allowSetState,
+                allowObjectChange: options.allowObjectChange,
+            },
+            options.adapter,
+            null,
+        );
+    }
+
     private initRoutes(): void {
+        const app = this.app;
+        if (!app) {
+            // Embedded in-process mode: no HTTP transport, so there is nothing to route.
+            return;
+        }
         // The MCP endpoint. In standalone mode this is `/mcp`; as a web extension we own the
         // `/<adapter>/` namespace (e.g. `/mcp/`) within the shared web server. `.replace` strips
         // the trailing slash so the route matches both `/mcp` and `/mcp/` (Express, non-strict).
@@ -180,7 +240,7 @@ export default class McpServer {
         const jsonParser = express.json({ limit: '4mb' });
 
         // Health endpoint inside our own namespace (`/status` standalone, `/mcp/status` embedded).
-        this.app.get(`${this.routerPrefix}status`, (_req: Request, res: Response) => {
+        app.get(`${this.routerPrefix}status`, (_req: Request, res: Response) => {
             res.json({
                 status: 'ok',
                 uptime: process.uptime(),
@@ -192,12 +252,12 @@ export default class McpServer {
         // Global middleware and root/info endpoints only when we own the whole app (standalone).
         // As an extension these would collide with the web adapter's own routes.
         if (!this.extension) {
-            this.app.use((req: Request, _res: Response, next: NextFunction) => {
+            app.use((req: Request, _res: Response, next: NextFunction) => {
                 this.adapter.log.debug(`${req.method} ${req.url} from ${req.ip}`);
                 next();
             });
 
-            this.app.get('/', (_req: Request, res: Response) => {
+            app.get('/', (_req: Request, res: Response) => {
                 res.json({
                     name: 'ioBroker MCP Server',
                     version: SERVER_VERSION,
@@ -206,7 +266,7 @@ export default class McpServer {
                 });
             });
 
-            this.app.get('/api/info', (_req: Request, res: Response) => {
+            app.get('/api/info', (_req: Request, res: Response) => {
                 res.json({
                     adapter: 'mcp',
                     version: SERVER_VERSION,
@@ -217,23 +277,23 @@ export default class McpServer {
         }
 
         // --- MCP Streamable HTTP transport ---
-        this.app.post(mcpPath, jsonParser, (req: Request, res: Response) => {
+        app.post(mcpPath, jsonParser, (req: Request, res: Response) => {
             void this.handleMcpPost(req, res);
         });
-        this.app.get(mcpPath, (req: Request, res: Response) => {
+        app.get(mcpPath, (req: Request, res: Response) => {
             void this.handleMcpSessionRequest(req, res);
         });
-        this.app.delete(mcpPath, (req: Request, res: Response) => {
+        app.delete(mcpPath, (req: Request, res: Response) => {
             void this.handleMcpSessionRequest(req, res);
         });
 
         // Catch-all 404 + error handlers only in standalone mode; the web adapter provides its own.
         if (!this.extension) {
-            this.app.use((req: Request, res: Response) => {
+            app.use((req: Request, res: Response) => {
                 res.status(404).json({ error: 'Not Found', path: req.url });
             });
 
-            this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+            app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
                 this.adapter.log.error(`Server error: ${err.message}`);
                 if (!res.headersSent) {
                     res.status(500).json({ error: 'Internal Server Error', message: err.message });
