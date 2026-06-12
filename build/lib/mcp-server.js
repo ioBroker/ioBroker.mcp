@@ -574,6 +574,32 @@ class McpServer {
                 return fail(e);
             }
         });
+        server.registerTool('search_adapter_repository', {
+            description: 'Search the ioBroker adapter REPOSITORY (all installable adapters, not just the ' +
+                'installed ones) by keyword, matched against the adapter name, title, description and ' +
+                'keywords. Use this to recommend which adapter to install for a device or service. ' +
+                'Reads the already-downloaded repository object (fast, no network).',
+            inputSchema: {
+                query: zod_1.z.string().describe('Keyword to search for, e.g. "philips hue", "zigbee", "mqtt"'),
+                type: zod_1.z
+                    .string()
+                    .optional()
+                    .describe('Filter by adapter category/type, e.g. "lighting", "climate-control", "hardware"'),
+                onlyNotInstalled: zod_1.z
+                    .boolean()
+                    .optional()
+                    .describe('If true, return only adapters that are not installed yet'),
+                language: zod_1.z.enum(LANGUAGES).optional().describe('Language for title/description'),
+                limit: zod_1.z.number().int().default(20),
+            },
+        }, async (args) => {
+            try {
+                return ok({ ok: true, data: { adapters: await this.searchAdapterRepository(args) } });
+            }
+            catch (e) {
+                return fail(e);
+            }
+        });
         const enumInput = {
             language: zod_1.z.enum(LANGUAGES).optional().describe('Language for names (defaults to the adapter language)'),
             withIcons: zod_1.z.boolean().optional().describe('Include the icons of the enum and its members'),
@@ -1098,6 +1124,72 @@ class McpServer {
                 mode: common.mode || '',
             };
         });
+    }
+    /**
+     * Search the adapter repository (all installable adapters) by keyword. Reads the already-downloaded
+     * repository object `system.repositories` — fast, no network — and matches against name, title,
+     * description and keywords, with an optional category `type` filter and an `installed` flag.
+     */
+    async searchAdapterRepository(params) {
+        const lang = params.language || this.language;
+        const needle = (params.query || '').toLowerCase();
+        const limit = params.limit ?? 20;
+        const reposObj = await this.adapter.getForeignObjectAsync('system.repositories', { user: this.defaultUser });
+        const repositories = (reposObj?.native?.repositories || {});
+        // Prefer the active repository; fall back to the first repository that has content.
+        const sysCfg = await this.adapter.getForeignObjectAsync('system.config', { user: this.defaultUser });
+        const active = sysCfg?.common?.activeRepo;
+        const activeNames = Array.isArray(active) ? active : active ? [active] : [];
+        let json;
+        for (const name of activeNames) {
+            if (repositories[name]?.json) {
+                json = repositories[name].json;
+                break;
+            }
+        }
+        if (!json) {
+            json = Object.values(repositories).find(repo => repo?.json)?.json;
+        }
+        if (!json) {
+            return [];
+        }
+        // Determine which adapters are already installed.
+        const installedView = await this.adapter.getObjectViewAsync('system', 'adapter', { startkey: 'system.adapter.', endkey: 'system.adapter.香' }, { user: this.defaultUser });
+        const installed = new Set(installedView.rows.map(row => row.value?.common?.name || row.id.replace('system.adapter.', '')));
+        const results = [];
+        for (const [name, entry] of Object.entries(json)) {
+            if (name.startsWith('_')) {
+                continue; // skip _repoInfo and similar meta keys
+            }
+            const e = entry;
+            const title = getText(e.titleLang || e.title, lang);
+            const desc = getText(e.desc, lang);
+            const keywords = Array.isArray(e.keywords) ? e.keywords : [];
+            const type = e.type || '';
+            if (params.type && type !== params.type) {
+                continue;
+            }
+            const isInstalled = installed.has(name);
+            if (params.onlyNotInstalled && isInstalled) {
+                continue;
+            }
+            if (needle && !`${name} ${title} ${desc} ${keywords.join(' ')}`.toLowerCase().includes(needle)) {
+                continue;
+            }
+            results.push({
+                name,
+                title,
+                description: desc,
+                keywords,
+                type,
+                version: e.version || '',
+                installed: isInstalled,
+            });
+            if (results.length >= limit) {
+                break;
+            }
+        }
+        return results;
     }
     async listHosts() {
         const objs = await this.adapter.getForeignObjectsAsync('system.host.*', 'host', { user: this.defaultUser });
