@@ -133,8 +133,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 0.3.0 (2026-06-11)
+### 0.3.1 (2026-06-11)
 * (@GermanBluefox) Added search through repository
+* (@GermanBluefox) Added ping tool
 
 ### 0.2.5 (2026-06-11)
 * (@GermanBluefox) Supported direct import of MCP server

@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const node_crypto_1 = require("node:crypto");
 const node_os_1 = __importDefault(require("node:os"));
+const node_net_1 = __importDefault(require("node:net"));
+const node_dns_1 = __importDefault(require("node:dns"));
+const node_child_process_1 = require("node:child_process");
 const zod_1 = require("zod");
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
 const streamableHttp_js_1 = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
@@ -448,6 +451,26 @@ class McpServer {
         }, async (args) => {
             try {
                 return ok({ ok: true, data: { logs: await this.getLogs(args) } });
+            }
+            catch (e) {
+                return fail(e);
+            }
+        });
+        server.registerTool('ping_host', {
+            description: 'Check whether a network device is reachable — useful to diagnose adapter connection ' +
+                'errors (e.g. a "connect ETIMEDOUT 192.168.10.5:2001"). Runs an ICMP ping to `host` and, ' +
+                'if `port` is given, also a TCP connect to that port (which tests the actual service, not ' +
+                'just the host). `host` may be an IP or hostname. Returns ICMP reachability/latency and, ' +
+                'when requested, whether the TCP port is open.',
+            inputSchema: {
+                host: zod_1.z.string(),
+                port: zod_1.z.number().int().min(1).max(65535).optional(),
+                count: zod_1.z.number().int().min(1).max(10).default(2),
+                timeout: zod_1.z.number().int().min(100).max(20000).default(2000),
+            },
+        }, async (args) => {
+            try {
+                return ok({ ok: true, data: await this.pingHost(args) });
             }
             catch (e) {
                 return fail(e);
@@ -1044,6 +1067,78 @@ class McpServer {
                     host: this.adapter.host,
                 })));
             });
+        });
+    }
+    /**
+     * Diagnose whether a network device/service is reachable: an ICMP ping to `host` and, if `port`
+     * is given, a TCP connect to that port. Used to investigate adapter connection errors.
+     */
+    async pingHost(params) {
+        const host = (params.host || '').trim();
+        // Only allow plausible IP/hostname characters — and never a leading "-" — so the value can't be
+        // injected as an option to the `ping` executable.
+        if (!host || host.startsWith('-') || !/^[a-zA-Z0-9._:-]+$/.test(host)) {
+            throw new Error(`Invalid host: ${params.host}`);
+        }
+        const count = Math.min(Math.max(params.count || 2, 1), 10);
+        const timeout = Math.min(Math.max(params.timeout || 2000, 100), 20000);
+        const resolvedIp = await new Promise(resolve => node_dns_1.default.lookup(host, (err, address) => resolve(err ? undefined : address)));
+        const result = {
+            host,
+            ...(resolvedIp && resolvedIp !== host ? { resolved_ip: resolvedIp } : {}),
+            icmp: await this.icmpPing(host, count, timeout),
+        };
+        if (params.port !== undefined) {
+            result.tcp = await this.tcpProbe(host, params.port, timeout);
+        }
+        return result;
+    }
+    /** ICMP ping via the OS `ping` command (no elevated privileges needed). */
+    icmpPing(host, count, timeout) {
+        const isWin = process.platform === 'win32';
+        // Windows: -n count, -w timeout(ms per reply). Unix: -c count, -W timeout(s per reply).
+        const args = isWin
+            ? ['-n', String(count), '-w', String(timeout), host]
+            : ['-c', String(count), '-W', String(Math.max(1, Math.round(timeout / 1000))), host];
+        return new Promise(resolve => {
+            (0, node_child_process_1.execFile)('ping', args, { timeout: timeout * count + 3000, windowsHide: true }, (_err, stdout, stderr) => {
+                const out = `${stdout || ''}${stderr || ''}`;
+                // Number of received replies (Windows "Received = N", Unix "N received").
+                const received = isWin
+                    ? Number(out.match(/Received = (\d+)/)?.[1] ?? out.match(/Empfangen = (\d+)/)?.[1] ?? 0)
+                    : Number(out.match(/(\d+) (?:packets )?received/)?.[1] ?? 0);
+                // Average round-trip time, if reported.
+                const avg = isWin
+                    ? (out.match(/Average = (\d+)ms/)?.[1] ?? out.match(/Mittelwert = (\d+)ms/)?.[1])
+                    : out.match(/=\s*[\d.]+\/([\d.]+)\//)?.[1];
+                resolve({
+                    reachable: received > 0,
+                    sent: count,
+                    received,
+                    ...(avg ? { avg_ms: Math.round(parseFloat(avg)) } : {}),
+                });
+            });
+        });
+    }
+    /** TCP connect probe — tests whether a specific service port accepts connections. */
+    tcpProbe(host, port, timeout) {
+        return new Promise(resolve => {
+            const start = Date.now();
+            const socket = new node_net_1.default.Socket();
+            let settled = false;
+            const done = (open, error) => {
+                if (settled) {
+                    return;
+                }
+                settled = true;
+                socket.destroy();
+                resolve({ port, open, latency_ms: Date.now() - start, ...(error ? { error } : {}) });
+            };
+            socket.setTimeout(timeout);
+            socket.once('connect', () => done(true));
+            socket.once('timeout', () => done(false, 'timeout'));
+            socket.once('error', (e) => done(false, e.message));
+            socket.connect(port, host);
         });
     }
     async getSystemInfo() {
