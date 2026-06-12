@@ -584,7 +584,11 @@ export default class McpServer {
         server.registerTool(
             'get_logs',
             {
-                description: 'Retrieve system logs',
+                description:
+                    'Retrieve recent ioBroker log lines from the host log file. Each entry has {ts, level, ' +
+                    'source, message}. Optionally filter by `level` (error/warn/info/debug), by `adapter` ' +
+                    '(source, e.g. "hm-rpc.0" or "hm-rpc"), or from `from_ts` (ms). When a level filter is set, ' +
+                    'a larger window of the log is scanned so errors/warnings are not hidden behind debug spam.',
                 inputSchema: {
                     level: z.array(z.enum(['error', 'warn', 'info', 'debug'])).optional(),
                     from_ts: z.number().int().optional(),
@@ -1232,35 +1236,89 @@ export default class McpServer {
         return results;
     }
 
+    /**
+     * Parse the raw log-file lines returned by the host `getLogs` into structured entries.
+     *
+     * The host replies with an array of raw strings (the file size is appended as the last, numeric
+     * element). Lines carry ANSI color codes and look like
+     * `2026-06-12 11:46:39.802  - error: hm-rpc.0 (1234) Init not possible…`. This mirrors the admin
+     * `LogsWorker` parsing: strip the color codes, then split timestamp / level / rest, and treat lines
+     * without a leading timestamp as continuations (e.g. stack traces) of the previous entry.
+     */
+    private parseLogLines(rawLines: unknown[]): { ts: number; level: string; source: string; message: string }[] {
+        const entries: { ts: number; level: string; source: string; message: string }[] = [];
+        for (const raw of rawLines) {
+            if (typeof raw !== 'string') {
+                continue;
+            }
+            const clean = raw.replace(/\x1b\[\d+m/g, ''); // eslint-disable-line no-control-regex
+            const match = clean.match(
+                /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+-\s+(silly|debug|info|warn|error):\s*(.*)$/,
+            );
+            if (match) {
+                const rest = match[3];
+                const fromMatch = rest.match(/^(host\.[^\s]+|[-\w]+\.\d+)/);
+                entries.push({
+                    ts: new Date(match[1].replace(' ', 'T')).getTime(),
+                    level: match[2],
+                    source: fromMatch ? fromMatch[1] : '',
+                    message: rest,
+                });
+            } else if (entries.length && clean.trim() && !/^\d+$/.test(clean.trim())) {
+                // Continuation line (e.g. a stack trace). The trailing file-size element is a bare number,
+                // which the `\d+` guard skips.
+                entries[entries.length - 1].message += `\n${clean}`;
+            }
+        }
+        return entries;
+    }
+
     private getLogs(params: {
         level?: string[];
         from_ts?: number;
         limit?: number;
         adapter?: string;
     }): Promise<Record<string, unknown>[]> {
-        return new Promise((resolve, reject) => {
-            const message: ioBroker.MessagePayload = { data: { size: params.limit || 200 } };
-            if (params.from_ts !== undefined) {
-                (message.data as Record<string, unknown>).from_ts = params.from_ts;
-            }
-            if (params.adapter !== undefined) {
-                (message.data as Record<string, unknown>).source = params.adapter;
-            }
+        const limit = Math.max(1, params.limit || 200);
+        const filtering = !!((params.level && params.level.length) || params.adapter || params.from_ts !== undefined);
+        // The host `getLogs` returns the tail of the log file (≈150 bytes per requested line). When a
+        // filter is active, scan a much larger window so error/warn lines are not pushed out by a flood
+        // of debug lines from a chatty adapter.
+        const fetchLines = filtering ? Math.min(Math.max(limit * 10, 3000), 20000) : limit;
 
-            this.adapter.sendToHost(this.adapter.host || null, 'getLogs', message, (result: any) => {
-                if (!result || result.error) {
-                    reject(new Error(result?.error || 'Failed to retrieve logs'));
+        return new Promise((resolve, reject) => {
+            // The controller expects the line count as the plain message (a number) and replies with an
+            // ARRAY of raw string lines — NOT an object with a `list` property.
+            this.adapter.sendToHost(this.adapter.host || null, 'getLogs', fetchLines, (result: any) => {
+                const rawList: unknown = Array.isArray(result) ? result : result?.list;
+                if (!Array.isArray(rawList)) {
+                    if (result && result.error) {
+                        reject(new Error(result.error));
+                    } else {
+                        resolve([]);
+                    }
                     return;
                 }
-                let logs: any[] = result.list || [];
-                if (params.level && params.level.length > 0) {
-                    logs = logs.filter(log => params.level!.includes(log.severity));
+                let logs = this.parseLogLines(rawList);
+                if (params.level && params.level.length) {
+                    logs = logs.filter(log => params.level!.includes(log.level));
+                }
+                if (params.from_ts !== undefined) {
+                    logs = logs.filter(log => log.ts >= params.from_ts!);
+                }
+                if (params.adapter) {
+                    const adapter = params.adapter;
+                    logs = logs.filter(log => log.source === adapter || log.source.startsWith(`${adapter}.`));
+                }
+                // Return the most recent `limit` matching lines.
+                if (logs.length > limit) {
+                    logs = logs.slice(logs.length - limit);
                 }
                 resolve(
                     logs.map(log => ({
                         ts: log.ts,
-                        level: log.severity,
-                        source: log.from,
+                        level: log.level,
+                        source: log.source,
                         message: log.message,
                         host: this.adapter.host,
                     })),
@@ -1463,17 +1521,24 @@ export default class McpServer {
         const active = sysCfg?.common?.activeRepo;
         const activeNames = Array.isArray(active) ? active : active ? [active] : [];
 
-        let json: Record<string, any> | undefined;
-        for (const name of activeNames) {
-            if (repositories[name]?.json) {
-                json = repositories[name].json;
-                break;
+        // Merge the JSON of ALL active repositories (or all repositories if none is marked active). An
+        // adapter present in several repos is kept once (first/active repo wins). This matters when the
+        // user has custom repos active next to the default one (their adapters are not in stable).
+        const activeWithJson = activeNames.filter(name => repositories[name]?.json);
+        const sources = (
+            activeWithJson.length ? activeWithJson.map(name => repositories[name]) : Object.values(repositories)
+        )
+            .map(repo => repo?.json)
+            .filter((j): j is Record<string, any> => !!j);
+        const json: Record<string, any> = {};
+        for (const src of sources) {
+            for (const key of Object.keys(src)) {
+                if (!(key in json)) {
+                    json[key] = src[key];
+                }
             }
         }
-        if (!json) {
-            json = Object.values(repositories).find(repo => repo?.json)?.json;
-        }
-        if (!json) {
+        if (!Object.keys(json).length) {
             return [];
         }
 
