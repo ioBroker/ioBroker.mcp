@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "news": {
+      "0.2.6": {
+        "en": "Added search through repository",
+        "de": "Suchen durch Repository hinzugefügt",
+        "ru": "Добавлен поиск через репозиторий",
+        "pt": "Adicionada pesquisa através do repositório",
+        "nl": "Zoekopdracht toegevoegd via repository",
+        "fr": "Recherche ajoutée par dépôt",
+        "it": "Ricerca aggiunta tramite repository",
+        "es": "Búsqueda agregada a través del repositorio",
+        "pl": "Dodano wyszukiwanie przez repozytorium",
+        "uk": "Додано пошук по репозиторію",
+        "zh-cn": "通过仓库添加搜索"
+      },
       "0.2.5": {
         "en": "Supported direct import of MCP server",
         "de": "Unterstützter Direktimport von MCP Server",
