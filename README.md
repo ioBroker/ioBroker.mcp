@@ -133,7 +133,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 0.2.7 (2026-06-12)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Added search through repository
 
 ### 0.2.5 (2026-06-11)

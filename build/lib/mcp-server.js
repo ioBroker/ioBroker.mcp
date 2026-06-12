@@ -978,7 +978,9 @@ class McpServer {
             if (typeof raw !== 'string') {
                 continue;
             }
-            const clean = raw.replace(/\x1b\[\d+m/g, ''); // eslint-disable-line no-control-regex
+            // Also strip the trailing CR: the host splits the CRLF log file on \n only, leaving a \r
+            // that would otherwise break the `$` anchor of the line regex below.
+            const clean = raw.replace(/\x1b\[\d+m/g, '').replace(/\r$/, ''); // eslint-disable-line no-control-regex
             const match = clean.match(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+-\s+(silly|debug|info|warn|error):\s*(.*)$/);
             if (match) {
                 const rest = match[3];
