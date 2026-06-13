@@ -137,7 +137,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.2 (2026-06-13)
 * (@GermanBluefox) Some repo checker errors were fixed
 
 ### 1.0.0 (2026-06-12)

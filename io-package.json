@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "news": {
+      "1.0.2": {
+        "en": "Some repo checker errors were fixed",
+        "de": "Einige Repo Checker Fehler wurden behoben",
+        "ru": "Некоторые ошибки проверки РЕПО были исправлены",
+        "pt": "Alguns erros de repo checker foram corrigidos",
+        "nl": "Sommige repo-checker fouten werden opgelost",
+        "fr": "Certaines erreurs de repo checker ont été corrigées",
+        "it": "Alcuni errori repo checker sono stati risolti",
+        "es": "Algunos errores de comprobantes de reposo fueron fijos",
+        "pl": "Niektóre błędy w sprawdzaniu repo zostały naprawione",
+        "uk": "Деякі помилки перевірки репо були виправлені",
+        "zh-cn": "一些Repo 检查器错误已被修正"
+      },
       "1.0.0": {
         "en": "Allowed node 18",
         "de": "Zulässiger Knoten 18",
