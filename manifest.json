@@ -1,19 +1,15 @@
 {
   "server": "iobroker-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "methods": [
     {
       "name": "list_devices",
-      "description": "List all devices with their states and metadata",
+      "description": "List detected devices grouped by room (uses the ioBroker type-detector to expose functional devices with named controls)",
       "parameters": {
         "type": "object",
         "properties": {
-          "room": { "type": "string", "description": "Filter by room" },
-          "type": { "type": "string", "description": "Device type, e.g. sensor | actor | media | cover" },
-          "role": { "type": "string", "description": "Filter by role (e.g. value.temperature)" },
-          "adapter": { "type": "string", "description": "Filter by adapter (e.g. zigbee.0)" },
-          "limit": { "type": "integer", "default": 100 },
-          "offset": { "type": "integer", "default": 0 }
+          "language": { "type": "string", "description": "Language for device/room/function names (defaults to the adapter language)" },
+          "room": { "type": "string", "description": "Filter the result to a single room (by name)" }
         }
       }
     },
@@ -110,6 +106,21 @@
       }
     },
     {
+      "name": "search_adapter_repository",
+      "description": "Search the ioBroker adapter repository (all installable adapters, not just installed ones) by keyword - use it to recommend which adapter to install for a device or service",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Keyword to search for, e.g. \"philips hue\", \"zigbee\", \"mqtt\"" },
+          "type": { "type": "string", "description": "Filter by adapter category/type, e.g. lighting, climate-control, hardware" },
+          "onlyNotInstalled": { "type": "boolean", "description": "If true, return only adapters that are not installed yet" },
+          "language": { "type": "string", "description": "Language for title/description" },
+          "limit": { "type": "integer", "default": 20 }
+        },
+        "required": ["query"]
+      }
+    },
+    {
       "name": "list_hosts",
       "description": "List all ioBroker hosts with their status"
     },
@@ -127,6 +138,20 @@
           "limit": { "type": "integer", "default": 200 },
           "adapter": { "type": "string" }
         }
+      }
+    },
+    {
+      "name": "ping_host",
+      "description": "Check whether a network device is reachable (ICMP ping, plus an optional TCP connect to a port) - useful to diagnose adapter connection errors like \"connect ETIMEDOUT\"",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "host": { "type": "string", "description": "IP address or hostname to ping" },
+          "port": { "type": "integer", "description": "Optional TCP port to probe (tests the actual service, not just the host)" },
+          "count": { "type": "integer", "default": 2, "description": "Number of ICMP echo requests (1-10)" },
+          "timeout": { "type": "integer", "default": 2000, "description": "Per-probe timeout in ms (100-20000)" }
+        },
+        "required": ["host"]
       }
     },
     {
@@ -156,8 +181,7 @@
           "role": { "type": "string", "description": "Filter by role" },
           "room": { "type": "string", "description": "Filter by room" },
           "adapter": { "type": "string", "description": "Filter by source adapter instance, e.g. hue.0" },
-          "limit": { "type": "integer", "default": 50 },
-          "offset": { "type": "integer", "default": 0 }
+          "limit": { "type": "integer", "default": 50 }
         },
         "required": ["query"]
       }
