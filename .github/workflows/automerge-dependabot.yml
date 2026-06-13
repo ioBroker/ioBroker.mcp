@@ -18,5 +18,5 @@ jobs:
               with:
                   # This must be a personal access token with push access
                   github-token: ${{ secrets.AUTO_MERGE_TOKEN }}
-                  # By default, squash and merge, so Github chooses nice commit messages
+                  # By default, squash and merge, so GitHub chooses nice commit messages
                   command: squash and merge

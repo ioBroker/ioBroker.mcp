@@ -99,12 +99,12 @@ class Mcp extends Adapter {
                 this.webServer.server = await webserver.init();
             } catch (err) {
                 this.log.error(`Cannot create webserver: ${err}`);
-                this.terminate ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(1);
+                this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 return;
             }
         } else {
             this.log.error('port missing');
-            process.exit(1);
+            this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
         }
 
         if (this.webServer.server) {
