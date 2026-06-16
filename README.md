@@ -137,6 +137,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added debug for ICMP ping and TCP probe in `ping_host` tool
+
 ### 1.0.2 (2026-06-13)
 * (@GermanBluefox) Some repo checker errors were fixed
 

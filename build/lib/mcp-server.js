@@ -1082,7 +1082,9 @@ class McpServer {
         }
         const count = Math.min(Math.max(params.count || 2, 1), 10);
         const timeout = Math.min(Math.max(params.timeout || 2000, 100), 20000);
+        this.adapter.log.debug(`[ping_host] request host="${host}" port=${params.port ?? '-'} count=${count} timeout=${timeout}ms platform=${process.platform}`);
         const resolvedIp = await new Promise(resolve => node_dns_1.default.lookup(host, (err, address) => resolve(err ? undefined : address)));
+        this.adapter.log.debug(`[ping_host] dns.lookup("${host}") -> ${resolvedIp ?? '(no resolution)'}`);
         const result = {
             host,
             ...(resolvedIp && resolvedIp !== host ? { resolved_ip: resolvedIp } : {}),
@@ -1091,6 +1093,7 @@ class McpServer {
         if (params.port !== undefined) {
             result.tcp = await this.tcpProbe(host, params.port, timeout);
         }
+        this.adapter.log.debug(`[ping_host] result: ${JSON.stringify(result)}`);
         return result;
     }
     /** ICMP ping via the OS `ping` command (no elevated privileges needed). */
@@ -1100,9 +1103,11 @@ class McpServer {
         const args = isWin
             ? ['-n', String(count), '-w', String(timeout), host]
             : ['-c', String(count), '-W', String(Math.max(1, Math.round(timeout / 1000))), host];
+        this.adapter.log.debug(`[ping_host] icmp exec: ping ${args.join(' ')}`);
         return new Promise(resolve => {
-            (0, node_child_process_1.execFile)('ping', args, { timeout: timeout * count + 3000, windowsHide: true }, (_err, stdout, stderr) => {
+            (0, node_child_process_1.execFile)('ping', args, { timeout: timeout * count + 3000, windowsHide: true }, (err, stdout, stderr) => {
                 const out = `${stdout || ''}${stderr || ''}`;
+                this.adapter.log.debug(`[ping_host] icmp exitError=${err ? `${err.code ?? err.message}` : 'none'} raw output:\n${out}`);
                 // Number of received replies (Windows "Received = N", Unix "N received").
                 const received = isWin
                     ? Number(out.match(/Received = (\d+)/)?.[1] ?? out.match(/Empfangen = (\d+)/)?.[1] ?? 0)
@@ -1111,6 +1116,7 @@ class McpServer {
                 const avg = isWin
                     ? (out.match(/Average = (\d+)ms/)?.[1] ?? out.match(/Mittelwert = (\d+)ms/)?.[1])
                     : out.match(/=\s*[\d.]+\/([\d.]+)\//)?.[1];
+                this.adapter.log.debug(`[ping_host] icmp parsed: received=${received} (matchedWin=${isWin}) avg=${avg ?? '-'} -> reachable=${received > 0}`);
                 resolve({
                     reachable: received > 0,
                     sent: count,
@@ -1122,6 +1128,7 @@ class McpServer {
     }
     /** TCP connect probe — tests whether a specific service port accepts connections. */
     tcpProbe(host, port, timeout) {
+        this.adapter.log.debug(`[ping_host] tcp connect ${host}:${port} (timeout=${timeout}ms)`);
         return new Promise(resolve => {
             const start = Date.now();
             const socket = new node_net_1.default.Socket();
@@ -1132,7 +1139,9 @@ class McpServer {
                 }
                 settled = true;
                 socket.destroy();
-                resolve({ port, open, latency_ms: Date.now() - start, ...(error ? { error } : {}) });
+                const probe = { port, open, latency_ms: Date.now() - start, ...(error ? { error } : {}) };
+                this.adapter.log.debug(`[ping_host] tcp result: ${JSON.stringify(probe)}`);
+                resolve(probe);
             };
             socket.setTimeout(timeout);
             socket.once('connect', () => done(true));
