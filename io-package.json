@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "news": {
+      "1.0.5": {
+        "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
+        "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
+        "ru": "Добавлена отладка для ICMP ping и TCP-зонда в инструменте «ping host»",
+        "pt": "Depuração adicionada para ping ICMP e sonda TCP na ferramenta `ping host`",
+        "nl": "Debug toegevoegd voor ICMP-ping en TCP-sonde in het gereedschap \"Ping host\"",
+        "fr": "Ajout du débogage pour le ping ICMP et la sonde TCP dans l'outil `ping host`",
+        "it": "Aggiunto il debug per ICMP ping e la sonda TCP nello strumento `ping host`",
+        "es": "Añadido debug for ICMP ping and TCP probe in `ping host` tool",
+        "pl": "Dodano debug dla ICMP ping i TCP sonda w 'ping _ host' narzędzie",
+        "uk": "Додана дебюга для ICMP ping і TCP пробе в `ping host`",
+        "zh-cn": "在“ ping host” 工具中为 ICMP ping 和 TCP 探测器添加调试"
+      },
       "1.0.4": {
         "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
         "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Obsługiwane bezpośrednie importowanie serwera MCP",
         "uk": "Підтримує прямий імпорт сервера MCP",
         "zh-cn": "支持直接导入 MCP 服务器"
-      },
-      "0.2.0": {
-        "en": "Many changes: see the previous changelog entry",
-        "de": "Viele Änderungen: siehe den vorherigen Changelog-Eintrag",
-        "ru": "Много изменений: см. предыдущую запись Changelog",
-        "pt": "Muitas alterações: veja o item anterior do changelog",
-        "nl": "Veel wijzigingen: zie het vorige wijzigingslog-item",
-        "fr": "Nombreux changements : voir l'entrée précédente du journal des changements",
-        "it": "Molte modifiche: vedi la precedente voce changelog",
-        "es": "Muchos cambios: ver la entrada de cambio anterior",
-        "pl": "Wiele zmian: zobacz poprzedni wpis changelog",
-        "uk": "Багато змін: див. запис попередньої зміни",
-        "zh-cn": "许多更改: 参见上一个更改日志条目"
       }
     },
     "titleLang": {
