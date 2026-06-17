@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import os from 'node:os';
 import net from 'node:net';
 import dns from 'node:dns';
+import fs from 'node:fs';
 import { execFile } from 'node:child_process';
 import { z } from 'zod';
 import { McpServer as McpSdkServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -615,8 +616,11 @@ export default class McpServer {
                     'Check whether a network device is reachable — useful to diagnose adapter connection ' +
                     'errors (e.g. a "connect ETIMEDOUT 192.168.10.5:2001"). Runs an ICMP ping to `host` and, ' +
                     'if `port` is given, also a TCP connect to that port (which tests the actual service, not ' +
-                    'just the host). `host` may be an IP or hostname. Returns ICMP reachability/latency and, ' +
-                    'when requested, whether the TCP port is open.',
+                    'just the host). `host` may be an IP or hostname. Returns the overall `reachable` verdict, ' +
+                    'ICMP reachability/latency and, when requested, whether the TCP port is open. If the `ping` ' +
+                    'command is NOT installed on the ioBroker host, ICMP is skipped (icmp.unavailable=true), ' +
+                    'reachability is determined via a TCP fallback instead, and the result carries a `note`/' +
+                    '`recommendation` with the exact command to install ping — relay that recommendation to the user.',
                 inputSchema: {
                     host: z.string(),
                     port: z.number().int().min(1).max(65535).optional(),
@@ -1385,13 +1389,33 @@ export default class McpServer {
         );
         this.adapter.log.debug(`[ping_host] dns.lookup("${host}") -> ${resolvedIp ?? '(no resolution)'}`);
 
+        const icmp = await this.icmpPing(host, count, timeout);
         const result: Record<string, unknown> = {
             host,
             ...(resolvedIp && resolvedIp !== host ? { resolved_ip: resolvedIp } : {}),
-            icmp: await this.icmpPing(host, count, timeout),
+            icmp,
         };
+
         if (params.port !== undefined) {
+            // Explicit port requested -> probe exactly that one.
             result.tcp = await this.tcpProbe(host, params.port, timeout);
+        } else if (!icmp.reachable) {
+            // ICMP did not confirm reachability — either the `ping` binary is missing (e.g. not installed
+            // in the container) or ICMP is blocked/filtered by a firewall. Fall back to TCP connects on
+            // common ports so a host that simply ignores ping (very common for routers) isn't wrongly
+            // reported as "down".
+            const tcpFallback = await this.tcpReachable(host, timeout);
+            result.tcp_fallback = tcpFallback;
+        }
+
+        // Overall verdict: reachable if ICMP answered OR a TCP fallback port accepted the connection.
+        const fb = result.tcp_fallback as { reachable?: boolean } | undefined;
+        result.reachable = !!icmp.reachable || !!fb?.reachable;
+        // If ICMP could not be used because `ping` is not installed, surface the recommendation at the
+        // top level so the assistant relays it to the user (and the verdict is based on TCP only).
+        if (icmp.unavailable && typeof icmp.recommendation === 'string') {
+            result.method = 'tcp';
+            result.note = icmp.recommendation;
         }
         this.adapter.log.debug(`[ping_host] result: ${JSON.stringify(result)}`);
         return result;
@@ -1400,17 +1424,33 @@ export default class McpServer {
     /** ICMP ping via the OS `ping` command (no elevated privileges needed). */
     private icmpPing(host: string, count: number, timeout: number): Promise<Record<string, unknown>> {
         const isWin = process.platform === 'win32';
+        const bin = this.resolvePingBinary();
         // Windows: -n count, -w timeout(ms per reply). Unix: -c count, -W timeout(s per reply).
         const args = isWin
             ? ['-n', String(count), '-w', String(timeout), host]
             : ['-c', String(count), '-W', String(Math.max(1, Math.round(timeout / 1000))), host];
-        this.adapter.log.debug(`[ping_host] icmp exec: ping ${args.join(' ')}`);
+        this.adapter.log.debug(`[ping_host] icmp exec: ${bin} ${args.join(' ')}`);
         return new Promise(resolve => {
-            execFile('ping', args, { timeout: timeout * count + 3000, windowsHide: true }, (err, stdout, stderr) => {
+            execFile(bin, args, { timeout: timeout * count + 3000, windowsHide: true }, (err, stdout, stderr) => {
                 const out = `${stdout || ''}${stderr || ''}`;
-                this.adapter.log.debug(
-                    `[ping_host] icmp exitError=${err ? `${err.code ?? err.message}` : 'none'} raw output:\n${out}`,
-                );
+                const errCode = err ? `${(err as NodeJS.ErrnoException).code ?? err.message}` : 'none';
+                this.adapter.log.debug(`[ping_host] icmp exitError=${errCode} raw output:\n${out}`);
+                // ENOENT = the `ping` executable was not found at all. That is NOT "host unreachable";
+                // report it explicitly so the caller can rely on the TCP fallback instead.
+                if (err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
+                    const install = this.suggestPingInstall();
+                    this.adapter.log.warn(
+                        `[ping_host] "ping" executable not found. ICMP check skipped — using TCP fallback. To enable ICMP, install it: ${install.command}`,
+                    );
+                    resolve({
+                        reachable: false,
+                        unavailable: true,
+                        error: 'ping executable not found on this host',
+                        recommendation: `ICMP ping is not available because the "ping" command is not installed on the ioBroker host. Reachability was therefore determined via TCP. To enable real ICMP ping, install it on the host (${install.os}): ${install.command}`,
+                        install_command: install.command,
+                    });
+                    return;
+                }
                 // Number of received replies (Windows "Received = N", Unix "N received").
                 const received = isWin
                     ? Number(out.match(/Received = (\d+)/)?.[1] ?? out.match(/Empfangen = (\d+)/)?.[1] ?? 0)
@@ -1430,6 +1470,84 @@ export default class McpServer {
                 });
             });
         });
+    }
+
+    /**
+     * Locate the `ping` executable. On Linux the adapter process sometimes runs with a minimal `PATH`
+     * (e.g. only `/usr/bin`) while `ping` lives in `/bin` or `/sbin`, which makes a bare `ping` fail with
+     * ENOENT. Probe the common absolute locations and fall back to the bare name otherwise.
+     */
+    private resolvePingBinary(): string {
+        if (process.platform === 'win32') {
+            return 'ping';
+        }
+        for (const candidate of ['/bin/ping', '/usr/bin/ping', '/sbin/ping', '/usr/sbin/ping']) {
+            try {
+                if (fs.existsSync(candidate)) {
+                    return candidate;
+                }
+            } catch {
+                // ignore and try the next candidate
+            }
+        }
+        return 'ping';
+    }
+
+    /**
+     * Build a distro-appropriate command to install the `ping` tool, used in the recommendation when the
+     * binary is missing. The distro is detected from the package manager / release files present on disk.
+     */
+    private suggestPingInstall(): { os: string; command: string } {
+        if (process.platform === 'win32') {
+            return { os: 'Windows', command: 'ping is part of Windows — no installation needed' };
+        }
+        if (process.platform === 'darwin') {
+            return { os: 'macOS', command: 'ping is part of macOS — no installation needed' };
+        }
+        const exists = (p: string): boolean => {
+            try {
+                return fs.existsSync(p);
+            } catch {
+                return false;
+            }
+        };
+        if (exists('/etc/alpine-release') || exists('/sbin/apk')) {
+            // Common on the official ioBroker Docker image (Alpine based).
+            return { os: 'Alpine Linux', command: 'apk add --no-cache iputils-ping' };
+        }
+        if (exists('/etc/debian_version') || exists('/usr/bin/apt-get')) {
+            return { os: 'Debian/Ubuntu', command: 'sudo apt-get update && sudo apt-get install -y iputils-ping' };
+        }
+        if (exists('/usr/bin/dnf')) {
+            return { os: 'Fedora/RHEL', command: 'sudo dnf install -y iputils' };
+        }
+        if (exists('/usr/bin/yum')) {
+            return { os: 'CentOS/RHEL', command: 'sudo yum install -y iputils' };
+        }
+        if (exists('/etc/arch-release') || exists('/usr/bin/pacman')) {
+            return { os: 'Arch Linux', command: 'sudo pacman -S --noconfirm iputils' };
+        }
+        return { os: 'Linux', command: 'install the "iputils-ping" (or "iputils") package via your package manager' };
+    }
+
+    /**
+     * Reachability fallback when ICMP is unavailable/blocked: try a TCP connect to a handful of ports
+     * that are commonly open on routers/devices. The host counts as reachable as soon as one port either
+     * accepts the connection or actively refuses it (a RST also proves the host is up).
+     */
+    private async tcpReachable(host: string, timeout: number): Promise<Record<string, unknown>> {
+        const ports = [80, 443, 53, 22, 7547, 8080];
+        const perPort = Math.min(Math.max(Math.round(timeout / 2), 500), 3000);
+        this.adapter.log.debug(`[ping_host] tcp fallback on ports ${ports.join(',')} (perPort=${perPort}ms)`);
+        for (const port of ports) {
+            const probe = await this.tcpProbe(host, port, perPort);
+            // "open" = accepted; a "connection refused" error proves the host is alive but the port closed.
+            const refused = typeof probe.error === 'string' && /refused|ECONNREFUSED/i.test(probe.error);
+            if (probe.open || refused) {
+                return { reachable: true, port, open: !!probe.open, refused, latency_ms: probe.latency_ms };
+            }
+        }
+        return { reachable: false, tried_ports: ports };
     }
 
     /** TCP connect probe — tests whether a specific service port accepts connections. */
