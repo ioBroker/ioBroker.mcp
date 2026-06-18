@@ -3,19 +3,6 @@
     "name": "mcp",
     "version": "1.0.7",
     "news": {
-      "1.0.7": {
-        "en": "Used `@iobroker/mcp-server` package",
-        "de": "Das Paket `@iobroker/mcp-server` wurde verwendet.",
-        "ru": "Использован пакет `@iobroker/mcp-server`",
-        "pt": "Utilizei o pacote `@iobroker/mcp-server`.",
-        "nl": "Gebruik gemaakt van het `@iobroker/mcp-server` pakket",
-        "fr": "Utilisation du package `@iobroker/mcp-server`",
-        "it": "È stato utilizzato il pacchetto `@iobroker/mcp-server`.",
-        "es": "Se utilizó el paquete `@iobroker/mcp-server`.",
-        "pl": "Użyto pakietu `@iobroker/mcp-server`",
-        "uk": "Використано пакет `@iobroker/mcp-server`",
-        "zh-cn": "使用了 `@iobroker/mcp-server` 包"
-      },
       "1.0.5": {
         "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
         "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",

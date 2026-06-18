@@ -137,7 +137,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.0.7 (2026-06-18)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Used `@iobroker/mcp-server` package
 
 ### 1.0.5 (2026-06-17)
