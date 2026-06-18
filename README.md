@@ -137,6 +137,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Used `@iobroker/mcp-server` package
+
 ### 1.0.5 (2026-06-17)
 * (@GermanBluefox) Added debug for ICMP ping and TCP probe in `ping_host` tool
 

@@ -3,18 +3,12 @@ import { WebServer } from '@iobroker/webserver';
 import express, { type Express } from 'express';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
-import McpServer from './lib/mcp-server';
-import type { McpAdapterConfig } from './lib/types';
-import { createInProcessMcp } from './lib/inProcessClient';
-
-export { McpServer, createInProcessMcp };
-export type { McpAdapterConfig } from './lib/types';
-export type { InProcessMcp, InProcessMcpOptions, InProcessToolInfo, InProcessToolResult } from './lib/inProcessClient';
+import McpServer, { createInProcessMcp, type McpConfig } from '@iobroker/mcp-server';
 
 type Server = HttpServer | HttpsServer;
 
 class Mcp extends Adapter {
-    declare config: McpAdapterConfig;
+    declare config: McpConfig;
     private readonly webServer: {
         mcpServer: McpServer | null;
         server: Server | null;
