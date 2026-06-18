@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "news": {
+      "1.0.6": {
+        "en": "Used `@iobroker/mcp-server` package",
+        "de": "Das Paket `@iobroker/mcp-server` wurde verwendet.",
+        "ru": "Использован пакет `@iobroker/mcp-server`",
+        "pt": "Utilizei o pacote `@iobroker/mcp-server`.",
+        "nl": "Gebruik gemaakt van het `@iobroker/mcp-server` pakket",
+        "fr": "Utilisation du package `@iobroker/mcp-server`",
+        "it": "È stato utilizzato il pacchetto `@iobroker/mcp-server`.",
+        "es": "Se utilizó el paquete `@iobroker/mcp-server`.",
+        "pl": "Użyto pakietu `@iobroker/mcp-server`",
+        "uk": "Використано пакет `@iobroker/mcp-server`",
+        "zh-cn": "使用了 `@iobroker/mcp-server` 包"
+      },
       "1.0.5": {
         "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
         "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Dodano wyszukiwanie w repozytorium i narzędzie ping",
         "uk": "Додано пошук по репозиторію та інструмент ping",
         "zh-cn": "添加了仓库搜索和 ping 工具"
-      },
-      "0.2.5": {
-        "en": "Supported direct import of MCP server",
-        "de": "Unterstützter Direktimport von MCP Server",
-        "ru": "Поддержка прямого импорта MCP-сервера",
-        "pt": "Importação direta suportada do servidor MCP",
-        "nl": "Ondersteunde directe import van MCP-server",
-        "fr": "Prise en charge de l'importation directe du serveur MCP",
-        "it": "Importazione diretta supportata del server MCP",
-        "es": "Importación directa del servidor MCP",
-        "pl": "Obsługiwane bezpośrednie importowanie serwera MCP",
-        "uk": "Підтримує прямий імпорт сервера MCP",
-        "zh-cn": "支持直接导入 MCP 服务器"
       }
     },
     "titleLang": {
