@@ -180,6 +180,8 @@ tools rather than as subscribable resources.)
 * Initial release with basic web server functionality
 *Configurable port, bind address, authentication, and SSL
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 MIT License
