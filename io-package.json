@@ -42,32 +42,6 @@
         "uk": "Додана дебюга для ICMP ping і TCP пробе в `ping host`",
         "zh-cn": "在“ ping host” 工具中为 ICMP ping 和 TCP 探测器添加调试"
       },
-      "1.0.3": {
-        "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
-        "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
-        "ru": "Добавлена отладка для ICMP ping и TCP-зонда в инструменте «ping host»",
-        "pt": "Depuração adicionada para ping ICMP e sonda TCP na ferramenta `ping host`",
-        "nl": "Debug toegevoegd voor ICMP-ping en TCP-sonde in het gereedschap \"Ping host\"",
-        "fr": "Ajout du débogage pour le ping ICMP et la sonde TCP dans l'outil `ping host`",
-        "it": "Aggiunto il debug per ICMP ping e la sonda TCP nello strumento `ping host`",
-        "es": "Añadido debug for ICMP ping and TCP probe in `ping host` tool",
-        "pl": "Dodano debug dla ICMP ping i TCP sonda w 'ping _ host' narzędzie",
-        "uk": "Додана дебюга для ICMP ping і TCP пробе в `ping host`",
-        "zh-cn": "在“ ping host” 工具中为 ICMP ping 和 TCP 探测器添加调试"
-      },
-      "1.0.2": {
-        "en": "Some repo checker errors were fixed",
-        "de": "Einige Repo Checker Fehler wurden behoben",
-        "ru": "Некоторые ошибки проверки РЕПО были исправлены",
-        "pt": "Alguns erros de repo checker foram corrigidos",
-        "nl": "Sommige repo-checker fouten werden opgelost",
-        "fr": "Certaines erreurs de repo checker ont été corrigées",
-        "it": "Alcuni errori repo checker sono stati risolti",
-        "es": "Algunos errores de comprobantes de reposo fueron fijos",
-        "pl": "Niektóre błędy w sprawdzaniu repo zostały naprawione",
-        "uk": "Деякі помилки перевірки репо були виправлені",
-        "zh-cn": "一些Repo 检查器错误已被修正"
-      },
       "1.0.0": {
         "en": "Allowed node 18",
         "de": "Zulässiger Knoten 18",
