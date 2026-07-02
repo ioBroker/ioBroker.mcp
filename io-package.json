@@ -162,7 +162,7 @@
     ]
   },
   "native": {
-    "port": 8093,
+    "port": 8011,
     "bind": "0.0.0.0",
     "auth": false,
     "secure": false,

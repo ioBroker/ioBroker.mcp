@@ -29,7 +29,7 @@
                     "label": "Port",
                     "min": 1,
                     "max": 65535,
-                    "default": 8093,
+                    "default": 8011,
                     "hidden": "!!data.webInstance",
                     "help": "Port on which the web server will listen",
                     "sm": 12,
