@@ -1,0 +1,15 @@
+// TypeScript settings for the test suite. Extends the adapter config but additionally pulls in the
+// Node.js and Mocha global types, which the strict src config deliberately omits.
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "esModuleInterop": true,
+        "types": ["node", "mocha", "@iobroker/types"]
+    },
+    "ts-node": {
+        // Runtime only transpiles; type-checking is done separately via `npm run check`.
+        "transpileOnly": true
+    },
+    "include": ["./**/*.ts"]
+}

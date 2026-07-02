@@ -37,7 +37,9 @@
         "@iobroker/types": "^7.2.2",
         "@tsconfig/node20": "^20.1.9",
         "@types/express": "^5.0.6",
+        "@types/mocha": "^10.0.10",
         "@types/node": "^20.19.43",
+        "ts-node": "^10.9.2",
         "typescript": "^6.0.3"
     },
     "main": "build/main.js",
@@ -50,9 +52,10 @@
     ],
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-        "test": "mocha --exit",
-        "test:package": "mocha test/package.test.js --exit",
-        "test:integration": "mocha test/testAdapter.test.js --exit",
+        "test": "mocha",
+        "test:package": "mocha test/package.test.ts",
+        "test:integration": "mocha test/testAdapter.test.ts",
+        "test:typecheck": "tsc --noEmit -p test/tsconfig.json",
         "lint": "eslint -c eslint.config.mjs",
         "release": "release-script",
         "release-patch": "release-script patch --yes --no-update-lockfile",
