@@ -137,6 +137,10 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
+
 ### 1.0.11 (2026-07-02)
 * (@GermanBluefox) Default port was changed to 8011
 * (@GermanBluefox) Corrected the issue with authentication
