@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "news": {
+      "1.0.11": {
+        "en": "Default port was changed to 8011\nCorrected the issue with authentication",
+        "de": "Der Standardport wurde auf 8011 geändert.\nDas Problem mit der Authentifizierung wurde behoben.",
+        "ru": "Порт по умолчанию был изменен на 8011.\nИсправлена проблема с аутентификацией.",
+        "pt": "A porta padrão foi alterada para 8011.\nProblema com a autenticação corrigido.",
+        "nl": "De standaardpoort is gewijzigd naar 8011.\nHet authenticatieprobleem is opgelost.",
+        "fr": "Le port par défaut a été modifié et est désormais le 8011.\nProblème d'authentification résolu",
+        "it": "La porta predefinita è stata modificata in 8011\nRisolto il problema di autenticazione.",
+        "es": "El puerto predeterminado se cambió a 8011.\nSe solucionó el problema de autenticación.",
+        "pl": "Domyślny port został zmieniony na 8011\nNaprawiono problem z uwierzytelnianiem",
+        "uk": "Порт за замовчуванням змінено на 8011\nВиправлено проблему з автентифікацією",
+        "zh-cn": "默认端口已更改为 8011\n已修复身份验证问题。"
+      },
       "1.0.8": {
         "en": "Used `@iobroker/mcp-server` package",
         "de": "Das Paket `@iobroker/mcp-server` wurde verwendet.",
