@@ -137,8 +137,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.0.10 (2026-07-02)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Default port was changed to 8011
+* (@GermanBluefox) Corrected the issue with authentication
 
 ### 1.0.8 (2026-06-18)
 * (@GermanBluefox) Used `@iobroker/mcp-server` package
