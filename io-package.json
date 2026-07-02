@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "news": {
+      "1.0.9": {
+        "en": "Default port was changed to 8011",
+        "de": "Der Standardport wurde auf 8011 geändert.",
+        "ru": "Порт по умолчанию был изменен на 8011.",
+        "pt": "A porta padrão foi alterada para 8011.",
+        "nl": "De standaardpoort is gewijzigd naar 8011.",
+        "fr": "Le port par défaut a été modifié et est désormais le 8011.",
+        "it": "La porta predefinita è stata modificata in 8011",
+        "es": "El puerto predeterminado se cambió a 8011.",
+        "pl": "Domyślny port został zmieniony na 8011",
+        "uk": "Порт за замовчуванням змінено на 8011",
+        "zh-cn": "默认端口已更改为 8011"
+      },
       "1.0.8": {
         "en": "Used `@iobroker/mcp-server` package",
         "de": "Das Paket `@iobroker/mcp-server` wurde verwendet.",
@@ -80,19 +93,6 @@
         "pl": "Dopuszczalny węzeł 18",
         "uk": "Дозволений вузол 18",
         "zh-cn": "允许的节点 18"
-      },
-      "0.3.1": {
-        "en": "Added repository search and a ping tool",
-        "de": "Repository-Suche und ein Ping-Tool hinzugefügt",
-        "ru": "Добавлен поиск по репозиторию и инструмент ping",
-        "pt": "Adicionada pesquisa no repositório e uma ferramenta de ping",
-        "nl": "Repository-zoekopdracht en een ping-tool toegevoegd",
-        "fr": "Ajout de la recherche dans le dépôt et d'un outil ping",
-        "it": "Aggiunta la ricerca nel repository e uno strumento ping",
-        "es": "Añadida la búsqueda en el repositorio y una herramienta de ping",
-        "pl": "Dodano wyszukiwanie w repozytorium i narzędzie ping",
-        "uk": "Додано пошук по репозиторію та інструмент ping",
-        "zh-cn": "添加了仓库搜索和 ping 工具"
       }
     },
     "titleLang": {
