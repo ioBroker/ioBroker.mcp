@@ -145,6 +145,9 @@
     "certChained": "",
     "defaultUser": "admin",
     "webInstance": "",
+    "oauth": false,
+    "publicUrl": "",
+    "oauthDynamicRegistration": true,
     "allowSetState": true,
     "allowObjectChange": false
   },

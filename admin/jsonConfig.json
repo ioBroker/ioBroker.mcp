@@ -58,6 +58,80 @@
                 }
             }
         },
+        "_oauth": {
+            "type": "panel",
+            "label": "OAuth",
+            "items": {
+                "_oauthIntro": {
+                    "type": "infoBox",
+                    "boxType": "info",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "MCP clients such as Claude Desktop connect through a browser login instead of a token you create by hand. The client never sees the ioBroker password and discovers the server on its own."
+                },
+                "oauth": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "Enable OAuth (browser login)",
+                    "default": false,
+                    "disabled": "!data.webInstance && !data.auth",
+                    "help": "Standalone mode requires 'Enable Authentication'."
+                },
+                "_oauthNeedsAuth": {
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "Enable 'Authentication' first — without it the MCP endpoint is open and OAuth has nothing to protect.",
+                    "hidden": "!!data.webInstance || !!data.auth"
+                },
+                "_oauthExtensionHint": {
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.",
+                    "hidden": "!data.webInstance || !data.oauth"
+                },
+                "_oauthHttpsWarning": {
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "OAuth without HTTPS: remote MCP clients refuse plain http:// and will not be able to connect. Enable SSL, or put this server behind an https reverse proxy and set the public URL.",
+                    "hidden": "!!data.webInstance || !data.auth || !data.oauth || !!data.secure || (data.publicUrl || '').startsWith('https://')"
+                },
+                "publicUrl": {
+                    "type": "text",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "label": "Public URL",
+                    "default": "",
+                    "placeholder": "https://iobroker.example.com",
+                    "hidden": "!data.oauth",
+                    "help": "Externally reachable address of this server, without a path. Required behind a reverse proxy. As a web extension it must match the public URL of the web instance.",
+                    "validator": "!data.publicUrl || /^https?:\\/\\/[^\\s/?#]+$/.test(data.publicUrl.replace(/\\/+$/, ''))",
+                    "validatorErrorText": "Enter an address like https://iobroker.example.com - scheme and host only, no path",
+                    "validatorNoSaveOnError": true
+                },
+                "oauthDynamicRegistration": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "Allow client self-registration",
+                    "default": true,
+                    "hidden": "!!data.webInstance || !data.oauth",
+                    "help": "MCP clients register themselves automatically. With this off, every client has to be registered by hand before it can connect."
+                }
+            }
+        },
         "_permissions": {
             "type": "panel",
             "label": "Permissions",
