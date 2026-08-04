@@ -161,7 +161,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.1.0 (2026-08-04)
 * (@GermanBluefox) Added OAuth: MCP clients can now be connected through a browser login instead of a manually created token
 * (@GermanBluefox) OAuth also works as a web extension, using the host `web` instance as the authorization server (requires OAuth enabled there too)
 * (@GermanBluefox) Updated `@iobroker/mcp-server` and `@iobroker/webserver`
