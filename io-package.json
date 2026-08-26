@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "news": {
+      "1.1.2": {
+        "en": "Node.js 22 is required now\nCorrected OAuth page",
+        "de": "Node.js 22 wird jetzt benötigt.\nKorrigierte OAuth-Seite",
+        "ru": "Теперь требуется Node.js 22.\nИсправлена страница OAuth",
+        "pt": "Agora é necessário o Node.js versão 22.\nPágina OAuth corrigida",
+        "nl": "Node.js versie 22 is nu vereist.\nOAuth-pagina gecorrigeerd",
+        "fr": "Node.js 22 est désormais requis.\nPage OAuth corrigée",
+        "it": "Ora è richiesto Node.js 22\nPagina OAuth corretta",
+        "es": "Ahora se requiere Node.js 22.\nPágina de OAuth corregida",
+        "pl": "Teraz wymagany jest Node.js 22\nSkorygowana strona OAuth",
+        "uk": "Тепер потрібен Node.js 22\nВиправлено сторінку OAuth",
+        "zh-cn": "现在需要 Node.js 22。\n已更正的 OAuth 页面"
+      },
       "1.1.0": {
         "en": "Added OAuth: MCP clients can now be connected through a browser login instead of a manually created token\nOAuth also works as a web extension, using the host `web` instance as the authorization server (requires OAuth enabled there too)\nUpdated `@iobroker/mcp-server` and `@iobroker/webserver`",
         "de": "OAuth hinzugefügt: MCP-Clients können sich jetzt über eine Browseranmeldung anstatt über ein manuell erstelltes Token verbinden.\nOAuth funktioniert auch als Web-Erweiterung, wobei die Host-Instanz `web` als Autorisierungsserver dient (OAuth muss dort ebenfalls aktiviert sein).\nAktualisiert: `@iobroker/mcp-server` und `@iobroker/webserver`",
