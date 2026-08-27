@@ -161,6 +161,10 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
+
 ### 1.1.2 (2026-08-26)
 * (@GermanBluefox) Node.js 22 is required now
 * (@GermanBluefox) Corrected OAuth page
