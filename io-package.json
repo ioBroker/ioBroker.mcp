@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "news": {
+      "1.1.4": {
+        "en": "`read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)",
+        "de": "`read_file` liest große Dateien stückweise: neue optionale Parameter `offset`/`length`, standardmäßig maximal 512 KiB pro Aufruf; das Ergebnis enthält jetzt `size`, `offset`, `length`, `truncated` und `nextOffset` (MCP-Clients lehnen Tool-Ergebnisse über 1 MB ab, ioBroker/ioBroker.mcp #63)",
+        "ru": "`read_file` читает большие файлы по частям: новые дополнительные параметры `offset`/`length`, по умолчанию не более 512 КБ за вызов; теперь результат содержит значения «размер», «смещение», «длина», «усеченный» и «NextOffset» (клиенты MCP отклоняют результаты работы инструментов размером более 1 МБ, IOBroker/IOBroker.mcp #63)",
+        "pt": "`read_file` lê arquivos grandes em blocos: novos parâmetros opcionais de `offset`/`length`, no máximo 512 KiB por chamada por padrão; o resultado agora contém `size`, `offset`, `length` e `nextOffset` (clientes MCP rejeitam resultados acima de 1 MB, IOBroker/IOBroker.mcp #63)",
+        "nl": "`read_file` leest grote bestanden in brokken: nieuwe optionele parameters `offset`/`length`, standaard maximaal 512 KiB per aanroep; het resultaat bevat nu `size`, `offset`, `length`, `truncated` en `NextOffset` (MCP-clients weigeren toolresultaten van meer dan 1 MB, ioBroker/ioBroker.mcp #63)",
+        "fr": "`read_file` lit les gros fichiers par morceaux : nouveaux paramètres optionnels `offset`/`length », au maximum 512 Ko par appel par défaut ; le résultat contient désormais `size`, `offset`, `length ', `truncated` et `NextOffset` (les clients MCP rejettent les résultats des outils supérieurs à 1 Mo, IObroker/IObroker.mcp #63)",
+        "it": "`read_file` legge file di grandi dimensioni in blocchi: nuovi parametri opzionali `offset`/`length`, al massimo 512 KiB per chiamata di default; il risultato ora contiene `size`, `offset`, `length`, `truncated` e `nextOffset` (i client MCP rifiutano i risultati superiori a 1 MB, IOBroker/IOBroker.mcp #63)",
+        "es": "`read_file` lee archivos grandes en fragmentos: nuevos parámetros opcionales de «offset`/`length», como máximo 512 KB por llamada de forma predeterminada; el resultado ahora contiene «size», «offset», «length», «truncated» y «nextOffset» (los clientes MCP rechazan los resultados de las herramientas de más de 1 MB, IOBroker/IOBroker.mcp #63)",
+        "pl": "`read_file` odczytuje duże pliki w kawałkach: nowe opcjonalne parametry `offset`/`ilg`, domyślnie maksymalnie 512 KiB na wywołanie; wynik zawiera teraz `size`, `offset`, `long`, `truncated` i `NextOffset` (klienci MCP odrzucają wyniki narzędzia powyżej 1 MB, ioBroker/iobroker.mcp #63)",
+        "uk": "`read_file` читає великі файли у фрагментах: нові необов'язкові параметри `offset`/`longitud`, за замовчуванням не більше 512 КБ за виклик; результат тепер містить `size`, `offset`, `longitud`, `truncated` та `nextOffset` (клієнти MCP відхиляють результати інструменту вище 1 Мб, ioBroker/ioBroker.mcp #63)",
+        "zh-cn": "`read_file`分块读取大文件：新的可选 `offset`/`length`参数，默认情况下每次调用最多为 512 KiB；结果现在包含 `size`、`offset`、`长度`、`truncated`和`nexOffset`（MCP 客户端拒绝超过 1 MB 的工具结果，iobroker/iobroker.mcp #63）"
+      },
       "1.1.3": {
         "en": "Adapter requires admin >= 7.8.23 now.\nUpdated packages",
         "de": "Adapter benötigt jetzt admin >= 7.8.23.\nNeue Pakete",
@@ -69,19 +82,6 @@
         "zh-cn": "使用了 `@iobroker/mcp-server` 包"
       },
       "1.0.5": {
-        "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
-        "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
-        "ru": "Добавлена отладка для ICMP ping и TCP-зонда в инструменте «ping host»",
-        "pt": "Depuração adicionada para ping ICMP e sonda TCP na ferramenta `ping host`",
-        "nl": "Debug toegevoegd voor ICMP-ping en TCP-sonde in het gereedschap \"Ping host\"",
-        "fr": "Ajout du débogage pour le ping ICMP et la sonde TCP dans l'outil `ping host`",
-        "it": "Aggiunto il debug per ICMP ping e la sonda TCP nello strumento `ping host`",
-        "es": "Añadido debug for ICMP ping and TCP probe in `ping host` tool",
-        "pl": "Dodano debug dla ICMP ping i TCP sonda w 'ping _ host' narzędzie",
-        "uk": "Додана дебюга для ICMP ping і TCP пробе в `ping host`",
-        "zh-cn": "在“ ping host” 工具中为 ICMP ping 和 TCP 探测器添加调试"
-      },
-      "1.0.4": {
         "en": "Added debug for ICMP ping and TCP probe in `ping_host` tool",
         "de": "Debug für ICMP-Ping und TCP-Sonde im `ping host`-Tool hinzugefügt",
         "ru": "Добавлена отладка для ICMP ping и TCP-зонда в инструменте «ping host»",

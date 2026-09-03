@@ -1,4 +1,7 @@
 # Older changes
+## 1.0.8 (2026-06-18)
+* (@GermanBluefox) Used `@iobroker/mcp-server` package
+
 ## 1.0.5 (2026-06-17)
 * (@GermanBluefox) Added debug for ICMP ping and TCP probe in `ping_host` tool
 

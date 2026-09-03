@@ -161,7 +161,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.1.4 (2026-09-03)
 * (@GermanBluefox) `read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)
 
 ### 1.1.3 (2026-09-03)
@@ -180,9 +180,6 @@ tools rather than as subscribable resources.)
 ### 1.0.11 (2026-07-02)
 * (@GermanBluefox) Default port was changed to 8011
 * (@GermanBluefox) Corrected the issue with authentication
-
-### 1.0.8 (2026-06-18)
-* (@GermanBluefox) Used `@iobroker/mcp-server` package
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
