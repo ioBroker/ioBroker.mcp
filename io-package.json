@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "news": {
+      "1.1.3": {
+        "en": "Adapter requires admin >= 7.8.23 now.\nUpdated packages",
+        "de": "Adapter benötigt jetzt admin >= 7.8.23.\nNeue Pakete",
+        "ru": "Теперь для адаптера требуется администратор >= 7.8.23.\nОбновленные пакеты",
+        "pt": "Agora o adaptador exige admin >= 7.8.23.\nPacotes novos",
+        "nl": "Voor de adapter is nu admin >= 7.8.23 vereist.\nBijgewerkte pakketten",
+        "fr": "Adapter nécessite admin >= 7.8.23.\nPackages mis à jour",
+        "it": "Adapter richiede admin >= 7.8.23 ora.\nPacchi nuovi",
+        "es": "El adaptador ahora necesita admin >= 7.8.23\nPaquetes nuevos",
+        "pl": "Adapter wymaga teraz administratora >= 7.8.23.\nZaktualizowane pakiety",
+        "uk": "Адаптер вимагає адміністратора >= 7.8.23 зараз.\nОновлені пакети",
+        "zh-cn": "适配器现在需要管理员 >= 7.8.23。\n更新的软件包"
+      },
       "1.1.2": {
         "en": "Node.js 22 is required now\nCorrected OAuth page",
         "de": "Node.js 22 wird jetzt benötigt.\nKorrigierte OAuth-Seite",
@@ -80,19 +93,6 @@
         "pl": "Dodano debug dla ICMP ping i TCP sonda w 'ping _ host' narzędzie",
         "uk": "Додана дебюга для ICMP ping і TCP пробе в `ping host`",
         "zh-cn": "在“ ping host” 工具中为 ICMP ping 和 TCP 探测器添加调试"
-      },
-      "1.0.0": {
-        "en": "Allowed node 18",
-        "de": "Zulässiger Knoten 18",
-        "ru": "Разрешенный узел 18",
-        "pt": "Nó permitido 18",
-        "nl": "Toegestane node 18",
-        "fr": "Noeud autorisé 18",
-        "it": "Nodo consentito 18",
-        "es": "Nodo 18",
-        "pl": "Dopuszczalny węzeł 18",
-        "uk": "Дозволений вузол 18",
-        "zh-cn": "允许的节点 18"
       }
     },
     "titleLang": {
