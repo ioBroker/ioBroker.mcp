@@ -161,8 +161,11 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) `read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)
+
 ### 1.1.3 (2026-09-03)
-- (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
+* (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
 * (@GermanBluefox) Updated packages
 
 ### 1.1.2 (2026-08-26)
