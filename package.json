@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
-    "@iobroker/webserver": "^3.0.1",
-    "@iobroker/mcp-server": "^1.0.1",
+    "@iobroker/webserver": "^3.0.2",
+    "@iobroker/mcp-server": "^1.0.2",
     "express": "^5.2.1"
   },
   "devDependencies": {
@@ -58,6 +58,8 @@
     "test:typecheck": "tsc --noEmit -p test/tsconfig.json",
     "lint": "eslint -c eslint.config.mjs",
     "release": "release-script",
+    "npm": "npm i",
+    "update-packages": "npx -y npm-check-updates --upgrade",
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",
     "release-major": "release-script major --yes --no-update-lockfile"

@@ -164,6 +164,7 @@ tools rather than as subscribable resources.)
 
 ### **WORK IN PROGRESS**
 - (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
+* (@GermanBluefox) Updated packages
 
 ### 1.1.2 (2026-08-26)
 * (@GermanBluefox) Node.js 22 is required now
