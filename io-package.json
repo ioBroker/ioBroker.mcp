@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "news": {
+      "1.1.7": {
+        "en": "Added instructions for connecting ChatGPT and Claude (via ioBroker Remote or directly)\nAdded IP address selector\nNew option \"Mark setting states as destructive\" (default on): `set_state`/`set_states` can be declared as non-destructive writes",
+        "de": "Anleitung zur Verbindung von ChatGPT und Claude hinzugefügt (per ioBroker Remote oder direkt)\nIP-Adresswähler hinzugefügt\nNeue Option „Als destruktiv markieren“ (Standard an): `set_state`/`set_states` kann als Non-Destructive Writes deklariert werden",
+        "ru": "Добавлены инструкции по подключению ChatGPT и Claude (через IOBroker Remote или напрямую)\nДобавлен селектор IP-адресов\nНовая опция «Отметить настройки как деструктивные» (по умолчанию включена): `set_state`/`set_state` можно объявить неразрушающими записями",
+        "pt": "Mais instruções para conectar ChatGPT e Claude (via IOBroker Remote ou diretamente)\nSeletor de IP adicionado\nNova opção “Marcar estados como destrutivos” (padrão ativada): `set_state`/`set_states` pode ser declarado não destrutivo",
+        "nl": "Instructies toegevoegd om ChatGPT en Claude te verbinden (via ioBroker Remote of rechtstreeks)\nIP-adresselector toegevoegd\nNieuwe optie „Insteltoestanden als destructief markeren” (standaard ingeschakeld): `set_state`/`set_state` kunnen worden gedeclareerd als niet-destructieve schrijfbewerkingen",
+        "fr": "Ajout d'instructions pour connecter ChatGPT à Claude (via IOBroker Remote ou directement)\nSélecteur d'adresse IP ajouté\nNouvelle option « Marquer les états comme destructifs » (activé par défaut) : « set_state`/`set_states » peut être déclaré non destructif",
+        "it": "Aggiunte istruzioni per collegare ChatGPT e Claude (via IOBroker Remote o direttamente)\nAggiunto selettore IP\nNuova opzione «Segna gli stati come distruttivi» (impostazione predefinita): `set_state`/`set_states`",
+        "es": "Se han añadido instrucciones para conectar ChatGPT y Claude (vía ioBroker Remote o directamente)\nAñadido selector de IP\nNueva opción «Marcar estados de ajuste como destructivos» (por defecto): `set_state`/`set_states` se puede declarar como escritura no destructiva",
+        "pl": "Dodano instrukcje dotyczące łączenia ChatGPT i Claude (za pośrednictwem pilota ioBroker lub bezpośrednio)\nDodano selektor adresu IP\nNowa opcja „Oznacz stany ustawień jako destrukcyjne” (domyślnie włączone): `set_state`/`set_state` można zadeklarować jako zapisy nieniszczące",
+        "uk": "Додані інструкції для підключення ChatGPT і Claude (через IObroker Remote або безпосередньо)\nДодано селектор IP-адреси\nНова опція «Позначити налаштування станів як деструктивні» (за замовчуванням увімкнено): `set_state`/`set_state-` можна оголосити як неруйнівні записи",
+        "zh-cn": "添加了连接 ChatGPT 和 Claude 的说明（通过 IOBroker Remote 或直接连接）\n添加了 IP 地址选择器\n新选项 “将设置状态标记为破坏性”（默认开启）：`set_state`/`set_states`可以声明为非破坏性写入"
+      },
       "1.1.4": {
         "en": "`read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)",
         "de": "`read_file` liest große Dateien stückweise: neue optionale Parameter `offset`/`length`, standardmäßig maximal 512 KiB pro Aufruf; das Ergebnis enthält jetzt `size`, `offset`, `length`, `truncated` und `nextOffset` (MCP-Clients lehnen Tool-Ergebnisse über 1 MB ab, ioBroker/ioBroker.mcp #63)",
