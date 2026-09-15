@@ -164,7 +164,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.1.5 (2026-09-15)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Added IP address selector
 * (@GermanBluefox) New option "Mark setting states as destructive" (default on): `set_state`/`set_states` can be declared as non-destructive writes
 
