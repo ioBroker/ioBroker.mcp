@@ -3,32 +3,6 @@
     "name": "mcp",
     "version": "1.1.6",
     "news": {
-      "1.1.6": {
-        "en": "Added IP address selector\nNew option \"Mark setting states as destructive\" (default on): `set_state`/`set_states` can be declared as non-destructive writes",
-        "de": "IP-Adresswähler hinzugefügt\nNeue Option „Als destruktiv markieren“ (Standard an): `set_state`/`set_states` kann als Non-Destructive Writes deklariert werden",
-        "ru": "Добавлен селектор IP-адресов\nНовая опция «Отметить настройки как деструктивные» (по умолчанию включена): `set_state`/`set_state` можно объявить неразрушающими записями",
-        "pt": "Seletor de IP adicionado\nNova opção “Marcar estados como destrutivos” (padrão ativada): `set_state`/`set_states` pode ser declarado não destrutivo",
-        "nl": "IP-adresselector toegevoegd\nNieuwe optie „Insteltoestanden als destructief markeren” (standaard ingeschakeld): `set_state`/`set_state` kunnen worden gedeclareerd als niet-destructieve schrijfbewerkingen",
-        "fr": "Sélecteur d'adresse IP ajouté\nNouvelle option « Marquer les états comme destructifs » (activé par défaut) : « set_state`/`set_states » peut être déclaré non destructif",
-        "it": "Aggiunto selettore IP\nNuova opzione «Segna gli stati come distruttivi» (impostazione predefinita): `set_state`/`set_states`",
-        "es": "Añadido selector de IP\nNueva opción «Marcar estados de ajuste como destructivos» (por defecto): `set_state`/`set_states` se puede declarar como escritura no destructiva",
-        "pl": "Dodano selektor adresu IP\nNowa opcja „Oznacz stany ustawień jako destrukcyjne” (domyślnie włączone): `set_state`/`set_state` można zadeklarować jako zapisy nieniszczące",
-        "uk": "Додано селектор IP-адреси\nНова опція «Позначити налаштування станів як деструктивні» (за замовчуванням увімкнено): `set_state`/`set_state-` можна оголосити як неруйнівні записи",
-        "zh-cn": "添加了 IP 地址选择器\n新选项 “将设置状态标记为破坏性”（默认开启）：`set_state`/`set_states`可以声明为非破坏性写入"
-      },
-      "1.1.5": {
-        "en": "Added IP address selector\nNew option \"Mark setting states as destructive\" (default on): `set_state`/`set_states` can be declared as non-destructive writes",
-        "de": "IP-Adresswähler hinzugefügt\nNeue Option „Als destruktiv markieren“ (Standard an): `set_state`/`set_states` kann als Non-Destructive Writes deklariert werden",
-        "ru": "Добавлен селектор IP-адресов\nНовая опция «Отметить настройки как деструктивные» (по умолчанию включена): `set_state`/`set_state` можно объявить неразрушающими записями",
-        "pt": "Seletor de IP adicionado\nNova opção “Marcar estados como destrutivos” (padrão ativada): `set_state`/`set_states` pode ser declarado não destrutivo",
-        "nl": "IP-adresselector toegevoegd\nNieuwe optie „Insteltoestanden als destructief markeren” (standaard ingeschakeld): `set_state`/`set_state` kunnen worden gedeclareerd als niet-destructieve schrijfbewerkingen",
-        "fr": "Sélecteur d'adresse IP ajouté\nNouvelle option « Marquer les états comme destructifs » (activé par défaut) : « set_state`/`set_states » peut être déclaré non destructif",
-        "it": "Aggiunto selettore IP\nNuova opzione «Segna gli stati come distruttivi» (impostazione predefinita): `set_state`/`set_states`",
-        "es": "Añadido selector de IP\nNueva opción «Marcar estados de ajuste como destructivos» (por defecto): `set_state`/`set_states` se puede declarar como escritura no destructiva",
-        "pl": "Dodano selektor adresu IP\nNowa opcja „Oznacz stany ustawień jako destrukcyjne” (domyślnie włączone): `set_state`/`set_state` można zadeklarować jako zapisy nieniszczące",
-        "uk": "Додано селектор IP-адреси\nНова опція «Позначити налаштування станів як деструктивні» (за замовчуванням увімкнено): `set_state`/`set_state-` можна оголосити як неруйнівні записи",
-        "zh-cn": "添加了 IP 地址选择器\n新选项 “将设置状态标记为破坏性”（默认开启）：`set_state`/`set_states`可以声明为非破坏性写入"
-      },
       "1.1.4": {
         "en": "`read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)",
         "de": "`read_file` liest große Dateien stückweise: neue optionale Parameter `offset`/`length`, standardmäßig maximal 512 KiB pro Aufruf; das Ergebnis enthält jetzt `size`, `offset`, `length`, `truncated` und `nextOffset` (MCP-Clients lehnen Tool-Ergebnisse über 1 MB ab, ioBroker/ioBroker.mcp #63)",

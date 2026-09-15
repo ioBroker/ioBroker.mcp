@@ -17,7 +17,7 @@
                     "newLine": true,
                     "type": "ip",
                     "label": "Bind Address",
-                    "listenOnAllInterfaces": true,
+                    "listenOnAllPorts": true,
                     "default": "0.0.0.0",
                     "hidden": "!!data.webInstance",
                     "help": "IP address to bind the server to (0.0.0.0 for all interfaces)",

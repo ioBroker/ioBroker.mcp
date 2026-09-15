@@ -255,8 +255,6 @@ tools rather than as subscribable resources.)
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Added instructions for connecting ChatGPT and Claude (via ioBroker Remote or directly)
-
-### 1.1.6 (2026-09-15)
 * (@GermanBluefox) Added IP address selector
 * (@GermanBluefox) New option "Mark setting states as destructive" (default on): `set_state`/`set_states` can be declared as non-destructive writes
 
