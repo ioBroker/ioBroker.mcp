@@ -1,4 +1,8 @@
 # Older changes
+## 1.0.11 (2026-07-02)
+* (@GermanBluefox) Default port was changed to 8011
+* (@GermanBluefox) Corrected the issue with authentication
+
 ## 1.0.8 (2026-06-18)
 * (@GermanBluefox) Used `@iobroker/mcp-server` package
 

@@ -164,7 +164,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.1.5 (2026-09-15)
 * (@GermanBluefox) Added IP address selector
 * (@GermanBluefox) New option "Mark setting states as destructive" (default on): `set_state`/`set_states` can be declared as non-destructive writes
 
@@ -183,10 +183,6 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) Added OAuth: MCP clients can now be connected through a browser login instead of a manually created token
 * (@GermanBluefox) OAuth also works as a web extension, using the host `web` instance as the authorization server (requires OAuth enabled there too)
 * (@GermanBluefox) Updated `@iobroker/mcp-server` and `@iobroker/webserver`
-
-### 1.0.11 (2026-07-02)
-* (@GermanBluefox) Default port was changed to 8011
-* (@GermanBluefox) Corrected the issue with authentication
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
