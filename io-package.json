@@ -175,6 +175,7 @@
     "publicUrl": "",
     "oauthDynamicRegistration": true,
     "allowSetState": true,
+    "setStateDestructive": true,
     "allowObjectChange": false
   },
   "objects": [],

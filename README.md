@@ -75,6 +75,9 @@ rejected. Clients can drop their tokens again via `POST /oauth/revoke`.
 ### Permissions
 - **Allow setting states**: Allow MCP clients to write state values (the `set_state` and `set_states` tools).
   Default: **on**.
+- **Mark setting states as destructive**: Declare `set_state` and `set_states` with `destructiveHint: true`, so MCP
+  clients can warn before a state is written. Default: **on**. When off, both tools are declared as non-destructive
+  writes (`readOnlyHint` stays `false`); whether a client still asks for confirmation then depends on the client.
 - **Allow object/file changes**: Allow MCP clients to create/modify/delete objects and files (the `set_object`,
   `delete_object`, `create_state`, `create_scene`, `write_file`, `delete_file`, `rename_file` and `mkdir`
   tools). Default: **off**. When off, these tools are not exposed at all.
@@ -161,6 +164,10 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added IP address selector
+* (@GermanBluefox) New option "Mark setting states as destructive" (default on): `set_state`/`set_states` can be declared as non-destructive writes
+
 ### 1.1.4 (2026-09-03)
 * (@GermanBluefox) `read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)
 

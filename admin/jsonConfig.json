@@ -15,8 +15,9 @@
                 },
                 "bind": {
                     "newLine": true,
-                    "type": "text",
+                    "type": "ip",
                     "label": "Bind Address",
+                    "listenOnAllInterfaces": true,
                     "default": "0.0.0.0",
                     "hidden": "!!data.webInstance",
                     "help": "IP address to bind the server to (0.0.0.0 for all interfaces)",
@@ -141,6 +142,13 @@
                     "label": "Allow setting states",
                     "default": true,
                     "help": "Allow MCP clients to write state values (set_state tool)"
+                },
+                "setStateDestructive": {
+                    "type": "checkbox",
+                    "label": "Mark setting states as destructive",
+                    "default": true,
+                    "hidden": "!data.allowSetState",
+                    "help": "Declare set_state/set_states as destructive (destructiveHint), so MCP clients can warn before writing. Whether a client still asks for confirmation when this is off depends on the client."
                 },
                 "allowObjectChange": {
                     "type": "checkbox",
