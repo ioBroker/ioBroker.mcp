@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "news": {
+      "1.1.6": {
+        "en": "Added IP address selector\nNew option \"Mark setting states as destructive\" (default on): `set_state`/`set_states` can be declared as non-destructive writes",
+        "de": "IP-Adresswähler hinzugefügt\nNeue Option „Als destruktiv markieren“ (Standard an): `set_state`/`set_states` kann als Non-Destructive Writes deklariert werden",
+        "ru": "Добавлен селектор IP-адресов\nНовая опция «Отметить настройки как деструктивные» (по умолчанию включена): `set_state`/`set_state` можно объявить неразрушающими записями",
+        "pt": "Seletor de IP adicionado\nNova opção “Marcar estados como destrutivos” (padrão ativada): `set_state`/`set_states` pode ser declarado não destrutivo",
+        "nl": "IP-adresselector toegevoegd\nNieuwe optie „Insteltoestanden als destructief markeren” (standaard ingeschakeld): `set_state`/`set_state` kunnen worden gedeclareerd als niet-destructieve schrijfbewerkingen",
+        "fr": "Sélecteur d'adresse IP ajouté\nNouvelle option « Marquer les états comme destructifs » (activé par défaut) : « set_state`/`set_states » peut être déclaré non destructif",
+        "it": "Aggiunto selettore IP\nNuova opzione «Segna gli stati come distruttivi» (impostazione predefinita): `set_state`/`set_states`",
+        "es": "Añadido selector de IP\nNueva opción «Marcar estados de ajuste como destructivos» (por defecto): `set_state`/`set_states` se puede declarar como escritura no destructiva",
+        "pl": "Dodano selektor adresu IP\nNowa opcja „Oznacz stany ustawień jako destrukcyjne” (domyślnie włączone): `set_state`/`set_state` można zadeklarować jako zapisy nieniszczące",
+        "uk": "Додано селектор IP-адреси\nНова опція «Позначити налаштування станів як деструктивні» (за замовчуванням увімкнено): `set_state`/`set_state-` можна оголосити як неруйнівні записи",
+        "zh-cn": "添加了 IP 地址选择器\n新选项 “将设置状态标记为破坏性”（默认开启）：`set_state`/`set_states`可以声明为非破坏性写入"
+      },
       "1.1.5": {
         "en": "Added IP address selector\nNew option \"Mark setting states as destructive\" (default on): `set_state`/`set_states` can be declared as non-destructive writes",
         "de": "IP-Adresswähler hinzugefügt\nNeue Option „Als destruktiv markieren“ (Standard an): `set_state`/`set_states` kann als Non-Destructive Writes deklariert werden",
@@ -80,19 +93,6 @@
         "pl": "Domyślny port został zmieniony na 8011\nNaprawiono problem z uwierzytelnianiem",
         "uk": "Порт за замовчуванням змінено на 8011\nВиправлено проблему з автентифікацією",
         "zh-cn": "默认端口已更改为 8011\n已修复身份验证问题。"
-      },
-      "1.0.8": {
-        "en": "Used `@iobroker/mcp-server` package",
-        "de": "Das Paket `@iobroker/mcp-server` wurde verwendet.",
-        "ru": "Использован пакет `@iobroker/mcp-server`",
-        "pt": "Utilizou-se o pacote `@iobroker/mcp-server`.",
-        "nl": "Gebruik gemaakt van het `@iobroker/mcp-server` pakket",
-        "fr": "Utilisation du package `@iobroker/mcp-server`",
-        "it": "È stato utilizzato il pacchetto `@iobroker/mcp-server`.",
-        "es": "Se utilizó el paquete `@iobroker/mcp-server`.",
-        "pl": "Użyto pakietu `@iobroker/mcp-server`",
-        "uk": "Використано пакет `@iobroker/mcp-server`",
-        "zh-cn": "使用了 `@iobroker/mcp-server` 包"
       }
     },
     "titleLang": {
