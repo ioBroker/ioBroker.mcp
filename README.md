@@ -253,7 +253,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.2.1 (2026-10-19)
 * (@Garfonso) Fixed: with "Allow object changes" enabled, MCP clients received no tools at all in some installations (ioBroker/ioBroker.mcp#70)
 * (@GermanBluefox) `set_states` checks the write permission of all states first and writes nothing if one of them may not be written by the Default User (ioBroker/ioBroker.mcp#71)
 * (@GermanBluefox) Completed the translations of the OAuth settings (ioBroker/ioBroker.mcp#73)
