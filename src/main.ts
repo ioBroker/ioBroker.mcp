@@ -88,6 +88,7 @@ class Mcp extends Adapter {
                     app: this.webServer.app,
                     adapter: this,
                     secure: this.config.secure,
+                    http2: false,
                 });
 
                 this.webServer.server = await webserver.init();
