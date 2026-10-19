@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
-    "@iobroker/webserver": "^3.3.1",
     "@iobroker/mcp-server": "^1.2.3",
+    "@iobroker/webserver": "^3.3.1",
     "express": "^5.3.0"
   },
   "devDependencies": {
@@ -34,7 +34,7 @@
     "@alcalzone/release-script-plugin-license": "^5.2.2",
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/testing": "^6.3.1",
-    "@iobroker/types": "^8.0.0-alpha.8-20261016-fbcb96b80",
+    "@iobroker/types": "^7.2.5",
     "@tsconfig/node22": "^22.0.6",
     "@types/express": "^5.0.6",
     "@types/node": "^22.20.5",
