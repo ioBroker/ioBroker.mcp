@@ -137,11 +137,19 @@
             "type": "panel",
             "label": "Permissions",
             "items": {
+                "_headerStates": {
+                    "type": "header",
+                    "text": "States and objects",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
                 "allowSetState": {
                     "type": "checkbox",
+                    "newLine": true,
                     "label": "Allow setting states",
                     "default": true,
-                    "help": "Allow MCP clients to write state values (set_state tool)"
+                    "help": "Allow MCP clients to write state values and to acknowledge system notifications (set_state, set_states, clear_notifications tools)"
                 },
                 "setStateDestructive": {
                     "type": "checkbox",
@@ -152,9 +160,78 @@
                 },
                 "allowObjectChange": {
                     "type": "checkbox",
+                    "newLine": true,
                     "label": "Allow object/file changes",
                     "default": false,
-                    "help": "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default."
+                    "help": "Allow MCP clients to create/modify objects, aliases and scenes and to write files (set_object, create_alias, write_file tools). Off by default."
+                },
+                "_headerSystem": {
+                    "type": "header",
+                    "text": "System",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
+                "allowInstanceControl": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Allow controlling instances",
+                    "default": false,
+                    "help": "Start, stop and restart adapter instances and change their log level (start_instance, stop_instance, restart_instance, set_log_level tools). Off by default."
+                },
+                "allowAdapterManagement": {
+                    "type": "checkbox",
+                    "label": "Allow managing adapters",
+                    "default": false,
+                    "help": "Add and delete instances and upgrade adapters from the repository (add_instance, delete_instance, upgrade_adapter tools). Off by default."
+                },
+                "allowScriptChange": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Allow changing scripts",
+                    "default": false,
+                    "help": "Create, change, start/stop and delete scripts of the javascript adapter and run code once (set_script, enable_script, delete_script, run_script tools). Reading scripts is always allowed. Off by default."
+                },
+                "_allowScriptChangeWarning": {
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "Scripts run with full access to ioBroker. Only enable this for MCP clients you trust.",
+                    "hidden": "!data.allowScriptChange"
+                },
+                "sendToAllowlist": {
+                    "type": "text",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "label": "Allow messages to adapters",
+                    "default": "",
+                    "placeholder": "telegram, backitup.0",
+                    "help": "Adapters or instances the send_to tool may send messages to, separated by commas; * allows all. Empty: no send_to tool."
+                },
+                "_headerSafety": {
+                    "type": "header",
+                    "text": "Safety",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
+                "confirmDangerous": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "sm": 12,
+                    "label": "Ask for confirmation before dangerous actions",
+                    "default": true,
+                    "help": "MCP clients that support it (elicitation) ask the user before an object or instance is deleted, an instance stopped, an adapter upgraded or installed, a script saved or run, or a message sent. Other clients rely on their own confirmation."
+                },
+                "_headerDevelopers": {
+                    "type": "header",
+                    "text": "Developers",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
                 },
                 "allowPackageInstall": {
                     "type": "checkbox",
