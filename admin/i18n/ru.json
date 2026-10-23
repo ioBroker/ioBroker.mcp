@@ -2,6 +2,7 @@
   "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default.": "Разрешить клиентам MCP создавать/изменять объекты и записывать файлы (инструменты set_object, write_file). По умолчанию отключено.",
   "Allow MCP clients to write state values (set_state tool)": "Разрешить клиентам MCP записывать значения состояния (инструмент set_state).",
   "Allow client self-registration": "Разрешить самостоятельную регистрацию клиентов",
+  "Allow installing packages (developers only)": "Разрешить установку пакетов (только для разработчиков)",
   "Allow object/file changes": "Разрешить изменение объектов/файлов",
   "Allow setting states": "Разрешить установку состояний",
   "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.": "В режиме веб-расширения вход обеспечивает выбранный экземпляр web: там тоже должен быть включён OAuth ('Allow third-party clients'), иначе MCP-клиенты получат лишь перенаправление на страницу входа, которой они не могут воспользоваться.",
@@ -26,6 +27,7 @@
   "Mark setting states as destructive": "Помечать установку состояний как деструктивную",
   "OAuth": "OAuth",
   "OAuth without HTTPS: remote MCP clients refuse plain http:// and will not be able to connect. Enable SSL, or put this server behind an https reverse proxy and set the public URL.": "OAuth без HTTPS: удалённые MCP-клиенты отклоняют обычный http:// и не смогут подключиться. Включите SSL или разместите сервер за обратным прокси с https и укажите публичный URL.",
+  "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default.": "Актуально только для разработчиков адаптеров: MCP-клиенты могут устанавливать пакеты адаптеров (npm, GitHub, URL или файл .tgz) на хост ioBroker (инструмент install_package). По умолчанию выключено.",
   "Path to the chained certificate file (optional)": "Путь к файлу цепочки сертификатов (необязательно)",
   "Path to the private key file": "Путь к файлу закрытого ключа",
   "Path to the public certificate file": "Путь к файлу открытого сертификата",
@@ -38,5 +40,6 @@
   "SSL/TLS Configuration": "Настройка SSL/TLS",
   "Server Configuration": "Конфигурация сервера",
   "Standalone mode requires 'Enable Authentication'.": "Для автономного режима требуется 'Включить аутентификацию'.",
+  "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "Эта опция предназначена для разработки адаптеров на тестовой системе, например чтобы ИИ-агент мог установить только что упакованный .tgz. Установленный пакет работает на хосте с полными правами. Никогда не включайте её на рабочей системе или для клиентов, которым вы не доверяете полностью.",
   "https://iobroker.example.com": "https://iobroker.example.com"
 }

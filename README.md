@@ -81,6 +81,12 @@ rejected. Clients can drop their tokens again via `POST /oauth/revoke`.
 - **Allow object/file changes**: Allow MCP clients to create/modify/delete objects and files (the `set_object`,
   `delete_object`, `create_state`, `create_scene`, `write_file`, `delete_file`, `rename_file` and `mkdir`
   tools). Default: **off**. When off, these tools are not exposed at all.
+- **Allow installing packages (developers only)** (`allowPackageInstall`): Offer the `install_package` tool, which
+  installs an adapter package on an ioBroker host - from npm, GitHub, a URL or a `.tgz` file - exactly like
+  *Install from custom URL / file* in ioBroker.admin (`iobroker url ...`). Default: **off**. This option is only
+  relevant for adapter developers, e.g. to let an AI agent build an adapter, pack it with `npm pack` and install the
+  `.tgz` on a test system. An installed package runs with full rights on the host, so never enable it on a
+  productive system or for clients you do not fully trust.
 
 ### SSL/TLS Configuration
 - **Enable HTTPS**: Enable HTTPS/SSL for secure connections
@@ -175,6 +181,7 @@ The menu names are taken from the help pages of
 
 - Set a **Default User** with only the rights the AI should have. Every tool runs with its permissions.
 - Leave **Allow object/file changes** off unless you need it.
+- Leave **Allow installing packages** off. It is only meant for adapter developers on test systems.
 - Leave **Mark setting states as destructive** on, so the clients ask before they switch something.
 
 ## MCP Endpoint
@@ -217,6 +224,7 @@ state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 | `delete_file`               | Delete a file from an adapter file storage — requires *Allow object/file changes*                                                                                                                                                                    |
 | `rename_file`               | Rename/move a file within the same adapter file storage — requires *Allow object/file changes*                                                                                                                                                       |
 | `mkdir`                     | Create a directory in an adapter file storage — requires *Allow object/file changes*                                                                                                                                                                 |
+| `install_package`           | Install an adapter package (npm, GitHub, URL, `.tgz` from the file storage or as base64) on a host and restart its enabled instances — requires *Allow installing packages*, developers only                                                         |
 
 All object/state access runs with the permissions of the configured **Default User**. The write tools are only
 registered when their respective permission option is enabled.
@@ -253,6 +261,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added the option "Allow installing packages" (off by default, only for developers): MCP clients can install an adapter package from npm, GitHub, a URL or a `.tgz` file
+
 ### 1.2.1 (2026-10-19)
 * (@Garfonso) Fixed: with "Allow object changes" enabled, MCP clients received no tools at all in some installations (ioBroker/ioBroker.mcp#70)
 * (@GermanBluefox) `set_states` checks the write permission of all states first and writes nothing if one of them may not be written by the Default User (ioBroker/ioBroker.mcp#71)

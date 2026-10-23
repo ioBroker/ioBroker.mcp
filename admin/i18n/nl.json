@@ -2,6 +2,7 @@
   "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default.": "Sta MCP-clients toe om objecten te maken/wijzigen en bestanden te schrijven (set_object, write_file tools). Standaard uitgeschakeld.",
   "Allow MCP clients to write state values (set_state tool)": "Sta MCP-clients toe om statuswaarden te schrijven (set_state tool).",
   "Allow client self-registration": "Zelfregistratie van clients toestaan",
+  "Allow installing packages (developers only)": "Installeren van pakketten toestaan (alleen voor ontwikkelaars)",
   "Allow object/file changes": "Object-/bestandswijzigingen toestaan",
   "Allow setting states": "Sta het instellen van staten toestaan",
   "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.": "Als webextensie verzorgt de gekozen web-instantie de aanmelding: OAuth moet daar ook ingeschakeld zijn ('Allow third-party clients'), anders krijgen MCP-clients alleen een doorverwijzing naar de inlogpagina, waar ze niets mee kunnen.",
@@ -26,6 +27,7 @@
   "Mark setting states as destructive": "Het instellen van statussen als destructief markeren",
   "OAuth": "OAuth",
   "OAuth without HTTPS: remote MCP clients refuse plain http:// and will not be able to connect. Enable SSL, or put this server behind an https reverse proxy and set the public URL.": "OAuth zonder HTTPS: externe MCP-clients weigeren gewoon http:// en kunnen geen verbinding maken. Schakel SSL in, of plaats deze server achter een https reverse proxy en stel de publieke URL in.",
+  "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default.": "Alleen relevant voor adapterontwikkelaars: MCP-clients mogen adapterpakketten (npm, GitHub, URL of .tgz-bestand) op een ioBroker-host installeren (install_package-tool). Standaard uit.",
   "Path to the chained certificate file (optional)": "Pad naar het certificaatbestand in de certificaatketen (optioneel)",
   "Path to the private key file": "Pad naar het bestand met de privésleutel",
   "Path to the public certificate file": "Pad naar het openbare certificaatbestand",
@@ -38,5 +40,6 @@
   "SSL/TLS Configuration": "SSL/TLS-configuratie",
   "Server Configuration": "Serverconfiguratie",
   "Standalone mode requires 'Enable Authentication'.": "Standalone-modus vereist 'Authenticatie inschakelen'.",
+  "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "Deze optie is bedoeld voor het ontwikkelen van adapters op een testsysteem, bijvoorbeeld om een AI-agent een vers verpakte .tgz te laten installeren. Een geïnstalleerd pakket draait met volledige rechten op de host. Schakel deze nooit in op een productiesysteem of voor clients die u niet volledig vertrouwt.",
   "https://iobroker.example.com": "https://iobroker.example.com"
 }

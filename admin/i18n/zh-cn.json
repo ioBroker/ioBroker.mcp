@@ -2,6 +2,7 @@
   "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default.": "允许 MCP 客户端创建/修改对象和写入文件（set_object、write_file 工具）。默认关闭。",
   "Allow MCP clients to write state values (set_state tool)": "允许 MCP 客户端写入状态值（set_state 工具）",
   "Allow client self-registration": "允许客户端自行注册",
+  "Allow installing packages (developers only)": "允许安装软件包（仅限开发者）",
   "Allow object/file changes": "允许对象/文件更改",
   "Allow setting states": "允许设置状态",
   "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.": "作为 Web 扩展运行时，由所选的 web 实例提供登录：那里也必须启用 OAuth（'Allow third-party clients'），否则 MCP 客户端只会收到一个它们无法使用的登录页面重定向。",
@@ -26,6 +27,7 @@
   "Mark setting states as destructive": "将设置状态标记为破坏性操作",
   "OAuth": "OAuth",
   "OAuth without HTTPS: remote MCP clients refuse plain http:// and will not be able to connect. Enable SSL, or put this server behind an https reverse proxy and set the public URL.": "未使用 HTTPS 的 OAuth：远程 MCP 客户端会拒绝普通的 http://，因此无法连接。请启用 SSL，或将此服务器置于 https 反向代理之后并设置公共 URL。",
+  "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default.": "仅与适配器开发者相关：MCP 客户端可以在 ioBroker 主机上安装适配器软件包（npm、GitHub、URL 或 .tgz 文件）（install_package 工具）。默认关闭。",
   "Path to the chained certificate file (optional)": "链式证书文件的路径（可选）",
   "Path to the private key file": "私钥文件的路径",
   "Path to the public certificate file": "公钥证书文件的路径",
@@ -38,5 +40,6 @@
   "SSL/TLS Configuration": "SSL/TLS 配置",
   "Server Configuration": "服务器配置",
   "Standalone mode requires 'Enable Authentication'.": "独立模式需要'启用身份验证'。",
+  "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "此选项用于在测试系统上开发适配器，例如让 AI 代理安装刚打包的 .tgz。已安装的软件包在主机上以完全权限运行。切勿在生产系统上或为不完全信任的客户端启用此选项。",
   "https://iobroker.example.com": "https://iobroker.example.com"
 }

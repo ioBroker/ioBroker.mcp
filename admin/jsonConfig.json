@@ -155,6 +155,21 @@
                     "label": "Allow object/file changes",
                     "default": false,
                     "help": "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default."
+                },
+                "allowPackageInstall": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Allow installing packages (developers only)",
+                    "default": false,
+                    "help": "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default."
+                },
+                "_allowPackageInstallWarning": {
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.",
+                    "hidden": "!data.allowPackageInstall"
                 }
             }
         },

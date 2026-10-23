@@ -145,6 +145,7 @@
     "mode": "daemon",
     "type": "utility",
     "compact": true,
+    "messagebox": true,
     "connectionType": "local",
     "dataSource": "push",
     "adminUI": {
@@ -176,7 +177,8 @@
     "oauthDynamicRegistration": true,
     "allowSetState": true,
     "setStateDestructive": true,
-    "allowObjectChange": false
+    "allowObjectChange": false,
+    "allowPackageInstall": false
   },
   "objects": [],
   "instanceObjects": [

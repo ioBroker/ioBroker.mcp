@@ -2,6 +2,7 @@
   "Allow MCP clients to create/modify objects and write files (set_object, write_file tools). Off by default.": "MCP-Clients das Anlegen/Ändern von Objekten und das Schreiben von Dateien erlauben (set_object-, write_file-Tools). Standardmäßig aus.",
   "Allow MCP clients to write state values (set_state tool)": "MCP-Clients das Schreiben von Zustandswerten erlauben (set_state-Tool)",
   "Allow client self-registration": "Selbstregistrierung von Clients erlauben",
+  "Allow installing packages (developers only)": "Installieren von Paketen erlauben (nur für Entwickler)",
   "Allow object/file changes": "Objekt-/Dateiänderungen erlauben",
   "Allow setting states": "Setzen von Zuständen erlauben",
   "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.": "Als Web-Erweiterung stellt die gewählte web-Instanz die Anmeldung bereit: Dort muss OAuth ebenfalls aktiviert sein (\"Drittanbieter-Clients erlauben\"), sonst erhalten MCP-Clients nur eine Weiterleitung auf die Login-Seite, mit der sie nichts anfangen können.",
@@ -26,6 +27,7 @@
   "Mark setting states as destructive": "Setzen von Zuständen als destruktiv kennzeichnen",
   "OAuth": "OAuth",
   "OAuth without HTTPS: remote MCP clients refuse plain http:// and will not be able to connect. Enable SSL, or put this server behind an https reverse proxy and set the public URL.": "OAuth ohne HTTPS: Entfernte MCP-Clients verweigern reines http:// und können sich nicht verbinden. Aktiviere SSL oder betreibe den Server hinter einem https-Reverse-Proxy und setze die öffentliche URL.",
+  "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default.": "Nur für Adapter-Entwickler relevant: MCP-Clients dürfen Adapter-Pakete (npm, GitHub, URL oder .tgz-Datei) auf einem ioBroker-Host installieren (install_package-Tool). Standardmäßig aus.",
   "Path to the chained certificate file (optional)": "Pfad zur Datei der Zertifikatskette (optional)",
   "Path to the private key file": "Pfad zur Datei des privaten Schlüssels",
   "Path to the public certificate file": "Pfad zur Datei des öffentlichen Zertifikats",
@@ -38,5 +40,6 @@
   "SSL/TLS Configuration": "SSL/TLS-Konfiguration",
   "Server Configuration": "Server-Konfiguration",
   "Standalone mode requires 'Enable Authentication'.": "Im Standalone-Betrieb ist \"Authentifizierung aktivieren\" erforderlich.",
+  "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "Diese Option ist für die Adapter-Entwicklung auf einem Testsystem gedacht, z. B. damit ein KI-Agent ein frisch gepacktes .tgz installieren kann. Ein installiertes Paket läuft mit vollen Rechten auf dem Host. Niemals auf einem produktiven System oder für Clients aktivieren, denen Sie nicht vollständig vertrauen.",
   "https://iobroker.example.com": "https://iobroker.example.com"
 }
