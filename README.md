@@ -318,7 +318,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.3.0 (2026-10-23)
 * (@GermanBluefox) Added the option "Allow installing packages" (off by default, only for developers): MCP clients can install an adapter package from npm, GitHub, a URL or a `.tgz` file
 * (@GermanBluefox) Added options to control instances, manage adapters, change scripts and send messages to adapters (all off by default) and to ask for a confirmation before dangerous actions
 * (@GermanBluefox) Fixed: as a web extension the outdated built-in MCP server was loaded instead of `@iobroker/mcp-server`
@@ -339,10 +339,6 @@ tools rather than as subscribable resources.)
 ### 1.1.3 (2026-09-03)
 * (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
 * (@GermanBluefox) Updated packages
-
-### 1.1.2 (2026-08-26)
-* (@GermanBluefox) Node.js 22 is required now
-* (@GermanBluefox) Corrected OAuth page
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

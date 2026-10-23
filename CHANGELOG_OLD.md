@@ -1,4 +1,8 @@
 # Older changes
+## 1.1.2 (2026-08-26)
+* (@GermanBluefox) Node.js 22 is required now
+* (@GermanBluefox) Corrected OAuth page
+
 ## 1.1.0 (2026-08-04)
 * (@GermanBluefox) Added OAuth: MCP clients can now be connected through a browser login instead of a manually created token
 * (@GermanBluefox) OAuth also works as a web extension, using the host `web` instance as the authorization server (requires OAuth enabled there too)
