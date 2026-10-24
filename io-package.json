@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "news": {
+      "1.5.1": {
+        "en": "The Default User is selected from a list of the ioBroker users",
+        "de": "Der Standardbenutzer ist Teil der ioBroker-Liste",
+        "ru": "Пользователь по умолчанию выбирается из списка пользователей IOBroker",
+        "pt": "O usuário padrão é selecionado na lista de usuários IOBroker",
+        "nl": "De standaardgebruiker wordt geselecteerd uit een lijst van IOBroker-gebruikers",
+        "fr": "L'utilisateur par défaut est choisi dans la liste d'IOBroker",
+        "it": "L'utente predefinito è scelto da un elenco di utenti IObroker",
+        "es": "El usuario por defecto se selecciona de una lista de usuarios de ioBroker",
+        "pl": "Domyślny użytkownik jest wybrany z listy użytkowników iOBroker",
+        "uk": "Користувач за замовчуванням вибирається зі списку користувачів IObroker",
+        "zh-cn": "从 IOBroker 用户列表中选择默认用户"
+      },
       "1.5.0": {
         "en": "With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off\nAs a web extension, the default user of the `web` instance is used\nAn upload link can only be used by the user that created it",
         "de": "Bei Authentifizierung werden die Tools mit den Rechten des angemeldeten Benutzers statt des Standardbenutzers ausgeführt; er wird nur angezeigt, wenn er deaktiviert ist\nAls Web-Extension wird der Standardnutzer der Web-Instanz benutzt\nEin Upload-Link kann nur der Nutzer nutzen, der ihn erstellt hat",
@@ -80,19 +93,6 @@
         "pl": "`read_file` odczytuje duże pliki w kawałkach: nowe opcjonalne parametry `offset`/`ilg`, domyślnie maksymalnie 512 KiB na wywołanie; wynik zawiera teraz `size`, `offset`, `long`, `truncated` i `NextOffset` (klienci MCP odrzucają wyniki narzędzia powyżej 1 MB, ioBroker/iobroker.mcp #63)",
         "uk": "`read_file` читає великі файли у фрагментах: нові необов'язкові параметри `offset`/`longitud`, за замовчуванням не більше 512 КБ за виклик; результат тепер містить `size`, `offset`, `longitud`, `truncated` та `nextOffset` (клієнти MCP відхиляють результати інструменту вище 1 Мб, ioBroker/ioBroker.mcp #63)",
         "zh-cn": "`read_file`分块读取大文件：新的可选 `offset`/`length`参数，默认情况下每次调用最多为 512 KiB；结果现在包含 `size`、`offset`、`长度`、`truncated`和`nexOffset`（MCP 客户端拒绝超过 1 MB 的工具结果，iobroker/iobroker.mcp #63）"
-      },
-      "1.1.3": {
-        "en": "Adapter requires admin >= 7.8.23 now.\nUpdated packages",
-        "de": "Adapter benötigt jetzt admin >= 7.8.23.\nNeue Pakete",
-        "ru": "Теперь для адаптера требуется администратор >= 7.8.23.\nОбновленные пакеты",
-        "pt": "Agora o adaptador exige admin >= 7.8.23.\nPacotes novos",
-        "nl": "Voor de adapter is nu admin >= 7.8.23 vereist.\nBijgewerkte pakketten",
-        "fr": "Adapter nécessite admin >= 7.8.23.\nPackages mis à jour",
-        "it": "Adapter richiede admin >= 7.8.23 ora.\nPacchi nuovi",
-        "es": "El adaptador ahora necesita admin >= 7.8.23\nPaquetes nuevos",
-        "pl": "Adapter wymaga teraz administratora >= 7.8.23.\nZaktualizowane pakiety",
-        "uk": "Адаптер вимагає адміністратора >= 7.8.23 зараз.\nОновлені пакети",
-        "zh-cn": "适配器现在需要管理员 >= 7.8.23。\n更新的软件包"
       }
     },
     "titleLang": {
