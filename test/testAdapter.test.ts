@@ -133,15 +133,8 @@ function ioBrokerPasswordHash(plain: string): string {
     return `pbkdf2$${iterations}$${hash}$${salt}`;
 }
 
-/** Create (or overwrite) an ioBroker user object with a known password, tolerant of the DB client API. */
-async function createUserWithPassword(harness: IntegrationTestHarness, user: string, password: string): Promise<void> {
-    const id = `system.user.${user}`;
-    const obj = {
-        type: 'user',
-        common: { name: user, enabled: true, password: ioBrokerPasswordHash(password) },
-        native: {},
-        _id: id,
-    };
+/** Write an object directly into the objects DB, tolerant of the DB client API. */
+async function writeObject(harness: IntegrationTestHarness, id: string, obj: Record<string, unknown>): Promise<void> {
     const objects = (harness as any).objects;
     if (typeof objects.setObjectAsync === 'function') {
         await objects.setObjectAsync(id, obj);
@@ -150,6 +143,38 @@ async function createUserWithPassword(harness: IntegrationTestHarness, user: str
             objects.setObject(id, obj, (err: Error | null | undefined) => (err ? reject(err) : resolve())),
         );
     }
+}
+
+/** Create (or overwrite) an ioBroker user object with a known password. */
+async function createUserWithPassword(harness: IntegrationTestHarness, user: string, password: string): Promise<void> {
+    const id = `system.user.${user}`;
+    await writeObject(harness, id, {
+        type: 'user',
+        common: { name: user, enabled: true, password: ioBrokerPasswordHash(password) },
+        native: {},
+        _id: id,
+    });
+}
+
+/** Create (or overwrite) a group whose members may only read objects, states and files. */
+async function createReadOnlyGroup(harness: IntegrationTestHarness, group: string, users: string[]): Promise<void> {
+    const id = `system.group.${group}`;
+    const read = { list: true, read: true, write: false, create: false, delete: false };
+    await writeObject(harness, id, {
+        type: 'group',
+        common: {
+            name: group,
+            members: users.map(user => `system.user.${user}`),
+            acl: {
+                object: read,
+                state: read,
+                file: read,
+                users: { list: false, read: false, write: false, create: false, delete: false },
+            },
+        },
+        native: {},
+        _id: id,
+    });
 }
 
 // Run the standard ioBroker package & startup tests, then our MCP-specific integration tests.
@@ -398,9 +423,7 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.strictEqual(obj.data.object.common.type, 'number');
                 assert.strictEqual(obj.data.object.common.unit, '°C');
 
-                const value = parseToolResult(
-                    await client.callTool({ name: 'get_states', arguments: { ids: [id] } }),
-                );
+                const value = parseToolResult(await client.callTool({ name: 'get_states', arguments: { ids: [id] } }));
                 assert.strictEqual(value.data.states[0].value, 21.5, 'initial value written');
 
                 // Creating the same state again must fail (use set_object to modify).
@@ -409,9 +432,7 @@ tests.integration(path.join(__dirname, '..'), {
                 );
                 assert.strictEqual(again.ok, false, 'duplicate create rejected');
 
-                const deleted = parseToolResult(
-                    await client.callTool({ name: 'delete_object', arguments: { id } }),
-                );
+                const deleted = parseToolResult(await client.callTool({ name: 'delete_object', arguments: { id } }));
                 assert.strictEqual(deleted.ok, true, 'object deleted');
 
                 const gone = parseToolResult(await client.callTool({ name: 'get_object', arguments: { id } }));
@@ -453,12 +474,13 @@ tests.integration(path.join(__dirname, '..'), {
                 );
                 assert.strictEqual(written.ok, true, 'file written');
 
-                const listed = parseToolResult(
-                    await client.callTool({ name: 'list_files', arguments: { path: dir } }),
-                );
+                const listed = parseToolResult(await client.callTool({ name: 'list_files', arguments: { path: dir } }));
                 assert.strictEqual(listed.ok, true);
                 const names = listed.data.files.map((f: any) => f.file);
-                assert.ok(names.includes('hello.txt'), `directory listing contains hello.txt (got ${names.join(', ')})`);
+                assert.ok(
+                    names.includes('hello.txt'),
+                    `directory listing contains hello.txt (got ${names.join(', ')})`,
+                );
 
                 const exists = parseToolResult(
                     await client.callTool({ name: 'file_exists', arguments: { path: `${dir}/hello.txt` } }),
@@ -664,6 +686,8 @@ tests.integration(path.join(__dirname, '..'), {
             const PORT = 18295;
             const AUTH_USER = 'mcpauthtester';
             const AUTH_PASS = 'McpTest123';
+            // Logged-in user without any group: the tools run with its (missing) permissions, not as admin
+            const NO_RIGHTS_USER = 'mcpnorights';
             let harness: IntegrationTestHarness;
 
             before(async function () {
@@ -682,6 +706,8 @@ tests.integration(path.join(__dirname, '..'), {
                 });
                 // A dedicated user with a known password so we can prove the authenticated path works.
                 await createUserWithPassword(harness, AUTH_USER, AUTH_PASS);
+                await createUserWithPassword(harness, NO_RIGHTS_USER, AUTH_PASS);
+                await createReadOnlyGroup(harness, 'mcpreaders', [AUTH_USER]);
                 await harness.startAdapterAndWait(true);
             });
 
@@ -731,6 +757,30 @@ tests.integration(path.join(__dirname, '..'), {
                 const tool = JSON.parse(payload.result.content[0].text);
                 assert.strictEqual(tool.ok, true);
                 assert.strictEqual(tool.data.states[0].value, true, 'authenticated client reads the state value');
+            });
+
+            it('runs the tools with the permissions of the logged-in user, not of the Default User', async function () {
+                this.timeout(20000);
+                const auth = { Authorization: basicAuth(NO_RIGHTS_USER, AUTH_PASS) };
+
+                const init = await rawInitialize(PORT, auth);
+                assert.strictEqual(init.status, 200, 'authenticated initialize succeeds');
+
+                const id = `${harness.adapterName}.0.info.connection`;
+                const call = await rawToolCall(PORT, init.sessionId!, 'get_states', { ids: [id] }, auth);
+                assert.strictEqual(call.status, 200);
+                const text = parseSseData(call.body).result.content[0].text;
+                assert.ok(!text.includes('"value":true'), `a user without rights must not read the state: ${text}`);
+            });
+
+            it('rejects a session of another user', async function () {
+                this.timeout(20000);
+                const init = await rawInitialize(PORT, { Authorization: basicAuth(AUTH_USER, AUTH_PASS) });
+                assert.strictEqual(init.status, 200);
+
+                const other = { Authorization: basicAuth(NO_RIGHTS_USER, AUTH_PASS) };
+                const call = await rawToolCall(PORT, init.sessionId!, 'get_states', { ids: ['x'] }, other);
+                assert.strictEqual(call.status, 404, 'the session id of another user must not be usable');
             });
 
             it('issues a Bearer access token via /oauth/token for valid credentials', async function () {
