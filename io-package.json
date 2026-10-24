@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "news": {
+      "1.5.0": {
+        "en": "With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off\nAs a web extension, the default user of the `web` instance is used\nAn upload link can only be used by the user that created it",
+        "de": "Bei Authentifizierung werden die Tools mit den Rechten des angemeldeten Benutzers statt des Standardbenutzers ausgeführt; er wird nur angezeigt, wenn er deaktiviert ist\nAls Web-Extension wird der Standardnutzer der Web-Instanz benutzt\nEin Upload-Link kann nur der Nutzer nutzen, der ihn erstellt hat",
+        "ru": "При аутентификации инструменты работают с разрешениями вошедшего в систему пользователя, а не пользователя по умолчанию; пользователь по умолчанию теперь отображается только тогда, когда аутентификация выключена\nВ качестве веб-расширения используется пользователь экземпляра `web` по умолчанию\nСсылку для загрузки может использовать только тот пользователь, который ее создал",
+        "pt": "Com a autenticação, as ferramentas funcionam com as permissões do usuário logado em vez do padrão; o usuário padrão agora só é exibido quando a autenticação é desativada\nComo extensão web, o usuário padrão da instância `web` é\nO link de upload só pode ser usado pelo usuário",
+        "nl": "Bij authenticatie worden de tools uitgevoerd met de machtigingen van de ingelogde gebruiker in plaats van met de standaardgebruiker; de standaardgebruiker wordt nu alleen getoond als de authenticatie is uitgeschakeld\nAls webextensie wordt de standaardgebruiker van de `web` instance gebruikt\nEen uploadlink kan alleen worden gebruikt door de gebruiker die de link heeft aangemaakt",
+        "fr": "Avec l'authentification, les outils fonctionnent avec les droits de l'utilisateur connecté et non de l'utilisateur par défaut ; celui-ci n'apparaît que lorsque l'authentification est désactivée\nEn tant qu'extension Web, l'utilisateur par défaut est utilisé\nSeul l'utilisateur qui l'a créé peut utiliser un lien",
+        "it": "Con l'autenticazione, gli strumenti funzionano con i permessi dell'utente loggato anziché predefinito; ora viene mostrato solo se è disattivata\nCome estensione web, si usa l'istanza «web» di default\nIl link di upload è usato solo da chi lo ha creato",
+        "es": "Con la autenticación, las herramientas funcionan con los permisos del usuario que ha iniciado sesión en lugar del usuario predeterminado; el usuario predeterminado solo aparece cuando la autenticación está desactivada\nComo extensión web, se usa el usuario por defecto de la instancia web\nEl enlace de subida solo lo puede usar el usuario que lo creó",
+        "pl": "W przypadku uwierzytelniania narzędzia działają z uprawnieniami zalogowanego użytkownika zamiast Użytkownika domyślnego; Domyślny użytkownik jest teraz wyświetlany tylko wtedy, gdy uwierzytelnianie jest wyłączone\nJako rozszerzenie sieciowe używany jest domyślny użytkownik instancji `web`\nLink do przesyłania może być używany tylko przez użytkownika, który go utworzył",
+        "uk": "З автентифікацією інструменти запускаються з дозволами зареєстрованого користувача замість Користувача за замовчуванням; тепер користувач за замовчуванням відображається лише тоді, коли аутентифікація вимкнена\nЯк веб-розширення використовується користувач за замовчуванням екземпляра `web`\nПосилання для завантаження може використовувати лише користувач, який його створив",
+        "zh-cn": "使用身份验证时，这些工具以登录用户的权限而不是默认用户的权限运行；现在，只有在关闭身份验证时才会显示默认用户\n作为 Web 扩展，使用 `web`实例的默认用户\n上传链接只能由创建它的用户使用"
+      },
       "1.4.0": {
         "en": "Tool results are kept below the 1 MiB limit of MCP clients: lists are paged, other results are replaced by a download link (#63)\nAdded the option \"Allow download/upload links\" (on by default): large files and results can be fetched and uploaded with curl, e.g. a `.tgz` for \"install_package\"",
         "de": "Tool-Ergebnisse unter 1 MiB für MCP-Clients: Listen sind seitenweise, andere durch Downloadlinks ersetzt (#63)\nOption „Links zulassen“ hinzugefügt (standardmäßig): große Dateien und Ergebnisse können mit curl abgerufen und hochgeladen werden, z. B. `.tgz` für „Install_Paket“",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga teraz administratora >= 7.8.23.\nZaktualizowane pakiety",
         "uk": "Адаптер вимагає адміністратора >= 7.8.23 зараз.\nОновлені пакети",
         "zh-cn": "适配器现在需要管理员 >= 7.8.23。\n更新的软件包"
-      },
-      "1.1.2": {
-        "en": "Node.js 22 is required now\nCorrected OAuth page",
-        "de": "Node.js 22 wird jetzt benötigt.\nKorrigierte OAuth-Seite",
-        "ru": "Теперь требуется Node.js 22.\nИсправлена страница OAuth",
-        "pt": "Agora é necessário o Node.js versão 22.\nPágina OAuth corrigida",
-        "nl": "Node.js versie 22 is nu vereist.\nOAuth-pagina gecorrigeerd",
-        "fr": "Node.js 22 est désormais requis.\nPage OAuth corrigée",
-        "it": "Ora è richiesto Node.js 22\nPagina OAuth corretta",
-        "es": "Ahora se requiere Node.js 22.\nPágina de OAuth corregida",
-        "pl": "Teraz wymagany jest Node.js 22\nSkorygowana strona OAuth",
-        "uk": "Тепер потрібен Node.js 22\nВиправлено сторінку OAuth",
-        "zh-cn": "现在需要 Node.js 22。\n已更正的 OAuth 页面"
       }
     },
     "titleLang": {

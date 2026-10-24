@@ -341,7 +341,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.5.0 (2026-10-24)
 * (@GermanBluefox) With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off
 * (@GermanBluefox) As a web extension, the default user of the `web` instance is used
 * (@GermanBluefox) An upload link can only be used by the user that created it
@@ -364,9 +364,6 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) Added instructions for connecting ChatGPT and Claude (via ioBroker Remote or directly)
 * (@GermanBluefox) Added IP address selector
 * (@GermanBluefox) New option "Mark setting states as destructive" (default on): `set_state`/`set_states` can be declared as non-destructive writes
-
-### 1.1.4 (2026-09-03)
-* (@GermanBluefox) `read_file` reads large files in chunks: new optional `offset`/`length` parameters, at most 512 KiB per call by default; the result now contains `size`, `offset`, `length`, `truncated` and `nextOffset` (MCP clients reject tool results above 1 MB, ioBroker/ioBroker.mcp#63)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
