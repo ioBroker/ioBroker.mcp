@@ -43,10 +43,11 @@ The adapter can be configured through the ioBroker admin interface using JSONCon
 
 ### Authentication
 - **Enable Authentication**: Enable ioBroker user authentication for the web server
-- **Default User**: The ioBroker user whose permissions every MCP request runs with (default: `admin`).
-  All object/state reads and writes performed by the tools are executed in the name of this user, so the
-  user's ACLs are enforced. A plain name like `operator` is automatically expanded to `system.user.operator`.
-  When running as a web extension and no user is set here, the host `web` instance's default user is used.
+- **Default User**: The ioBroker user whose permissions MCP requests run with when authentication is off
+  (default: `admin`). With authentication on, every session runs with the permissions of the user who logged in,
+  so this field is hidden then. All object/state reads and writes performed by the tools are executed in the name
+  of that user, so the user's ACLs are enforced. A plain name like `operator` is automatically expanded to
+  `system.user.operator`. As a web extension the authentication and the default user of the `web` instance apply.
 
 ### OAuth
 
@@ -78,8 +79,8 @@ All options that change the system are **off** by default; turn on only what the
 **States and objects**
 - **Allow setting states**: Allow MCP clients to write state values and to acknowledge system notifications (the
   `set_state`, `set_states` and `clear_notifications` tools). Default: **on**. Which states can be written is
-  decided by the ACLs of the Default User. `set_states` checks the write permission of all states first and writes
-  nothing if one of them is not writable.
+  decided by the ACLs of the user the request runs with (logged-in user or Default User). `set_states` checks the
+  write permission of all states first and writes nothing if one of them is not writable.
 - **Mark setting states as destructive** (`setStateDestructive`): Declare `set_state` and `set_states` with
   `destructiveHint: true`, so MCP clients can warn before a state is written. Default: **on**. When off, both tools
   are declared as non-destructive writes (`readOnlyHint` stays `false`); whether a client still asks for
@@ -209,7 +210,8 @@ The menu names are taken from the help pages of
 
 ### Recommendations
 
-- Set a **Default User** with only the rights the AI should have. Every tool runs with its permissions.
+- Let the AI log in with an ioBroker user that has only the rights it should have, or, without authentication, set
+  such a user as **Default User**. Every tool runs with its permissions.
 - Leave **Allow object/file changes** off unless you need it.
 - Turn on the **System** options (instances, adapters, scripts, messages) only for clients you trust, and only the
   ones you need. With **Allow messages to adapters** name the adapters explicitly instead of `*`.
@@ -278,8 +280,8 @@ state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 | `run_script`                | Run code once in the javascript adapter and return its log output (javascript ≥ 10.1.0) — requires *Allow changing scripts*                                                                                                                          |
 | `send_to`                   | Send a message to an adapter instance (`sendTo`) and return the answer — only instances in *Allow messages to adapters*                                                                                                                              |
 
-All object/state access runs with the permissions of the configured **Default User**. The write tools are only
-registered when their respective permission option is enabled.
+All object/state access runs with the permissions of the logged-in user, or of the **Default User** without
+authentication. The write tools are only registered when their respective permission option is enabled.
 
 ### Large results and files
 MCP clients reject tool results above 1 MiB, and a model cannot pass megabytes of base64 as a tool argument. So:
@@ -339,6 +341,11 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off
+* (@GermanBluefox) As a web extension, the default user of the `web` instance is used
+* (@GermanBluefox) An upload link can only be used by the user that created it
+
 ### 1.4.0 (2026-10-24)
 * (@GermanBluefox) Tool results are kept below the 1 MiB limit of MCP clients: lists are paged, other results are replaced by a download link (#63)
 * (@GermanBluefox) Added the option "Allow download/upload links" (on by default): large files and results can be fetched and uploaded with curl, e.g. a `.tgz` for "install_package"

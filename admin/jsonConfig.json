@@ -54,8 +54,8 @@
                     "type": "text",
                     "label": "Default User",
                     "default": "admin",
-                    "hidden": "!data.auth",
-                    "help": "Default user for authentication (e.g., 'admin')"
+                    "hidden": "data.auth",
+                    "help": "Without authentication, all MCP requests run with the permissions of this user (e.g. 'admin')"
                 }
             }
         },

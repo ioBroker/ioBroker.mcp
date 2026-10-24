@@ -20,7 +20,7 @@
   "Create, change, start/stop and delete scripts of the javascript adapter and run code once (set_script, enable_script, delete_script, run_script tools). Reading scripts is always allowed. Off by default.": "创建、更改、启动/停止和删除 javascript 适配器的脚本，并一次性运行代码（set_script、enable_script、delete_script、run_script 工具）。始终允许读取脚本。默认关闭。",
   "Declare set_state/set_states as destructive (destructiveHint), so MCP clients can warn before writing. Whether a client still asks for confirmation when this is off depends on the client.": "将 set_state/set_states 声明为破坏性操作（destructiveHint），以便 MCP 客户端在写入前发出警告。关闭此选项后客户端是否仍要求确认，取决于客户端。",
   "Default User": "默认用户",
-  "Default user for authentication (e.g., 'admin')": "默认身份验证用户（例如，“admin”）",
+  "Without authentication, all MCP requests run with the permissions of this user (e.g. 'admin')": "未启用身份验证时，所有 MCP 请求都以此用户的权限运行（例如 'admin'）",
   "Developers": "开发者",
   "Enable 'Authentication' first — without it the MCP endpoint is open and OAuth has nothing to protect.": "请先启用'启用身份验证'——否则 MCP 端点是开放的，OAuth 也就没有什么可保护的。",
   "Enable Authentication": "启用身份验证",

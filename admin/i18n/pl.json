@@ -20,7 +20,7 @@
   "Create, change, start/stop and delete scripts of the javascript adapter and run code once (set_script, enable_script, delete_script, run_script tools). Reading scripts is always allowed. Off by default.": "Tworzenie, zmienianie, uruchamianie/zatrzymywanie i usuwanie skryptów adaptera javascript oraz jednorazowe wykonywanie kodu (narzędzia set_script, enable_script, delete_script, run_script). Odczyt skryptów jest zawsze dozwolony. Domyślnie wyłączone.",
   "Declare set_state/set_states as destructive (destructiveHint), so MCP clients can warn before writing. Whether a client still asks for confirmation when this is off depends on the client.": "Deklaruj set_state/set_states jako destrukcyjne (destructiveHint), aby klienci MCP mogli ostrzegać przed zapisem. To, czy klient nadal prosi o potwierdzenie przy wyłączonej opcji, zależy od klienta.",
   "Default User": "Domyślny użytkownik",
-  "Default user for authentication (e.g., 'admin')": "Domyślny użytkownik do uwierzytelniania (np. „admin”)",
+  "Without authentication, all MCP requests run with the permissions of this user (e.g. 'admin')": "Bez uwierzytelniania wszystkie żądania MCP są wykonywane z uprawnieniami tego użytkownika (np. „admin”)",
   "Developers": "Programiści",
   "Enable 'Authentication' first — without it the MCP endpoint is open and OAuth has nothing to protect.": "Najpierw włącz 'Włącz uwierzytelnianie' — bez tego punkt końcowy MCP jest otwarty, a OAuth nie ma czego chronić.",
   "Enable Authentication": "Włącz uwierzytelnianie",
