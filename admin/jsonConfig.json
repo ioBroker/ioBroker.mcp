@@ -51,7 +51,8 @@
                     "help": "Enable ioBroker user authentication for the web server"
                 },
                 "defaultUser": {
-                    "type": "text",
+                    "type": "user",
+                    "short": true,
                     "label": "Default User",
                     "default": "admin",
                     "hidden": "data.auth",

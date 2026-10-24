@@ -341,6 +341,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) The Default User is selected from a list of the ioBroker users
+
 ### 1.5.0 (2026-10-24)
 * (@GermanBluefox) With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off
 * (@GermanBluefox) As a web extension, the default user of the `web` instance is used
