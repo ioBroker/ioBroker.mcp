@@ -183,7 +183,8 @@
     "allowAdapterManagement": false,
     "allowScriptChange": false,
     "sendToAllowlist": "",
-    "confirmDangerous": true
+    "confirmDangerous": true,
+    "transferLinks": true
   },
   "objects": [],
   "instanceObjects": [

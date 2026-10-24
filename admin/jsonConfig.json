@@ -226,6 +226,14 @@
                     "default": true,
                     "help": "MCP clients that support it (elicitation) ask the user before an object or instance is deleted, an instance stopped, an adapter upgraded or installed, a script saved or run, or a message sent. Other clients rely on their own confirmation."
                 },
+                "transferLinks": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "sm": 12,
+                    "label": "Allow download/upload links",
+                    "default": true,
+                    "help": "For data that is too large for an MCP message, e.g. a long list of objects or a .tgz to install, tools hand out links valid for 15 minutes, which clients that can run shell commands (e.g. Claude Code) use with curl. Not available as a web extension with authentication enabled in the web adapter."
+                },
                 "_headerDevelopers": {
                     "type": "header",
                     "text": "Developers",
