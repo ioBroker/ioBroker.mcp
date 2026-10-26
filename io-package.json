@@ -5,16 +5,16 @@
     "news": {
       "1.7.1": {
         "en": "`find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)",
-        "de": "`find_orphan_states` meldet nicht mehr den Uploadstatus der Adapter (`system.adapter. <adapter>.upload`), was js-controller ohne Objekt schreibt (`@iobroker /mcp-server` 1.8.1)",
-        "ru": "`find_orphan_states` больше не сообщает о ходе загрузки адаптеров (`system.adapter). <adapter>.upload`), который js-контроллер специально записывает без объекта (`@iobroker /mcp-server` 1.8.1)",
-        "pt": "`find_orphan_states` não relata mais o upload dos adaptadores (`system.adapter. <adapter>.upload`), que js-controller grava sem objeto (`@iobroker /mcp-server` 1.8.1)",
-        "nl": "`find_orphan_states` rapporteert niet langer de voortgang van het uploaden van de adapters (`system.adapter). <adapter>.upload`), die js-controller opzettelijk zonder object schrijft (`@iobroker /mcp-server` 1.8.1)",
-        "fr": "`find_orphan_states` ne signale plus la progression du chargement des adaptateurs (`system.adapter. <adapter>.upload`), que js-controller écrit exprès sans objet (`@iobroker /mcp-server` 1.8.1)",
-        "it": "`find_orphan_states` non riporta più l'upload degli adattatori (`system.adapter. <adapter>.upload`), che js-controller scrive apposta senza oggetto (`@iobroker /mcp-server` 1.8.1)",
-        "es": "`find_orphan_states` ya no informa del progreso de carga de los adaptadores (`system.adapter. <adapter>.upload`), que js-controller escribe sin objeto a propósito (`@iobroker /mcp-server` 1.8.1)",
-        "pl": "`find_orph_state` nie zgłasza już postępu przesyłania adapterów (`system.adapter. <adapter>.upload`), które js-controller celowo zapisuje bez obiektu (`@iobroker /mcp-server` 1.8.1)",
-        "uk": "`find_orph_state-` більше не повідомляє про хід завантаження адаптерів (`system.adapter. <adapter>.upload`), яку js-контролер записує без об'єкта спеціально (`@iobroker /mcp-server` 1.8.1)",
-        "zh-cn": "`find_orphan_states`不再报告适配器的上传进度（`system.adapter。<adapter>.upload`)，js-controller 故意在没有对象的情况下写入（`@iobroker /mcp-server` 1.8.1）"
+        "de": "`find_orphan_states` meldet den Upload-Fortschritt der Adapter (`system.adapter.<adapter>.upload`) nicht mehr, den js-controller absichtlich ohne Objekt schreibt (`@iobroker/mcp-server` 1.8.1)",
+        "ru": "`find_orphan_states` больше не сообщает о ходе загрузки адаптеров (`system.adapter.<adapter>.upload`), который js-controller намеренно записывает без объекта (`@iobroker/mcp-server` 1.8.1)",
+        "pt": "`find_orphan_states` não informa mais o progresso do upload dos adaptadores (`system.adapter.<adapter>.upload`), que o js-controller grava sem objeto de propósito (`@iobroker/mcp-server` 1.8.1)",
+        "nl": "`find_orphan_states` meldt de uploadvoortgang van de adapters (`system.adapter.<adapter>.upload`) niet meer, die js-controller bewust zonder object schrijft (`@iobroker/mcp-server` 1.8.1)",
+        "fr": "`find_orphan_states` ne signale plus la progression du téléversement des adaptateurs (`system.adapter.<adapter>.upload`), que js-controller écrit volontairement sans objet (`@iobroker/mcp-server` 1.8.1)",
+        "it": "`find_orphan_states` non segnala più l'avanzamento del caricamento degli adattatori (`system.adapter.<adapter>.upload`), che js-controller scrive di proposito senza oggetto (`@iobroker/mcp-server` 1.8.1)",
+        "es": "`find_orphan_states` ya no informa del progreso de carga de los adaptadores (`system.adapter.<adapter>.upload`), que js-controller escribe a propósito sin objeto (`@iobroker/mcp-server` 1.8.1)",
+        "pl": "`find_orphan_states` nie zgłasza już postępu przesyłania adapterów (`system.adapter.<adapter>.upload`), który js-controller celowo zapisuje bez obiektu (`@iobroker/mcp-server` 1.8.1)",
+        "uk": "`find_orphan_states` більше не повідомляє про хід завантаження адаптерів (`system.adapter.<adapter>.upload`), який js-controller навмисно записує без об'єкта (`@iobroker/mcp-server` 1.8.1)",
+        "zh-cn": "`find_orphan_states` 不再报告适配器的上传进度（`system.adapter.<adapter>.upload`），js-controller 有意在没有对象的情况下写入它（`@iobroker/mcp-server` 1.8.1）"
       },
       "1.7.0": {
         "en": "Security: commands on a host need the \"execute\" right of the user, messages to adapters the \"sendto\" right, like in admin; a session is only offered the tools its user has the rights for (`@iobroker/mcp-server` 1.8.0)\nEvery change made via MCP is logged with the user, the tool and its arguments; `get_logs` searches the messages for a text or a regular expression (`@iobroker/mcp-server` 1.8.0)\n`set_state` can wait for the confirmation of the device (`wait_ack`); new tools `wait_for_state` and `find_orphan_states` (`@iobroker/mcp-server` 1.8.0)\n`install_package` reports a done installation even if the instances could not be restarted afterwards (`@iobroker/mcp-server` 1.8.0)",
