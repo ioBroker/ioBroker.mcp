@@ -19,15 +19,15 @@
       "1.6.1": {
         "en": "The settings show the MCP server URL to copy, for standalone mode and as a web extension\nUpdated `@iobroker/webserver` to 3.4.0",
         "de": "Die Einstellungen zeigen die MCP-Server-URL zum Kopieren an, im Standalone-Betrieb und als Web-Erweiterung\n`@iobroker/webserver` auf 3.4.0 aktualisiert",
-        "ru": "В настройках отображается URL-адрес сервера MCP для копирования в автономном режиме и в виде веб-расширения\nОбновлено «@iobroker /веб-сервер» до версии 3.4.0",
-        "pt": "As configurações mostram o URL do servidor MCP a ser copiado, autônomo e web\nAtualizou `@iobroker /webserver` a 3.4.0",
-        "nl": "De instellingen tonen de URL van de MCP-server die moet worden gekopieerd, voor de stand-alone modus en als webextensie\n`@iobroker /webserver` bijgewerkt naar 3.4.0",
-        "fr": "Les paramètres indiquent l'URL du serveur MCP à copier, en mode autonome et en tant qu'extension Web\n@iobroker /webserver a été mis à jour en 3.4.0",
-        "it": "Le impostazioni mostrano l'URL del server MCP da copiare, standalone e web\n`@iobroker /webserver` aggiornato a 3.4.0",
-        "es": "La configuración muestra la URL del servidor MCP a copiar, en modo autónomo y extensión web\nSe actualizó @iobroker /webserver a 3.4.0",
-        "pl": "Ustawienia pokazują adres URL serwera MCP do skopiowania, w trybie autonomicznym i jako rozszerzenie sieci\nZaktualizowano `@iobroker /webserver` do wersji 3.4.0",
-        "uk": "У налаштуваннях відображається URL-адреса сервера MCP для копіювання, для автономного режиму та як веб-розширення\nОновлено `@iobroker /веб-сервер` до 3.4.0",
-        "zh-cn": "这些设置显示要复制的 MCP 服务器 URL，无论是独立模式还是作为 Web 扩展程序\n将 @iobroker /webserver 更新到 3.4.0"
+        "ru": "В настройках отображается URL MCP-сервера для копирования: в автономном режиме и как веб-расширение\n`@iobroker/webserver` обновлён до 3.4.0",
+        "pt": "As configurações mostram o URL do servidor MCP para copiar, no modo autônomo e como extensão web\n`@iobroker/webserver` atualizado para 3.4.0",
+        "nl": "De instellingen tonen de URL van de MCP-server om te kopiëren, in de standalone-modus en als webextensie\n`@iobroker/webserver` bijgewerkt naar 3.4.0",
+        "fr": "Les paramètres affichent l'URL du serveur MCP à copier, en mode autonome et en tant qu'extension web\n`@iobroker/webserver` mis à jour vers 3.4.0",
+        "it": "Le impostazioni mostrano l'URL del server MCP da copiare, in modalità standalone e come estensione web\n`@iobroker/webserver` aggiornato a 3.4.0",
+        "es": "La configuración muestra la URL del servidor MCP para copiar, en modo autónomo y como extensión web\n`@iobroker/webserver` actualizado a 3.4.0",
+        "pl": "Ustawienia pokazują adres URL serwera MCP do skopiowania, w trybie samodzielnym i jako rozszerzenie web\nZaktualizowano `@iobroker/webserver` do wersji 3.4.0",
+        "uk": "У налаштуваннях відображається URL MCP-сервера для копіювання: в автономному режимі та як веб-розширення\n`@iobroker/webserver` оновлено до 3.4.0",
+        "zh-cn": "设置中显示可复制的 MCP 服务器地址，适用于独立模式和 Web 扩展模式\n将 `@iobroker/webserver` 更新到 3.4.0"
       },
       "1.6.0": {
         "en": "Added the `check_permissions` tool: what the user of the MCP session may do with an object\n`install_package` reports whether the restarted instances came up again and their first log lines\n`get_states` returns `exists: false` for an unknown ID; `get_logs` returns the time of the newest line and the size of the log file\nA confirmation dismissed by the client explains how to turn off the confirmations instead of \"Cancelled by the user\"\nA wrong password is logged with the address and the User-Agent of the client\nUpdated `@iobroker/mcp-server` to 1.7.0 and `@iobroker/webserver` to 3.3.2",
