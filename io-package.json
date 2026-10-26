@@ -5,7 +5,7 @@
     "news": {
       "1.6.1": {
         "en": "The settings show the MCP server URL to copy, for standalone mode and as a web extension\nUpdated `@iobroker/webserver` to 3.4.0",
-        "de": "Die Einstellungen zeigen die MCP-Server-URL zum Kopieren, Standalone und Web\n@iobroker /webserver auf 3.4.0 aktualisiert",
+        "de": "Die Einstellungen zeigen die MCP-Server-URL zum Kopieren an, im Standalone-Betrieb und als Web-Erweiterung\n`@iobroker/webserver` auf 3.4.0 aktualisiert",
         "ru": "В настройках отображается URL-адрес сервера MCP для копирования в автономном режиме и в виде веб-расширения\nОбновлено «@iobroker /веб-сервер» до версии 3.4.0",
         "pt": "As configurações mostram o URL do servidor MCP a ser copiado, autônomo e web\nAtualizou `@iobroker /webserver` a 3.4.0",
         "nl": "De instellingen tonen de URL van de MCP-server die moet worden gekopieerd, voor de stand-alone modus en als webextensie\n`@iobroker /webserver` bijgewerkt naar 3.4.0",
