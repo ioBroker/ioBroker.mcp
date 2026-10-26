@@ -342,7 +342,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.6.0 (2026-10-26)
 * (@GermanBluefox) Added the `check_permissions` tool: what the user of the MCP session may do with an object
 * (@GermanBluefox) `install_package` reports whether the restarted instances came up again and their first log lines
 * (@GermanBluefox) `get_states` returns `exists: false` for an unknown ID; `get_logs` returns the time of the newest line and the size of the log file
@@ -366,11 +366,6 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) Added the option "Allow installing packages" (off by default, only for developers): MCP clients can install an adapter package from npm, GitHub, a URL or a `.tgz` file
 * (@GermanBluefox) Added options to control instances, manage adapters, change scripts and send messages to adapters (all off by default) and to ask for a confirmation before dangerous actions
 * (@GermanBluefox) Fixed: as a web extension the outdated built-in MCP server was loaded instead of `@iobroker/mcp-server`
-
-### 1.2.1 (2026-10-19)
-* (@Garfonso) Fixed: with "Allow object changes" enabled, MCP clients received no tools at all in some installations (ioBroker/ioBroker.mcp#70)
-* (@GermanBluefox) `set_states` checks the write permission of all states first and writes nothing if one of them may not be written by the Default User (ioBroker/ioBroker.mcp#71)
-* (@GermanBluefox) Completed the translations of the OAuth settings (ioBroker/ioBroker.mcp#73)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
