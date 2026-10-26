@@ -369,7 +369,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.7.1 (2026-10-26)
 * (@GermanBluefox) `find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)
 
 ### 1.7.0 (2026-10-26)
@@ -392,9 +392,6 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) A confirmation dismissed by the client explains how to turn off the confirmations instead of "Cancelled by the user"
 * (@GermanBluefox) A wrong password is logged with the address and the User-Agent of the client
 * (@GermanBluefox) Updated `@iobroker/mcp-server` to 1.7.0 and `@iobroker/webserver` to 3.3.2
-
-### 1.5.1 (2026-10-24)
-* (@GermanBluefox) The Default User is selected from a list of the ioBroker users
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

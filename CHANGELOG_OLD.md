@@ -1,4 +1,7 @@
 # Older changes
+## 1.5.1 (2026-10-24)
+* (@GermanBluefox) The Default User is selected from a list of the ioBroker users
+
 ## 1.5.0 (2026-10-24)
 * (@GermanBluefox) With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off
 * (@GermanBluefox) As a web extension, the default user of the `web` instance is used

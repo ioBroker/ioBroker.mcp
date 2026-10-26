@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "news": {
+      "1.7.1": {
+        "en": "`find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)",
+        "de": "`find_orphan_states` meldet nicht mehr den Uploadstatus der Adapter (`system.adapter. <adapter>.upload`), was js-controller ohne Objekt schreibt (`@iobroker /mcp-server` 1.8.1)",
+        "ru": "`find_orphan_states` больше не сообщает о ходе загрузки адаптеров (`system.adapter). <adapter>.upload`), который js-контроллер специально записывает без объекта (`@iobroker /mcp-server` 1.8.1)",
+        "pt": "`find_orphan_states` não relata mais o upload dos adaptadores (`system.adapter. <adapter>.upload`), que js-controller grava sem objeto (`@iobroker /mcp-server` 1.8.1)",
+        "nl": "`find_orphan_states` rapporteert niet langer de voortgang van het uploaden van de adapters (`system.adapter). <adapter>.upload`), die js-controller opzettelijk zonder object schrijft (`@iobroker /mcp-server` 1.8.1)",
+        "fr": "`find_orphan_states` ne signale plus la progression du chargement des adaptateurs (`system.adapter. <adapter>.upload`), que js-controller écrit exprès sans objet (`@iobroker /mcp-server` 1.8.1)",
+        "it": "`find_orphan_states` non riporta più l'upload degli adattatori (`system.adapter. <adapter>.upload`), che js-controller scrive apposta senza oggetto (`@iobroker /mcp-server` 1.8.1)",
+        "es": "`find_orphan_states` ya no informa del progreso de carga de los adaptadores (`system.adapter. <adapter>.upload`), que js-controller escribe sin objeto a propósito (`@iobroker /mcp-server` 1.8.1)",
+        "pl": "`find_orph_state` nie zgłasza już postępu przesyłania adapterów (`system.adapter. <adapter>.upload`), które js-controller celowo zapisuje bez obiektu (`@iobroker /mcp-server` 1.8.1)",
+        "uk": "`find_orph_state-` більше не повідомляє про хід завантаження адаптерів (`system.adapter. <adapter>.upload`), яку js-контролер записує без об'єкта спеціально (`@iobroker /mcp-server` 1.8.1)",
+        "zh-cn": "`find_orphan_states`不再报告适配器的上传进度（`system.adapter。<adapter>.upload`)，js-controller 故意在没有对象的情况下写入（`@iobroker /mcp-server` 1.8.1）"
+      },
       "1.7.0": {
         "en": "Security: commands on a host need the \"execute\" right of the user, messages to adapters the \"sendto\" right, like in admin; a session is only offered the tools its user has the rights for (`@iobroker/mcp-server` 1.8.0)\nEvery change made via MCP is logged with the user, the tool and its arguments; `get_logs` searches the messages for a text or a regular expression (`@iobroker/mcp-server` 1.8.0)\n`set_state` can wait for the confirmation of the device (`wait_ack`); new tools `wait_for_state` and `find_orphan_states` (`@iobroker/mcp-server` 1.8.0)\n`install_package` reports a done installation even if the instances could not be restarted afterwards (`@iobroker/mcp-server` 1.8.0)",
         "de": "Sicherheit: Befehle auf einem Host erfordern das Recht \"execute\" des Benutzers, Nachrichten an Adapter das Recht \"sendto\", wie in admin; eine Sitzung bekommt nur die Tools angeboten, für die ihr Benutzer die Rechte hat (`@iobroker/mcp-server` 1.8.0)\nJede Änderung über MCP wird mit Benutzer, Tool und Argumenten protokolliert; `get_logs` durchsucht die Meldungen nach einem Text oder einem regulären Ausdruck (`@iobroker/mcp-server` 1.8.0)\n`set_state` kann auf die Bestätigung des Geräts warten (`wait_ack`); neue Tools `wait_for_state` und `find_orphan_states` (`@iobroker/mcp-server` 1.8.0)\n`install_package` meldet eine abgeschlossene Installation auch dann, wenn die Instanzen danach nicht neu gestartet werden konnten (`@iobroker/mcp-server` 1.8.0)",
@@ -80,19 +93,6 @@
         "pl": "W przypadku uwierzytelniania narzędzia działają z uprawnieniami zalogowanego użytkownika zamiast Użytkownika domyślnego; Domyślny użytkownik jest teraz wyświetlany tylko wtedy, gdy uwierzytelnianie jest wyłączone\nJako rozszerzenie sieciowe używany jest domyślny użytkownik instancji `web`\nLink do przesyłania może być używany tylko przez użytkownika, który go utworzył",
         "uk": "З автентифікацією інструменти запускаються з дозволами зареєстрованого користувача замість Користувача за замовчуванням; тепер користувач за замовчуванням відображається лише тоді, коли аутентифікація вимкнена\nЯк веб-розширення використовується користувач за замовчуванням екземпляра `web`\nПосилання для завантаження може використовувати лише користувач, який його створив",
         "zh-cn": "使用身份验证时，这些工具以登录用户的权限而不是默认用户的权限运行；现在，只有在关闭身份验证时才会显示默认用户\n作为 Web 扩展，使用 `web`实例的默认用户\n上传链接只能由创建它的用户使用"
-      },
-      "1.4.0": {
-        "en": "Tool results are kept below the 1 MiB limit of MCP clients: lists are paged, other results are replaced by a download link (#63)\nAdded the option \"Allow download/upload links\" (on by default): large files and results can be fetched and uploaded with curl, e.g. a `.tgz` for \"install_package\"",
-        "de": "Tool-Ergebnisse unter 1 MiB für MCP-Clients: Listen sind seitenweise, andere durch Downloadlinks ersetzt (#63)\nOption „Links zulassen“ hinzugefügt (standardmäßig): große Dateien und Ergebnisse können mit curl abgerufen und hochgeladen werden, z. B. `.tgz` für „Install_Paket“",
-        "ru": "Результаты работы инструмента не превышают лимита в 1 МБ для клиентов MCP: списки разбиваются на страницы, другие результаты заменяются ссылкой для скачивания (#63)\nДобавлена опция «Разрешить ссылки на загрузку/загрузку» (по умолчанию включена): большие файлы и результаты можно извлекать и загружать с помощью curl, например, `.tgz` для «install_package»",
-        "pt": "Os resultados da ferramenta estão abaixo do limite de 1 MiB dos clientes MCP: listas são paginadas e links para download (#63)\nAdicionada a opção “Permitir links de download/upload” (ativada por padrão): arquivos grandes e resultados com curl, por exemplo, `.tgz` para “install_package”",
-        "nl": "De resultaten van de tool worden onder de limiet van 1 MiB van MCP-clients gehouden: lijsten worden op pagina's weergegeven, andere resultaten worden vervangen door een downloadlink (#63)\nDe optie „Download-/uploadlinks toestaan” toegevoegd (standaard ingeschakeld): grote bestanden en resultaten kunnen worden opgehaald en geüpload met curl, bijvoorbeeld een `.tgz` voor „install_package”",
-        "fr": "Les résultats des outils sont limités à 1 Mo pour les clients MCP : les listes sont paginées, les autres sont téléchargés (#63)\nAjout de l'option « Autoriser les liens » (activée par défaut) : les fichiers volumineux et les résultats peuvent être récupérés et chargés avec curl, par exemple un « .tgz » pour « install_package »",
-        "it": "I risultati degli strumenti sono al di sotto di 1 MiB dei client MCP: elenchi, altri risultati link per il download (#63)\nAggiunta l'opzione «Permetti link di download/upload» (di default): file e risultati di grandi dimensioni con curl, ad es. un `.tgz` per «install_package»",
-        "es": "Los resultados de las herramientas están por debajo del límite de 1 MiB de los clientes de MCP: las listas se paginan y otros por un enlace de descarga (#63)\nSe ha añadido la opción «Permitir enlaces de descarga/subida» (activada por defecto): los archivos y resultados grandes se pueden buscar y subir con curl, por ejemplo, un `.tgz para «install_package»",
-        "pl": "Wyniki narzędzi są utrzymywane poniżej limitu 1 MiB klientów MCP: listy są stronicowane, inne wyniki są zastępowane łączem do pobrania (#63)\nDodano opcję „Zezwalaj na linki do pobierania/przesyłania” (domyślnie włączona): duże pliki i wyniki mogą być pobierane i przesyłane za pomocą curl, np. `.tgz` dla „install_package”",
-        "uk": "Результати інструменту зберігаються нижче ліміту 1 MiB клієнтів MCP: списки переходять на сторінку, інші результати замінюються посиланням для завантаження (#63)\nДодано опцію «Дозволити завантаження/завантаження посилань» (увімкнено за замовчуванням): великі файли та результати можна отримати та завантажувати за допомогою curl, наприклад `.tgz` для «install_package»",
-        "zh-cn": "工具结果保持在 MCP 客户端的 1 MiB 限制以下：列表分页，其他结果由下载链接取代 (#63)\n添加了 “允许下载/上传链接” 选项（默认情况下处于启用状态）：可以使用 curl 提取和上传大文件和结果，例如 “install_package” 的 `.tgz`"
       }
     },
     "titleLang": {
