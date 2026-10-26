@@ -1,4 +1,9 @@
 # Older changes
+## 1.3.0 (2026-10-23)
+* (@GermanBluefox) Added the option "Allow installing packages" (off by default, only for developers): MCP clients can install an adapter package from npm, GitHub, a URL or a `.tgz` file
+* (@GermanBluefox) Added options to control instances, manage adapters, change scripts and send messages to adapters (all off by default) and to ask for a confirmation before dangerous actions
+* (@GermanBluefox) Fixed: as a web extension the outdated built-in MCP server was loaded instead of `@iobroker/mcp-server`
+
 ## 1.2.1 (2026-10-19)
 * (@Garfonso) Fixed: with "Allow object changes" enabled, MCP clients received no tools at all in some installations (ioBroker/ioBroker.mcp#70)
 * (@GermanBluefox) `set_states` checks the write permission of all states first and writes nothing if one of them may not be written by the Default User (ioBroker/ioBroker.mcp#71)
