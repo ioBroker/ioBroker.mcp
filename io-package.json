@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "news": {
+      "1.6.2": {
+        "en": "Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)",
+        "de": "Behoben: `get_logs` gab immer `size: null` für Logdatei zurück (`@iobroker /mcp-server` 1.7.1)",
+        "ru": "Исправлено: `get_logs` всегда возвращал `size: null` для файла журнала (`@iobroker /mcp-server` 1.7.1)",
+        "pt": "Corrigido: `get_logs` sempre retornava `size: null` para o log (`@iobroker /mcp-server` 1.7.1)",
+        "nl": "Opgelost: `get_logs` gaf altijd `size: null` terug voor het logbestand (`@iobroker /mcp-server` 1.7.1)",
+        "fr": "Corrigé : « get_logs » renvoyait toujours « size : null » pour le log (@iobroker /mcp-server 1.7.1)",
+        "it": "Risolto: get_logs restituiva sempre «size: null» nel file di log (@iobroker /mcp-server 1.7.1)",
+        "es": "Corregido: `get_logs` siempre devolvía `size: null` para el log (`@iobroker /mcp-server` 1.7.1)",
+        "pl": "Naprawiono: `get_logs` zawsze zwracał `rozmiar: nul` dla pliku dziennika (`@iobroker /mcp-server` 1.7.1)",
+        "uk": "Виправлено: `get_logs` завжди повертав `size: null` для файлу журналу (`@iobroker /mcp-server` 1.7.1)",
+        "zh-cn": "修复：`get_logs` 总是为日志文件返回 `size: null`（`@iobroker /mcp-server` 1.7.1）"
+      },
       "1.6.1": {
         "en": "The settings show the MCP server URL to copy, for standalone mode and as a web extension\nUpdated `@iobroker/webserver` to 3.4.0",
         "de": "Die Einstellungen zeigen die MCP-Server-URL zum Kopieren an, im Standalone-Betrieb und als Web-Erweiterung\n`@iobroker/webserver` auf 3.4.0 aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "Dodano opcję „Zezwalaj na instalowanie pakietów” (domyślnie wyłączona, tylko dla programistów): klienci MCP mogą zainstalować pakiet adaptera z npm, GitHub, adresu URL lub pliku `.tgz`\nDodano opcje kontrolowania instancji, zarządzania adapterami, zmiany skryptów i wysyłania wiadomości do adapterów (wszystkie domyślnie wyłączone) oraz żądania potwierdzenia przed niebezpiecznymi działaniami\nNaprawiono: jako rozszerzenie internetowe ładowano przestarzały wbudowany serwer MCP zamiast `@iobroker /mcp-server`",
         "uk": "Додана опція «Дозволити встановлення пакетів» (вимкнено за замовчуванням, тільки для розробників): клієнти MCP можуть встановити пакет адаптера з npm, GitHub, URL або файлу `.tgz`\nДодані опції для керування екземплярами, управління адаптерами, зміни сценаріїв та надсилання повідомлень на адаптери (все вимкнено за замовчуванням) та просити підтвердження перед небезпечними діями\nВиправлено: як веб-розширення застарілий вбудований сервер MCP був завантажений замість `@iobroker /mcp-server`",
         "zh-cn": "添加了 “允许安装软件包” 选项（默认情况下处于关闭状态，仅适用于开发人员）：MCP 客户端可以从 npm、GitHub、URL 或 `.tgz`文件安装适配器包\n添加了控制实例、管理适配器、更改脚本和向适配器发送消息（默认情况下全部关闭）以及在执行危险操作之前要求确认的选项\n修复：作为网络扩展，加载的是过时的内置 MCP 服务器，而不是 @iobroker /mcp-server"
-      },
-      "1.2.1": {
-        "en": "Fixed: with \"Allow object changes\" enabled, MCP clients received no tools at all in some installations (ioBroker/ioBroker.mcp#70)\n`set_states` checks the write permission of all states first and writes nothing if one of them may not be written by the Default User (ioBroker/ioBroker.mcp#71)\nCompleted the translations of the OAuth settings (ioBroker/ioBroker.mcp#73)",
-        "de": "Behoben: Mit „Objektänderungen zulassen“ erhielten MCP-Clients in manchen Anlagen gar keine Tools (ioBroker/ioBroker.MCP #70)\n`set_states` prüft zuerst die Schreibrechte aller Staaten und schreibt nichts, wenn nicht der Standardbenutzer (ioBroker/ioBroker.mcp #71)\nDie OAuth-Einstellungen wurden übersetzt (ioBroker/ioBroker.mcp #73)",
-        "ru": "Исправлено: при включении опции «Разрешить изменение объектов» клиенты MCP в некоторых установках вообще не получали никаких инструментов (IOBroker/IOBroker.mcp #70)\n`set_states` сначала проверяет разрешение на запись всех состояний и ничего не записывает, если одно из них не может быть записано пользователем по умолчанию (IOBroker/IOBroker.mcp #71)\nЗавершены переводы настроек OAuth (IOBroker/IOBroker.mcp #73)",
-        "pt": "Corrigido: com “Permitir mudanças de objetos”, os clientes MCP não recebiam ferramentas em algumas instalações (IOBroker/IOBroker.mcp #70)\n`set_states` verifica primeiro a permissão de gravação de todos os estados e não grava nada se não fosse o usuário padrão (IOBroker/IOBroker.mcp #71)\nConcluiu a tradução dos ajustes OAuth (IOBroker/IOBroker.mcp #73)",
-        "nl": "Opgelost: met „Allow object changes” ingeschakeld, kregen MCP-clients in sommige installaties helemaal geen tools (IOBroker/IOBroker.mcp #70)\n`set_states` controleert eerst de schrijfrechten van alle staten en schrijft niets als een van deze staten niet door de standaardgebruiker is geschreven (IOBroker/IOBroker.mcp #71)\nDe vertalingen van de OAuth-instellingen voltooid (IOBroker/IOBroker.mcp #73)",
-        "fr": "Corrigé : lorsque « Autoriser les modifications d'objets » était activé, les clients MCP ne recevaient aucun outil (IObroker/IObroker.MCP #70)\n`set_states` vérifie d'abord l'autorisation d'écriture de tous les états et n'écrit rien si l'utilisateur par défaut n'en écrit pas un (IObroker/IObroker.mcp #71)\nLes paramètres OAuth ont été traduits (IObroker/IObroker.mcp #73)",
-        "it": "Risolto: con «Consenti modifiche agli oggetti» abilitato, i client MCP non ricevevano alcuno strumento (IObroker/IObroker.MCP #70)\n`set_states` verifica prima i permessi di scrittura di tutti gli stati e non scrive nulla se uno non è stato scritto dall'utente predefinito #71\nHo tradotto i settaggi OAuth (IOBroker/IOBroker.mcp #73)",
-        "es": "Corregido: Con «Permitir cambios de objetos», los clientes MCP no recibían ninguna herramienta en algunas instalaciones (IOBroker/IOBroker.MCP #70)\n`set_states` comprueba primero el permiso de escritura de todos los estados y no escribe nada si uno de ellos no lo escribe el usuario predeterminado (IOBroker/IOBroker.mcp #71)\nHa traducido los ajustes de OAuth (IOBroker/IOBroker.MCP #73)",
-        "pl": "Naprawiono: z włączonym „Zezwalaj na zmiany obiektów” klienci MCP nie otrzymywali żadnych narzędzi w niektórych instalacjach (iobroker/iobroker.mcp #70)\n`set_state` sprawdza najpierw uprawnienia do zapisu wszystkich stanów i nie zapisuje niczego, jeśli jeden z nich nie może być napisany przez Domyślnego Użytkownika (iOBroker/iobroker.mcp #71)\nZakończono tłumaczenia ustawień OAuth (iobroker/iobroker.mcp #73)",
-        "uk": "Виправлено: якщо увімкнено «Дозволити зміни об'єктів», клієнти MCP взагалі не отримували інструментів у деяких установках (IObroker/iobroker.mcp #70)\n`set_state-` спочатку перевіряє дозвіл на запис усіх станів і нічого не записує, якщо один з них не може бути записаний користувачем за замовчуванням (ioBroker/ioBroker.mcp #71)\nЗавершено переклади налаштувань OAuth (ioBroker/Iobroker.mcp #73)",
-        "zh-cn": "修复：启用 “允许更改对象” 后，MCP 客户端在某些安装中根本没有收到任何工具 (iobroker/iobroker.mcp #70)\n`set_states`首先检查所有状态的写入权限，如果默认用户不能写入其中一个状态，则不写任何内容 (iobroker/iobroker.mcp #71)\n已完成 OAuth 设置的翻译 (iobroker/iobroker.mcp #73)"
       }
     },
     "titleLang": {

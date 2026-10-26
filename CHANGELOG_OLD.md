@@ -1,4 +1,8 @@
 # Older changes
+## 1.4.0 (2026-10-24)
+* (@GermanBluefox) Tool results are kept below the 1 MiB limit of MCP clients: lists are paged, other results are replaced by a download link (#63)
+* (@GermanBluefox) Added the option "Allow download/upload links" (on by default): large files and results can be fetched and uploaded with curl, e.g. a `.tgz` for "install_package"
+
 ## 1.3.0 (2026-10-23)
 * (@GermanBluefox) Added the option "Allow installing packages" (off by default, only for developers): MCP clients can install an adapter package from npm, GitHub, a URL or a `.tgz` file
 * (@GermanBluefox) Added options to control instances, manage adapters, change scripts and send messages to adapters (all off by default) and to ask for a confirmation before dangerous actions

@@ -345,7 +345,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.6.2 (2026-10-26)
 * (@GermanBluefox) Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)
 
 ### 1.6.1 (2026-10-26)
@@ -367,10 +367,6 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) With authentication, the tools run with the permissions of the logged-in user instead of the Default User; the Default User is now only shown when authentication is off
 * (@GermanBluefox) As a web extension, the default user of the `web` instance is used
 * (@GermanBluefox) An upload link can only be used by the user that created it
-
-### 1.4.0 (2026-10-24)
-* (@GermanBluefox) Tool results are kept below the 1 MiB limit of MCP clients: lists are paged, other results are replaced by a download link (#63)
-* (@GermanBluefox) Added the option "Allow download/upload links" (on by default): large files and results can be fetched and uploaded with curl, e.g. a `.tgz` for "install_package"
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
