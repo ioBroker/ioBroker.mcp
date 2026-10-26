@@ -257,7 +257,7 @@ state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 |-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `get_states`                | Retrieve the current value of one or multiple states; IDs may contain wildcards (e.g. `hue.0.*.brightness`); an ID without a state is returned with `exists: false` or a hint                                                                      |
 | `wait_for_state`            | Wait until a state has a `value` (or, without `value`, until it is updated), optionally only with `ack`; gives up after `timeout` seconds (default 30, at most 50) with `reached: false`                                                             |
-| `find_orphan_states`        | Find states without object (e.g. `system.adapter.vis.0.alive` of a deleted instance) by an ID `pattern`; delete them on the host with `iobroker state del <id>`                                                                                      |
+| `find_orphan_states`        | Find states without object (e.g. `system.adapter.vis.0.alive` of a deleted instance) by an ID `pattern`, except the upload progress `system.adapter.<adapter>.upload`, which has no object on purpose; delete them on the host with `iobroker state del <id>`|
 | `get_object`                | Read a single object by its ID                                                                                                                                                                                                                       |
 | `check_permissions`         | Show the user and groups of the MCP session, the rights of its groups and, for given object IDs, whether it may read/write/delete the object and read/write the state                                                                               |
 | `search_objects`            | Search objects/states by keyword (matched against ID and name); optional filters for object `type`, `role`, `room` and source `adapter` instance                                                                                                     |
@@ -369,6 +369,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) `find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)
+
 ### 1.7.0 (2026-10-26)
 * (@GermanBluefox) Security: commands on a host need the "execute" right of the user, messages to adapters the "sendto" right, like in admin; a session is only offered the tools its user has the rights for (`@iobroker/mcp-server` 1.8.0)
 * (@GermanBluefox) Every change made via MCP is logged with the user, the tool and its arguments; `get_logs` searches the messages for a text or a regular expression (`@iobroker/mcp-server` 1.8.0)
