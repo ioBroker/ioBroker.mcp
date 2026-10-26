@@ -36,6 +36,30 @@
                     "sm": 12,
                     "md": 4,
                     "lg": 2
+                },
+                "_mcpUrl": {
+                    "type": "pattern",
+                    "newLine": true,
+                    "label": "MCP server URL",
+                    "copyToClipboard": true,
+                    "hidden": "!!data.webInstance",
+                    "pattern": "${data.oauth && data.publicUrl ? data.publicUrl.replace(/\\/+$/, '') : (data.secure ? 'https' : 'http') + '://' + (!data.bind || data.bind === '0.0.0.0' || data.bind === '::' ? window.location.hostname : data.bind.includes(':') ? '[' + data.bind + ']' : data.bind) + ':' + data.port}/mcp",
+                    "help": "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.",
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6
+                },
+                "_mcpUrlWeb": {
+                    "type": "pattern",
+                    "newLine": true,
+                    "label": "MCP server URL (web extension)",
+                    "copyToClipboard": true,
+                    "hidden": "!data.webInstance",
+                    "pattern": "${(data.webInstance === '*' ? await _socket.getAdapterInstances('web') : [await getObject('system.adapter.' + data.webInstance)]).filter(obj => obj && obj.native).map(obj => (data.oauth && data.publicUrl ? data.publicUrl.replace(/\\/+$/, '') : (obj.native.secure ? 'https' : 'http') + '://' + (!obj.native.bind || obj.native.bind === '0.0.0.0' || obj.native.bind === '::' ? window.location.hostname : obj.native.bind.includes(':') ? '[' + obj.native.bind + ']' : obj.native.bind) + ':' + obj.native.port) + '/mcp').filter((url, i, all) => all.indexOf(url) === i).join(', ')}",
+                    "help": "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).",
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6
                 }
             }
         },

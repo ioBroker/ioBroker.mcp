@@ -27,7 +27,7 @@ The adapter can run in two ways:
 2. **Web extension** – it runs inside an existing [`web`](https://github.com/ioBroker/ioBroker.web) adapter
    instance and shares its web server (port, authentication, SSL). Select the target web instance in the
    admin configuration ("Extend WEB adapter"). The MCP endpoint is then served under the web adapter, e.g.
-   `http(s)://<host>:8082/mcp/`.
+   `http(s)://<host>:8082/mcp`.
 
    When a web instance is selected, the standalone server settings (port, bind address, authentication, SSL)
    are hidden because they are inherited from the chosen `web` instance.
@@ -40,6 +40,10 @@ The adapter can be configured through the ioBroker admin interface using JSONCon
 - **Extend WEB adapter**: Select a `web` instance to run as its extension. Leave empty to run standalone.
 - **Port**: The port on which the web server will listen (default: 8093) – standalone only
 - **Bind Address**: IP address to bind the server to (0.0.0.0 for all interfaces) – standalone only
+- **MCP server URL**: The address to enter in the MCP client, with a button to copy it. Standalone it is built from
+  SSL, bind address and port of this instance; as a web extension from SSL, bind address and port of the selected
+  `web` instance (with "all instances" one URL per instance). With OAuth and a **Public URL** the public URL is
+  used, otherwise the host from the address of the admin page.
 
 ### Authentication
 - **Enable Authentication**: Enable ioBroker user authentication for the web server
@@ -165,8 +169,7 @@ Good to know:
 1. Enable **Enable Authentication** and **Enable OAuth**. As a web extension, enable OAuth ("Allow third-party
    clients") in the `web` instance as well.
 2. Make the server reachable via **HTTPS** from the internet and enter this address as **Public URL**.
-3. Use the URL `https://<your public address>/mcp` (as web extension `https://<your public address>/mcp/`) in the
-   client and log in with an ioBroker user.
+3. Use the URL `https://<your public address>/mcp` in the client and log in with an ioBroker user.
 
 ### Claude (claude.ai, Claude Desktop)
 
@@ -225,7 +228,7 @@ The MCP server is served at `POST/GET/DELETE /mcp` using the Streamable HTTP tra
 state (tracked via the `Mcp-Session-Id` header). Point your MCP client at:
 
 - standalone: `http(s)://<host>:<port>/mcp`
-- web extension: `http(s)://<host>:<webPort>/mcp/`
+- web extension: `http(s)://<host>:<webPort>/mcp`
 
 ### Available tools
 
@@ -342,6 +345,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) The settings show the MCP server URL to copy, for standalone mode and as a web extension
+
 ### 1.6.0 (2026-10-26)
 * (@GermanBluefox) Added the `check_permissions` tool: what the user of the MCP session may do with an object
 * (@GermanBluefox) `install_package` reports whether the restarted instances came up again and their first log lines

@@ -58,5 +58,9 @@
   "States and objects": "状态和对象",
   "System": "系统",
   "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "此选项用于在测试系统上开发适配器，例如让 AI 代理安装刚打包的 .tgz。已安装的软件包在主机上以完全权限运行。切勿在生产系统上或为不完全信任的客户端启用此选项。",
-  "https://iobroker.example.com": "https://iobroker.example.com"
+  "https://iobroker.example.com": "https://iobroker.example.com",
+  "MCP server URL": "MCP 服务器地址",
+  "MCP server URL (web extension)": "MCP 服务器地址（Web 扩展）",
+  "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.": "在 MCP 客户端（例如 Claude、ChatGPT 或 Claude Code）中输入此地址。未设置公共 URL 时，主机名取自当前管理页面的地址。",
+  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "由所选的 web 实例使用其端口和 HTTPS 设置提供。在 MCP 客户端（例如 Claude、ChatGPT 或 Claude Code）中输入此地址。"
 }

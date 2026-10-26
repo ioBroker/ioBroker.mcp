@@ -58,5 +58,9 @@
   "States and objects": "Zustände und Objekte",
   "System": "System",
   "This option is meant for developing adapters on a test system, e.g. to let an AI agent install a freshly packed .tgz. An installed package runs with full rights on the host. Never enable it on a productive system or for clients you do not fully trust.": "Diese Option ist für die Adapter-Entwicklung auf einem Testsystem gedacht, z. B. damit ein KI-Agent ein frisch gepacktes .tgz installieren kann. Ein installiertes Paket läuft mit vollen Rechten auf dem Host. Niemals auf einem produktiven System oder für Clients aktivieren, denen Sie nicht vollständig vertrauen.",
-  "https://iobroker.example.com": "https://iobroker.example.com"
+  "https://iobroker.example.com": "https://iobroker.example.com",
+  "MCP server URL": "MCP-Server-URL",
+  "MCP server URL (web extension)": "MCP-Server-URL (Web-Erweiterung)",
+  "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.": "Diese Adresse im MCP-Client eintragen (z. B. Claude, ChatGPT oder Claude Code). Ohne öffentliche URL wird der Host aus der Adresse dieser Admin-Seite übernommen.",
+  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "Wird von der gewählten Web-Instanz mit deren Port und HTTPS-Einstellung bereitgestellt. Diese Adresse im MCP-Client eintragen (z. B. Claude, ChatGPT oder Claude Code)."
 }
