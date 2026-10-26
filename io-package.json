@@ -5,16 +5,16 @@
     "news": {
       "1.6.2": {
         "en": "Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)",
-        "de": "Behoben: `get_logs` gab immer `size: null` für Logdatei zurück (`@iobroker /mcp-server` 1.7.1)",
-        "ru": "Исправлено: `get_logs` всегда возвращал `size: null` для файла журнала (`@iobroker /mcp-server` 1.7.1)",
-        "pt": "Corrigido: `get_logs` sempre retornava `size: null` para o log (`@iobroker /mcp-server` 1.7.1)",
-        "nl": "Opgelost: `get_logs` gaf altijd `size: null` terug voor het logbestand (`@iobroker /mcp-server` 1.7.1)",
-        "fr": "Corrigé : « get_logs » renvoyait toujours « size : null » pour le log (@iobroker /mcp-server 1.7.1)",
-        "it": "Risolto: get_logs restituiva sempre «size: null» nel file di log (@iobroker /mcp-server 1.7.1)",
-        "es": "Corregido: `get_logs` siempre devolvía `size: null` para el log (`@iobroker /mcp-server` 1.7.1)",
-        "pl": "Naprawiono: `get_logs` zawsze zwracał `rozmiar: nul` dla pliku dziennika (`@iobroker /mcp-server` 1.7.1)",
-        "uk": "Виправлено: `get_logs` завжди повертав `size: null` для файлу журналу (`@iobroker /mcp-server` 1.7.1)",
-        "zh-cn": "修复：`get_logs` 总是为日志文件返回 `size: null`（`@iobroker /mcp-server` 1.7.1）"
+        "de": "Behoben: `get_logs` gab für die Logdatei immer `size: null` zurück (`@iobroker/mcp-server` 1.7.1)",
+        "ru": "Исправлено: `get_logs` всегда возвращал `size: null` для файла журнала (`@iobroker/mcp-server` 1.7.1)",
+        "pt": "Corrigido: `get_logs` sempre retornava `size: null` para o arquivo de log (`@iobroker/mcp-server` 1.7.1)",
+        "nl": "Opgelost: `get_logs` gaf voor het logbestand altijd `size: null` terug (`@iobroker/mcp-server` 1.7.1)",
+        "fr": "Corrigé : `get_logs` renvoyait toujours `size: null` pour le fichier journal (`@iobroker/mcp-server` 1.7.1)",
+        "it": "Corretto: `get_logs` restituiva sempre `size: null` per il file di log (`@iobroker/mcp-server` 1.7.1)",
+        "es": "Corregido: `get_logs` siempre devolvía `size: null` para el archivo de registro (`@iobroker/mcp-server` 1.7.1)",
+        "pl": "Naprawiono: `get_logs` zawsze zwracał `size: null` dla pliku dziennika (`@iobroker/mcp-server` 1.7.1)",
+        "uk": "Виправлено: `get_logs` завжди повертав `size: null` для файлу журналу (`@iobroker/mcp-server` 1.7.1)",
+        "zh-cn": "修复：`get_logs` 对日志文件始终返回 `size: null`（`@iobroker/mcp-server` 1.7.1）"
       },
       "1.6.1": {
         "en": "The settings show the MCP server URL to copy, for standalone mode and as a web extension\nUpdated `@iobroker/webserver` to 3.4.0",
