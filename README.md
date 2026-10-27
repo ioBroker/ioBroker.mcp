@@ -371,7 +371,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.8.0 (2026-10-27)
 * (@GermanBluefox) New tool `delete_orphan_states`: deletes the states without object found by `find_orphan_states`, but never a state with an object (`@iobroker/mcp-server` 1.9.0)
 
 ### 1.7.1 (2026-10-26)
@@ -389,14 +389,6 @@ tools rather than as subscribable resources.)
 ### 1.6.1 (2026-10-26)
 * (@GermanBluefox) The settings show the MCP server URL to copy, for standalone mode and as a web extension
 * (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.0
-
-### 1.6.0 (2026-10-26)
-* (@GermanBluefox) Added the `check_permissions` tool: what the user of the MCP session may do with an object
-* (@GermanBluefox) `install_package` reports whether the restarted instances came up again and their first log lines
-* (@GermanBluefox) `get_states` returns `exists: false` for an unknown ID; `get_logs` returns the time of the newest line and the size of the log file
-* (@GermanBluefox) A confirmation dismissed by the client explains how to turn off the confirmations instead of "Cancelled by the user"
-* (@GermanBluefox) A wrong password is logged with the address and the User-Agent of the client
-* (@GermanBluefox) Updated `@iobroker/mcp-server` to 1.7.0 and `@iobroker/webserver` to 3.3.2
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

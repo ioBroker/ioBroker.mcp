@@ -1,4 +1,12 @@
 # Older changes
+## 1.6.0 (2026-10-26)
+* (@GermanBluefox) Added the `check_permissions` tool: what the user of the MCP session may do with an object
+* (@GermanBluefox) `install_package` reports whether the restarted instances came up again and their first log lines
+* (@GermanBluefox) `get_states` returns `exists: false` for an unknown ID; `get_logs` returns the time of the newest line and the size of the log file
+* (@GermanBluefox) A confirmation dismissed by the client explains how to turn off the confirmations instead of "Cancelled by the user"
+* (@GermanBluefox) A wrong password is logged with the address and the User-Agent of the client
+* (@GermanBluefox) Updated `@iobroker/mcp-server` to 1.7.0 and `@iobroker/webserver` to 3.3.2
+
 ## 1.5.1 (2026-10-24)
 * (@GermanBluefox) The Default User is selected from a list of the ioBroker users
 
