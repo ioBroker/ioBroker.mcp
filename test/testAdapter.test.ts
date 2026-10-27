@@ -825,5 +825,45 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.ok(tokenRes.status >= 400, 'invalid credentials must not yield a token');
             });
         });
+
+        // --- Stop: a connected client must not delay the stop ---------------------------------------
+        suite('MCP server (stop with a connected client)', getHarness => {
+            const PORT = 18296;
+            let harness: IntegrationTestHarness;
+
+            before(async function () {
+                this.timeout(60000);
+                harness = getHarness();
+                await harness.changeAdapterConfig(harness.adapterName, {
+                    native: { port: PORT, bind: HOST, secure: false, auth: false, defaultUser: 'admin' },
+                });
+                await harness.startAdapterAndWait(true);
+            });
+
+            after(async function () {
+                this.timeout(20000);
+                await harness?.stopAdapter();
+            });
+
+            it('stops before js-controller kills it, although a client holds its event stream open', async function () {
+                this.timeout(20000);
+                const { status, sessionId } = await rawInitialize(PORT);
+                assert.strictEqual(status, 200, 'initialize succeeds');
+                assert.ok(sessionId, 'initialize returns a session id');
+                // The event stream of the session, as MCP clients keep it open for messages from the server
+                const stream = await fetch(`http://${HOST}:${PORT}/mcp`, {
+                    headers: { Accept: 'text/event-stream', 'mcp-session-id': sessionId! },
+                });
+                assert.strictEqual(stream.status, 200, 'the event stream is open');
+
+                const started = Date.now();
+                await harness.stopAdapter();
+                const took = Date.now() - started;
+                // js-controller kills an instance with SIGKILL that has not exited 1 s after the stop request
+                assert.ok(took < 1000, `the adapter needed ${took} ms to stop`);
+                assert.ok(!harness.isAdapterRunning(), 'the adapter process has exited');
+                await stream.body?.cancel().catch(() => {});
+            });
+        });
     },
 });

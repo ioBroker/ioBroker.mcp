@@ -25,6 +25,8 @@ class Mcp extends Adapter {
             stateChange: (id, state) => this.webServer?.mcpServer?.stateChange(id, state),
             objectChange: (id, obj) => this.webServer?.mcpServer?.objectChange(id, obj),
             ready: () => this.main(),
+            // js-controller calls only this option on stop, not a method `onUnload`
+            unload: callback => this.onUnload(callback),
         });
 
         this.webServer = {
@@ -42,30 +44,20 @@ class Mcp extends Adapter {
             }
             void this.setState('info.connection', false, true);
 
-            this.log.info(`terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`);
-            if (this.webServer?.mcpServer) {
-                this.webServer.mcpServer.unload();
-                try {
-                    if (this.webServer.server) {
-                        this.webServer.server.close();
-                        this.webServer.server = null;
-                    }
-                } catch (error) {
-                    // ignore
-                    console.error(`Cannot close server: ${error}`);
-                }
-                callback();
-            } else {
-                if (this.webServer?.server) {
-                    this.webServer.server.close();
-                    this.webServer.server = null;
-                }
-                callback();
+            // Ends the MCP sessions, so the clients learn that the server is gone
+            this.webServer.mcpServer?.unload();
+            if (this.webServer.server) {
+                this.log.info(`terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`);
+                // close() only stops accepting connections and waits for the open ones, e.g. the event
+                // streams (GET /mcp) of connected clients, which stay open until the client disconnects
+                this.webServer.server.close();
+                this.webServer.server.closeAllConnections();
+                this.webServer.server = null;
             }
         } catch (error) {
-            console.error(`Cannot close server: ${error}`);
-            callback();
+            this.log.error(`Cannot close server: ${error}`);
         }
+        callback();
     }
 
     async initWebServer(): Promise<void> {
