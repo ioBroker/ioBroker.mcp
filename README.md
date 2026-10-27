@@ -371,7 +371,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.8.1 (2026-10-27)
 * (@GermanBluefox) Fixed: js-controller usually killed the instance with SIGKILL when stopping it, because the adapter never closed its server and the connections of the MCP clients
 
 ### 1.8.0 (2026-10-27)
@@ -388,10 +388,6 @@ tools rather than as subscribable resources.)
 
 ### 1.6.2 (2026-10-26)
 * (@GermanBluefox) Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)
-
-### 1.6.1 (2026-10-26)
-* (@GermanBluefox) The settings show the MCP server URL to copy, for standalone mode and as a web extension
-* (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.0
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

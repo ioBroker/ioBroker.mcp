@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mcp",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "news": {
+      "1.8.1": {
+        "en": "Fixed: js-controller usually killed the instance with SIGKILL when stopping it, because the adapter never closed its server and the connections of the MCP clients",
+        "de": "Behoben: JS-Controller beendete die Instanz beim Stoppen meist mit SIGKILL, da der Adapter weder den Server noch die MCP-Clients schloss",
+        "ru": "Исправлено: js-controller обычно уничтожал экземпляр с помощью SIGKILL при остановке, потому что адаптер никогда не закрывал сервер и соединения клиентов MCP",
+        "pt": "Corrigido: o js-controller matava a instância com SIGKILL ao pará-la, pois o adaptador nunca fechava o servidor e as conexões dos clientes MCP",
+        "nl": "Opgelost: de js-controller heeft de instance met SIGKILL meestal uitgeschakeld wanneer deze werd gestopt, omdat de adapter de server en de verbindingen van de MCP-clients nooit heeft gesloten",
+        "fr": "Corrigé : js-controller arrêtait généralement l'instance avec SIGKILL, car l'adaptateur ne fermait jamais son serveur et les connexions des clients MCP",
+        "it": "Risolto: js-controller di solito uccideva l'istanza con SIGKILL quando la arrestava, perché l'adattatore non chiudeva mai il server e le connessioni dei client MCP",
+        "es": "Corregido: js-controller solía matar la instancia con SIGKILL al detenerla, porque el adaptador nunca cerraba su servidor y las conexiones de los clientes MCP",
+        "pl": "Naprawiono: js-controller zwykle zabijał instancję za pomocą SIGKILL podczas jej zatrzymania, ponieważ adapter nigdy nie zamykał swojego serwera i połączeń klientów MCP",
+        "uk": "Виправлено: js-контролер зазвичай вбивав екземпляр з SIGKILL при його зупинці, оскільки адаптер ніколи не закривав свій сервер і з'єднання клієнтів MCP",
+        "zh-cn": "修复：js-controller 在停止实例时通常使用 SIGKILL 将其杀死，因为适配器从未关闭其服务器和 MCP 客户端的连接"
+      },
       "1.8.0": {
         "en": "New tool `delete_orphan_states`: deletes the states without object found by `find_orphan_states`, but never a state with an object (`@iobroker/mcp-server` 1.9.0)",
         "de": "Neues Tool `delete_orphan_states`: löscht die von `find_orphan_states` gefundenen States ohne Objekt, aber nie einen State mit Objekt (`@iobroker/mcp-server` 1.9.0)",
@@ -80,19 +93,6 @@
         "pl": "Dodano narzędzie `check_permissions`: co użytkownik sesji MCP może zrobić z obiektem\n`install_package` zgłasza, czy ponownie uruchomione instancje znów działają, oraz ich pierwsze wiersze dziennika\n`get_states` zwraca `exists: false` dla nieznanego ID; `get_logs` zwraca czas najnowszego wiersza i rozmiar pliku dziennika\nPotwierdzenie odrzucone przez klienta wyjaśnia, jak wyłączyć potwierdzenia, zamiast \"Cancelled by the user\"\nBłędne hasło jest zapisywane w dzienniku z adresem i User-Agent klienta\nZaktualizowano `@iobroker/mcp-server` do 1.7.0 i `@iobroker/webserver` do 3.3.2",
         "uk": "Додано інструмент `check_permissions`: що користувач сесії MCP може робити з об'єктом\n`install_package` повідомляє, чи знову запустилися перезапущені екземпляри, та їхні перші рядки журналу\n`get_states` повертає `exists: false` для невідомого ID; `get_logs` повертає час найновішого рядка та розмір файлу журналу\nПідтвердження, відхилене клієнтом, пояснює, як вимкнути підтвердження, замість \"Cancelled by the user\"\nНеправильний пароль записується в журнал з адресою та User-Agent клієнта\nОновлено `@iobroker/mcp-server` до 1.7.0 та `@iobroker/webserver` до 3.3.2",
         "zh-cn": "新增 `check_permissions` 工具：MCP 会话的用户可以对某个对象执行哪些操作\n`install_package` 报告重启后的实例是否重新运行，以及它们的前几行日志\n对于未知 ID，`get_states` 返回 `exists: false`；`get_logs` 返回最新一行的时间和日志文件的大小\n被客户端关闭的确认会说明如何关闭确认功能，而不是提示 \"Cancelled by the user\"\n错误的密码会连同客户端的地址和 User-Agent 一起记录到日志\n将 `@iobroker/mcp-server` 更新到 1.7.0，将 `@iobroker/webserver` 更新到 3.3.2"
-      },
-      "1.5.1": {
-        "en": "The Default User is selected from a list of the ioBroker users",
-        "de": "Der Standardbenutzer ist Teil der ioBroker-Liste",
-        "ru": "Пользователь по умолчанию выбирается из списка пользователей IOBroker",
-        "pt": "O usuário padrão é selecionado na lista de usuários IOBroker",
-        "nl": "De standaardgebruiker wordt geselecteerd uit een lijst van IOBroker-gebruikers",
-        "fr": "L'utilisateur par défaut est choisi dans la liste d'IOBroker",
-        "it": "L'utente predefinito è scelto da un elenco di utenti IObroker",
-        "es": "El usuario por defecto se selecciona de una lista de usuarios de ioBroker",
-        "pl": "Domyślny użytkownik jest wybrany z listy użytkowników iOBroker",
-        "uk": "Користувач за замовчуванням вибирається зі списку користувачів IObroker",
-        "zh-cn": "从 IOBroker 用户列表中选择默认用户"
       }
     },
     "titleLang": {

@@ -1,4 +1,8 @@
 # Older changes
+## 1.6.1 (2026-10-26)
+* (@GermanBluefox) The settings show the MCP server URL to copy, for standalone mode and as a web extension
+* (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.0
+
 ## 1.6.0 (2026-10-26)
 * (@GermanBluefox) Added the `check_permissions` tool: what the user of the MCP session may do with an object
 * (@GermanBluefox) `install_package` reports whether the restarted instances came up again and their first log lines
