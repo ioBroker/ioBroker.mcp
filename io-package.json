@@ -5,16 +5,16 @@
     "news": {
       "1.8.1": {
         "en": "Fixed: js-controller usually killed the instance with SIGKILL when stopping it, because the adapter never closed its server and the connections of the MCP clients",
-        "de": "Behoben: JS-Controller beendete die Instanz beim Stoppen meist mit SIGKILL, da der Adapter weder den Server noch die MCP-Clients schloss",
-        "ru": "Исправлено: js-controller обычно уничтожал экземпляр с помощью SIGKILL при остановке, потому что адаптер никогда не закрывал сервер и соединения клиентов MCP",
-        "pt": "Corrigido: o js-controller matava a instância com SIGKILL ao pará-la, pois o adaptador nunca fechava o servidor e as conexões dos clientes MCP",
-        "nl": "Opgelost: de js-controller heeft de instance met SIGKILL meestal uitgeschakeld wanneer deze werd gestopt, omdat de adapter de server en de verbindingen van de MCP-clients nooit heeft gesloten",
-        "fr": "Corrigé : js-controller arrêtait généralement l'instance avec SIGKILL, car l'adaptateur ne fermait jamais son serveur et les connexions des clients MCP",
-        "it": "Risolto: js-controller di solito uccideva l'istanza con SIGKILL quando la arrestava, perché l'adattatore non chiudeva mai il server e le connessioni dei client MCP",
-        "es": "Corregido: js-controller solía matar la instancia con SIGKILL al detenerla, porque el adaptador nunca cerraba su servidor y las conexiones de los clientes MCP",
-        "pl": "Naprawiono: js-controller zwykle zabijał instancję za pomocą SIGKILL podczas jej zatrzymania, ponieważ adapter nigdy nie zamykał swojego serwera i połączeń klientów MCP",
-        "uk": "Виправлено: js-контролер зазвичай вбивав екземпляр з SIGKILL при його зупинці, оскільки адаптер ніколи не закривав свій сервер і з'єднання клієнтів MCP",
-        "zh-cn": "修复：js-controller 在停止实例时通常使用 SIGKILL 将其杀死，因为适配器从未关闭其服务器和 MCP 客户端的连接"
+        "de": "Behoben: js-controller hat die Instanz beim Stoppen meist mit SIGKILL beendet, weil der Adapter seinen Server und die Verbindungen der MCP-Clients nie geschlossen hat",
+        "ru": "Исправлено: js-controller при остановке обычно завершал экземпляр через SIGKILL, потому что адаптер никогда не закрывал свой сервер и соединения клиентов MCP",
+        "pt": "Corrigido: o js-controller geralmente matava a instância com SIGKILL ao pará-la, porque o adaptador nunca fechava seu servidor e as conexões dos clientes MCP",
+        "nl": "Opgelost: js-controller beëindigde de instantie bij het stoppen meestal met SIGKILL, omdat de adapter zijn server en de verbindingen van de MCP-clients nooit sloot",
+        "fr": "Corrigé : js-controller tuait généralement l'instance avec SIGKILL lors de son arrêt, car l'adaptateur ne fermait jamais son serveur ni les connexions des clients MCP",
+        "it": "Risolto: js-controller di solito terminava l'istanza con SIGKILL durante l'arresto, perché l'adattatore non chiudeva mai il suo server e le connessioni dei client MCP",
+        "es": "Corregido: js-controller solía terminar la instancia con SIGKILL al detenerla, porque el adaptador nunca cerraba su servidor ni las conexiones de los clientes MCP",
+        "pl": "Naprawiono: js-controller zwykle zabijał instancję sygnałem SIGKILL podczas zatrzymywania, ponieważ adapter nigdy nie zamykał swojego serwera ani połączeń klientów MCP",
+        "uk": "Виправлено: js-controller під час зупинки зазвичай примусово завершував екземпляр через SIGKILL, оскільки адаптер ніколи не закривав свій сервер і з'єднання клієнтів MCP",
+        "zh-cn": "修复：js-controller 在停止实例时通常会用 SIGKILL 强制结束它，因为适配器从未关闭其服务器和 MCP 客户端的连接"
       },
       "1.8.0": {
         "en": "New tool `delete_orphan_states`: deletes the states without object found by `find_orphan_states`, but never a state with an object (`@iobroker/mcp-server` 1.9.0)",
