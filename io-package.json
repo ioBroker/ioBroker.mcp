@@ -5,16 +5,16 @@
     "news": {
       "1.8.0": {
         "en": "New tool `delete_orphan_states`: deletes the states without object found by `find_orphan_states`, but never a state with an object (`@iobroker/mcp-server` 1.9.0)",
-        "de": "Neues Tool `delete_orphan_states`: löscht Staaten ohne Objekt von `find_orphan_states`, aber nie einen Staat mit Objekt (`@iobroker /mcp-server` 1.9.0)",
-        "ru": "Новый инструмент `delete_orphan_states`: удаляет состояния без объекта, найденного командой `find_orphan_states`, но не удаляет состояния с объектом (`@iobroker /mcp-server` 1.9.0)",
-        "pt": "Nova ferramenta `delete_orphan_states`: exclui os estados sem objeto encontrado por `find_orphan_states`, mas nunca um estado com um objeto (`@iobroker /mcp-server` 1.9.0)",
-        "nl": "Nieuwe tool `delete_orphan_states`: verwijdert de staten zonder dat er een object is gevonden door `find_orphan_states`, maar nooit een staat met een object (`@iobroker /mcp-server` 1.9.0)",
-        "fr": "Nouvel outil delete_orphan_states : supprime les états sans objet trouvés par find_orphan_states, mais jamais ceux contenant un objet (@iobroker /mcp-server 1.9.0)",
-        "it": "Nuovo strumento `delete_orphan_states`: elimina gli stati senza oggetto trovati da `find_orphan_states`, ma mai uno con oggetto (`@iobroker /mcp-server` 1.9.0)",
-        "es": "Nueva herramienta `delete_orphan_states`: elimina los estados sin objeto encontrado por `find_orphan_states`, pero nunca los estados con un objeto (`@iobroker /mcp-server` 1.9.0)",
-        "pl": "Nowe narzędzie `delete_orph_state`: usuwa stany bez obiektu znalezionego przez `find_orph_state`, ale nigdy stan z obiektem (`@iobroker /mcp-server` 1.9.0)",
-        "uk": "Новий інструмент `delete_orph_state-`: видаляє стани без об'єкта, знайденого `find_orph_state-`, але ніколи не видаляє стан з об'єктом (`@iobroker /mcp-server` 1.9.0)",
-        "zh-cn": "新工具 `delete_orphan_states`：删除 `find_orphan_states` 未找到对象的状态，但永远不会删除带有对象的状态 (`@iobroker /mcp-server` 1.9.0)"
+        "de": "Neues Tool `delete_orphan_states`: löscht die von `find_orphan_states` gefundenen States ohne Objekt, aber nie einen State mit Objekt (`@iobroker/mcp-server` 1.9.0)",
+        "ru": "Новый инструмент `delete_orphan_states`: удаляет найденные `find_orphan_states` состояния без объекта, но никогда не удаляет состояние с объектом (`@iobroker/mcp-server` 1.9.0)",
+        "pt": "Nova ferramenta `delete_orphan_states`: exclui os estados sem objeto encontrados por `find_orphan_states`, mas nunca um estado com objeto (`@iobroker/mcp-server` 1.9.0)",
+        "nl": "Nieuwe tool `delete_orphan_states`: verwijdert de door `find_orphan_states` gevonden states zonder object, maar nooit een state met object (`@iobroker/mcp-server` 1.9.0)",
+        "fr": "Nouvel outil `delete_orphan_states` : supprime les états sans objet trouvés par `find_orphan_states`, mais jamais un état qui a un objet (`@iobroker/mcp-server` 1.9.0)",
+        "it": "Nuovo strumento `delete_orphan_states`: elimina gli stati senza oggetto trovati da `find_orphan_states`, ma mai uno stato con oggetto (`@iobroker/mcp-server` 1.9.0)",
+        "es": "Nueva herramienta `delete_orphan_states`: elimina los estados sin objeto encontrados por `find_orphan_states`, pero nunca un estado con objeto (`@iobroker/mcp-server` 1.9.0)",
+        "pl": "Nowe narzędzie `delete_orphan_states`: usuwa stany bez obiektu znalezione przez `find_orphan_states`, ale nigdy stanu z obiektem (`@iobroker/mcp-server` 1.9.0)",
+        "uk": "Новий інструмент `delete_orphan_states`: видаляє знайдені `find_orphan_states` стани без об'єкта, але ніколи не видаляє стан з об'єктом (`@iobroker/mcp-server` 1.9.0)",
+        "zh-cn": "新工具 `delete_orphan_states`：删除 `find_orphan_states` 找到的没有对象的状态，但绝不会删除有对象的状态（`@iobroker/mcp-server` 1.9.0）"
       },
       "1.7.1": {
         "en": "`find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)",
