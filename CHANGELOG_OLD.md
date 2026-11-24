@@ -1,4 +1,7 @@
 # Older changes
+## 1.6.2 (2026-10-26)
+* (@GermanBluefox) Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)
+
 ## 1.6.1 (2026-10-26)
 * (@GermanBluefox) The settings show the MCP server URL to copy, for standalone mode and as a web extension
 * (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.0
