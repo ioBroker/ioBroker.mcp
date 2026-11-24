@@ -381,6 +381,7 @@ tools rather than as subscribable resources.)
 * (@GermanBluefox) `get_script` returns a long source in parts (`offset`, `length`), like `read_file` (`@iobroker/mcp-server` 1.10.0)
 * (@MarcoHe85) `get_object` returns an object that is too large for one answer in base64 parts (`offset`, `length`), checked with SHA-256 (`sha256`), for clients that get no download links (`@iobroker/mcp-server` 1.10.0)
 * (@GermanBluefox) `list_devices`: a name (`smartName` without `smartType`) on one state of a detected device names that device instead of splitting the state off as a device of its own, and a room or function hidden from the smart home (`smartName: false`) is still the room or function of its devices (`@iobroker/mcp-server` 1.9.2)
+* (@GermanBluefox) The permissions tab shows a hint that the MCP client has to reload the tools after the permissions were changed
 
 ### 1.8.1 (2026-10-27)
 * (@GermanBluefox) Fixed: js-controller usually killed the instance with SIGKILL when stopping it, because the adapter never closed its server and the connections of the MCP clients

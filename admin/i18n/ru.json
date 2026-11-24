@@ -62,5 +62,6 @@
   "MCP server URL": "URL MCP-сервера",
   "MCP server URL (web extension)": "URL MCP-сервера (веб-расширение)",
   "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.": "Укажите этот адрес в MCP-клиенте (например, Claude, ChatGPT или Claude Code). Без публичного URL хост берётся из адреса этой страницы администратора.",
-  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "Предоставляется выбранным экземпляром web с его портом и настройкой HTTPS. Укажите этот адрес в MCP-клиенте (например, Claude, ChatGPT или Claude Code)."
+  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "Предоставляется выбранным экземпляром web с его портом и настройкой HTTPS. Укажите этот адрес в MCP-клиенте (например, Claude, ChatGPT или Claude Code).",
+  "These settings decide which tools the MCP server offers. After changing them, reload the tools in your MCP client: reconnect the server or start a new chat (e.g. /mcp in Claude Code), otherwise the client keeps using the old tool list.": "Эти настройки определяют, какие инструменты предлагает MCP-сервер. После их изменения перезагрузите инструменты в MCP-клиенте: переподключите сервер или начните новый чат (например, /mcp в Claude Code), иначе клиент продолжит использовать старый список инструментов."
 }

@@ -62,5 +62,6 @@
   "MCP server URL": "MCP 服务器地址",
   "MCP server URL (web extension)": "MCP 服务器地址（Web 扩展）",
   "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.": "在 MCP 客户端（例如 Claude、ChatGPT 或 Claude Code）中输入此地址。未设置公共 URL 时，主机名取自当前管理页面的地址。",
-  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "由所选的 web 实例使用其端口和 HTTPS 设置提供。在 MCP 客户端（例如 Claude、ChatGPT 或 Claude Code）中输入此地址。"
+  "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).": "由所选的 web 实例使用其端口和 HTTPS 设置提供。在 MCP 客户端（例如 Claude、ChatGPT 或 Claude Code）中输入此地址。",
+  "These settings decide which tools the MCP server offers. After changing them, reload the tools in your MCP client: reconnect the server or start a new chat (e.g. /mcp in Claude Code), otherwise the client keeps using the old tool list.": "这些设置决定 MCP 服务器提供哪些工具。更改后，请在 MCP 客户端中重新加载工具：重新连接服务器或开始新的对话（例如在 Claude Code 中使用 /mcp），否则客户端会继续使用旧的工具列表。"
 }

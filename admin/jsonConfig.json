@@ -162,6 +162,13 @@
             "type": "panel",
             "label": "Permissions",
             "items": {
+                "_permissionsReloadHint": {
+                    "type": "infoBox",
+                    "boxType": "info",
+                    "newLine": true,
+                    "sm": 12,
+                    "text": "These settings decide which tools the MCP server offers. After changing them, reload the tools in your MCP client: reconnect the server or start a new chat (e.g. /mcp in Claude Code), otherwise the client keeps using the old tool list."
+                },
                 "_headerStates": {
                     "type": "header",
                     "text": "States and objects",
