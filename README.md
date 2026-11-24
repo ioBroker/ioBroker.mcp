@@ -377,6 +377,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Release of 1.9.0, which was not published because the tests failed with the newest js-controller nightly (no changes in the adapter)
+
 ### 1.9.0 (2026-11-24)
 * (@GermanBluefox) `get_script` returns a long source in parts (`offset`, `length`), like `read_file` (`@iobroker/mcp-server` 1.10.0)
 * (@MarcoHe85) `get_object` returns an object that is too large for one answer in base64 parts (`offset`, `length`), checked with SHA-256 (`sha256`), for clients that get no download links (`@iobroker/mcp-server` 1.10.0)
