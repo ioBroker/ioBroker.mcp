@@ -377,7 +377,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.9.1 (2026-11-24)
 * (@GermanBluefox) Release of 1.9.0, which was not published because the tests failed with the newest js-controller nightly (no changes in the adapter)
 
 ### 1.9.0 (2026-11-24)
@@ -394,12 +394,6 @@ tools rather than as subscribable resources.)
 
 ### 1.7.1 (2026-10-26)
 * (@GermanBluefox) `find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)
-
-### 1.7.0 (2026-10-26)
-* (@GermanBluefox) Security: commands on a host need the "execute" right of the user, messages to adapters the "sendto" right, like in admin; a session is only offered the tools its user has the rights for (`@iobroker/mcp-server` 1.8.0)
-* (@GermanBluefox) Every change made via MCP is logged with the user, the tool and its arguments; `get_logs` searches the messages for a text or a regular expression (`@iobroker/mcp-server` 1.8.0)
-* (@GermanBluefox) `set_state` can wait for the confirmation of the device (`wait_ack`); new tools `wait_for_state` and `find_orphan_states` (`@iobroker/mcp-server` 1.8.0)
-* (@GermanBluefox) `install_package` reports a done installation even if the instances could not be restarted afterwards (`@iobroker/mcp-server` 1.8.0)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

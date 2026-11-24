@@ -1,4 +1,10 @@
 # Older changes
+## 1.7.0 (2026-10-26)
+* (@GermanBluefox) Security: commands on a host need the "execute" right of the user, messages to adapters the "sendto" right, like in admin; a session is only offered the tools its user has the rights for (`@iobroker/mcp-server` 1.8.0)
+* (@GermanBluefox) Every change made via MCP is logged with the user, the tool and its arguments; `get_logs` searches the messages for a text or a regular expression (`@iobroker/mcp-server` 1.8.0)
+* (@GermanBluefox) `set_state` can wait for the confirmation of the device (`wait_ack`); new tools `wait_for_state` and `find_orphan_states` (`@iobroker/mcp-server` 1.8.0)
+* (@GermanBluefox) `install_package` reports a done installation even if the instances could not be restarted afterwards (`@iobroker/mcp-server` 1.8.0)
+
 ## 1.6.2 (2026-10-26)
 * (@GermanBluefox) Fixed: `get_logs` always returned `size: null` for the log file (`@iobroker/mcp-server` 1.7.1)
 
