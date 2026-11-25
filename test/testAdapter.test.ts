@@ -179,10 +179,6 @@ async function createReadOnlyGroup(harness: IntegrationTestHarness, group: strin
 
 // Run the standard ioBroker package & startup tests, then our MCP-specific integration tests.
 tests.integration(path.join(__dirname, '..'), {
-    // Pinned: since 8.0.0-alpha.23 the adapter ignores the sigKill the test harness sends to stop it
-    // (from "system.host.testing" instead of the own host), so every after() hook timed out.
-    // Back to 'dev' once js-controller accepts it again.
-    controllerVersion: '8.0.0-alpha.15-20261107-98273cb4c',
     defineAdditionalTests({ suite }) {
         // --- All tools available: state & object writing enabled ----------------------------------
         suite('MCP server (write enabled)', getHarness => {
