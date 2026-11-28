@@ -377,7 +377,7 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.9.2 (2026-11-28)
 * (@GermanBluefox) `set_object` no longer deletes the protected settings of an instance (`protectedNative`, e.g. the login and password of cloud and iot), stores a new password (`encryptedNative`) encrypted and writes the current user and time (`@iobroker/mcp-server` 1.10.1)
 * (@GermanBluefox) Fixed: the memory grew with every new MCP session (about 0.5 MB each), because the sessions of clients that never end them were kept forever; a session is now closed after an hour without requests (`@iobroker/mcp-server` 1.10.2, #83)
 * (@GermanBluefox) The settings define their width for every screen size
@@ -396,9 +396,6 @@ tools rather than as subscribable resources.)
 
 ### 1.8.0 (2026-10-27)
 * (@GermanBluefox) New tool `delete_orphan_states`: deletes the states without object found by `find_orphan_states`, but never a state with an object (`@iobroker/mcp-server` 1.9.0)
-
-### 1.7.1 (2026-10-26)
-* (@GermanBluefox) `find_orphan_states` no longer reports the upload progress of the adapters (`system.adapter.<adapter>.upload`), which js-controller writes without object on purpose (`@iobroker/mcp-server` 1.8.1)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
