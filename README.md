@@ -117,8 +117,8 @@ All options that change the system are **off** by default; turn on only what the
 
 **Developers**
 - **Allow installing packages (developers only)** (`allowPackageInstall`): Offer the `install_package` tool, which
-  installs an adapter package on an ioBroker host - from npm, GitHub, a URL or a `.tgz` file - exactly like
-  *Install from custom URL / file* in ioBroker.admin (`iobroker url ...`). Default: **off**. This option is only
+  installs an adapter package on an ioBroker host - from npm, GitHub, a URL or a `.tgz` file - the same way as
+  ioBroker.admin does with a package from a custom address (`iobroker url ...`). Default: **off**. This option is only
   relevant for adapter developers, e.g. to let an AI agent build an adapter, pack it with `npm pack` and install the
   `.tgz` on a test system. An installed package runs with full rights on the host, so never enable it on a
   productive system or for clients you do not fully trust.
@@ -379,6 +379,7 @@ tools rather than as subscribable resources.)
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) `set_object` no longer deletes the protected settings of an instance (`protectedNative`, e.g. the login and password of cloud and iot), stores a new password (`encryptedNative`) encrypted and writes the current user and time (`@iobroker/mcp-server` 1.10.1)
+* (@GermanBluefox) The settings define their width for every screen size
 
 ### 1.9.1 (2026-11-24)
 * (@GermanBluefox) Release of 1.9.0, which was not published because the tests failed with the newest js-controller nightly (no changes in the adapter)
@@ -404,7 +405,7 @@ tools rather than as subscribable resources.)
 
 MIT License
 
-Copyright (c) 2025-2026 ioBroker
+Copyright (c) 2025-2026 ioBroker <info@iobroker.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -10,7 +10,11 @@
                     "type": "instance",
                     "label": "Extend WEB adapter",
                     "all": true,
+                    "xs": 12,
                     "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
                     "adapter": "web"
                 },
                 "bind": {
@@ -21,9 +25,11 @@
                     "default": "0.0.0.0",
                     "hidden": "!!data.webInstance",
                     "help": "IP address to bind the server to (0.0.0.0 for all interfaces)",
+                    "xs": 12,
                     "sm": 12,
                     "md": 8,
-                    "lg": 4
+                    "lg": 4,
+                    "xl": 4
                 },
                 "port": {
                     "type": "number",
@@ -33,9 +39,11 @@
                     "default": 8011,
                     "hidden": "!!data.webInstance",
                     "help": "Port on which the web server will listen",
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "_mcpUrl": {
                     "type": "pattern",
@@ -45,9 +53,11 @@
                     "hidden": "!!data.webInstance",
                     "pattern": "${data.oauth && data.publicUrl ? data.publicUrl.replace(/\\/+$/, '') : (data.secure ? 'https' : 'http') + '://' + (!data.bind || data.bind === '0.0.0.0' || data.bind === '::' ? window.location.hostname : data.bind.includes(':') ? '[' + data.bind + ']' : data.bind) + ':' + data.port}/mcp",
                     "help": "Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code). Without a public URL the host is taken from the address of this admin page.",
+                    "xs": 12,
                     "sm": 12,
                     "md": 8,
-                    "lg": 6
+                    "lg": 6,
+                    "xl": 6
                 },
                 "_mcpUrlWeb": {
                     "type": "pattern",
@@ -57,9 +67,11 @@
                     "hidden": "!data.webInstance",
                     "pattern": "${(data.webInstance === '*' ? await _socket.getAdapterInstances('web') : [await getObject('system.adapter.' + data.webInstance)]).filter(obj => obj && obj.native).map(obj => (data.oauth && data.publicUrl ? data.publicUrl.replace(/\\/+$/, '') : (obj.native.secure ? 'https' : 'http') + '://' + (!obj.native.bind || obj.native.bind === '0.0.0.0' || obj.native.bind === '::' ? window.location.hostname : obj.native.bind.includes(':') ? '[' + obj.native.bind + ']' : obj.native.bind) + ':' + obj.native.port) + '/mcp').filter((url, i, all) => all.indexOf(url) === i).join(', ')}",
                     "help": "Served by the selected web instance with its port and HTTPS setting. Enter this address in your MCP client (e.g. Claude, ChatGPT or Claude Code).",
+                    "xs": 12,
                     "sm": 12,
                     "md": 8,
-                    "lg": 6
+                    "lg": 6,
+                    "xl": 6
                 }
             }
         },
@@ -72,7 +84,12 @@
                     "type": "checkbox",
                     "label": "Enable Authentication",
                     "default": false,
-                    "help": "Enable ioBroker user authentication for the web server"
+                    "help": "Enable ioBroker user authentication for the web server",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "defaultUser": {
                     "type": "user",
@@ -80,7 +97,12 @@
                     "label": "Default User",
                     "default": "admin",
                     "hidden": "data.auth",
-                    "help": "Without authentication, all MCP requests run with the permissions of this user (e.g. 'admin')"
+                    "help": "Without authentication, all MCP requests run with the permissions of this user (e.g. 'admin')",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 }
             }
         },
@@ -98,9 +120,11 @@
                 "oauth": {
                     "type": "checkbox",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
+                    "xl": 4,
                     "label": "Enable OAuth (browser login)",
                     "default": false,
                     "disabled": "!data.webInstance && !data.auth",
@@ -133,9 +157,11 @@
                 "publicUrl": {
                     "type": "text",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
                     "md": 8,
                     "lg": 6,
+                    "xl": 6,
                     "label": "Public URL",
                     "default": "",
                     "placeholder": "https://iobroker.example.com",
@@ -148,9 +174,11 @@
                 "oauthDynamicRegistration": {
                     "type": "checkbox",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
+                    "xl": 4,
                     "label": "Allow client self-registration",
                     "default": true,
                     "hidden": "!!data.webInstance || !data.oauth",
@@ -181,21 +209,36 @@
                     "newLine": true,
                     "label": "Allow setting states",
                     "default": true,
-                    "help": "Allow MCP clients to write state values and to acknowledge system notifications (set_state, set_states, clear_notifications tools)"
+                    "help": "Allow MCP clients to write state values and to acknowledge system notifications (set_state, set_states, clear_notifications tools)",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "setStateDestructive": {
                     "type": "checkbox",
                     "label": "Mark setting states as destructive",
                     "default": true,
                     "hidden": "!data.allowSetState",
-                    "help": "Declare set_state/set_states as destructive (destructiveHint), so MCP clients can warn before writing. Whether a client still asks for confirmation when this is off depends on the client."
+                    "help": "Declare set_state/set_states as destructive (destructiveHint), so MCP clients can warn before writing. Whether a client still asks for confirmation when this is off depends on the client.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "allowObjectChange": {
                     "type": "checkbox",
                     "newLine": true,
                     "label": "Allow object/file changes",
                     "default": false,
-                    "help": "Allow MCP clients to create/modify objects, aliases and scenes and to write files (set_object, create_alias, write_file tools). Off by default."
+                    "help": "Allow MCP clients to create/modify objects, aliases and scenes and to write files (set_object, create_alias, write_file tools). Off by default.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "_headerSystem": {
                     "type": "header",
@@ -209,20 +252,35 @@
                     "newLine": true,
                     "label": "Allow controlling instances",
                     "default": false,
-                    "help": "Start, stop and restart adapter instances and change their log level (start_instance, stop_instance, restart_instance, set_log_level tools). Off by default."
+                    "help": "Start, stop and restart adapter instances and change their log level (start_instance, stop_instance, restart_instance, set_log_level tools). Off by default.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "allowAdapterManagement": {
                     "type": "checkbox",
                     "label": "Allow managing adapters",
                     "default": false,
-                    "help": "Add and delete instances and upgrade adapters from the repository (add_instance, delete_instance, upgrade_adapter tools). Off by default."
+                    "help": "Add and delete instances and upgrade adapters from the repository (add_instance, delete_instance, upgrade_adapter tools). Off by default.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "allowScriptChange": {
                     "type": "checkbox",
                     "newLine": true,
                     "label": "Allow changing scripts",
                     "default": false,
-                    "help": "Create, change, start/stop and delete scripts of the javascript adapter and run code once (set_script, enable_script, delete_script, run_script tools). Reading scripts is always allowed. Off by default."
+                    "help": "Create, change, start/stop and delete scripts of the javascript adapter and run code once (set_script, enable_script, delete_script, run_script tools). Reading scripts is always allowed. Off by default.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "_allowScriptChangeWarning": {
                     "type": "infoBox",
@@ -235,9 +293,11 @@
                 "sendToAllowlist": {
                     "type": "text",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
                     "md": 8,
                     "lg": 6,
+                    "xl": 6,
                     "label": "Allow messages to adapters",
                     "default": "",
                     "placeholder": "telegram, backitup.0",
@@ -253,7 +313,11 @@
                 "confirmDangerous": {
                     "type": "checkbox",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
                     "label": "Ask for confirmation before dangerous actions",
                     "default": true,
                     "help": "MCP clients that support it (elicitation) ask the user before an object or instance is deleted, an instance stopped, an adapter upgraded or installed, a script saved or run, or a message sent. Other clients rely on their own confirmation."
@@ -261,7 +325,11 @@
                 "transferLinks": {
                     "type": "checkbox",
                     "newLine": true,
+                    "xs": 12,
                     "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
                     "label": "Allow download/upload links",
                     "default": true,
                     "help": "For data that is too large for an MCP message, e.g. a long list of objects or a .tgz to install, tools hand out links valid for 15 minutes, which clients that can run shell commands (e.g. Claude Code) use with curl. Not available as a web extension with authentication enabled in the web adapter."
@@ -278,7 +346,12 @@
                     "newLine": true,
                     "label": "Allow installing packages (developers only)",
                     "default": false,
-                    "help": "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default."
+                    "help": "Only relevant for adapter developers: MCP clients may install adapter packages (npm, GitHub, URL or .tgz file) on an ioBroker host (install_package tool). Off by default.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "_allowPackageInstallWarning": {
                     "type": "infoBox",
@@ -299,28 +372,48 @@
                     "type": "checkbox",
                     "label": "Enable HTTPS",
                     "default": false,
-                    "help": "Enable HTTPS/SSL for secure connections"
+                    "help": "Enable HTTPS/SSL for secure connections",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "certPublic": {
                     "type": "certificate",
                     "label": "Public Certificate",
                     "certType": "public",
                     "hidden": "!data.secure",
-                    "help": "Path to the public certificate file"
+                    "help": "Path to the public certificate file",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "certPrivate": {
                     "type": "certificate",
                     "label": "Private Key",
                     "certType": "private",
                     "hidden": "!data.secure",
-                    "help": "Path to the private key file"
+                    "help": "Path to the private key file",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "certChained": {
                     "type": "certificate",
                     "label": "Chained Certificate",
                     "certType": "chained",
                     "hidden": "!data.secure",
-                    "help": "Path to the chained certificate file (optional)"
+                    "help": "Path to the chained certificate file (optional)",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4
                 }
             }
         }
