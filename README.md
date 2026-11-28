@@ -379,6 +379,7 @@ tools rather than as subscribable resources.)
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) `set_object` no longer deletes the protected settings of an instance (`protectedNative`, e.g. the login and password of cloud and iot), stores a new password (`encryptedNative`) encrypted and writes the current user and time (`@iobroker/mcp-server` 1.10.1)
+* (@GermanBluefox) Fixed: the memory grew with every new MCP session (about 0.5 MB each), because the sessions of clients that never end them were kept forever; a session is now closed after an hour without requests (`@iobroker/mcp-server` 1.10.2, #83)
 * (@GermanBluefox) The settings define their width for every screen size
 
 ### 1.9.1 (2026-11-24)
