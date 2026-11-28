@@ -145,6 +145,28 @@ async function writeObject(harness: IntegrationTestHarness, id: string, obj: Rec
     }
 }
 
+/** Read an object directly from the objects DB, tolerant of the DB client API. */
+async function readObject(harness: IntegrationTestHarness, id: string): Promise<any> {
+    const objects = (harness as any).objects;
+    if (typeof objects.getObjectAsync === 'function') {
+        return objects.getObjectAsync(id);
+    }
+    return new Promise((resolve, reject) =>
+        objects.getObject(id, (err: Error | null | undefined, obj: any) => (err ? reject(err) : resolve(obj))),
+    );
+}
+
+/** Read a state directly from the states DB, tolerant of the DB client API. */
+async function readState(harness: IntegrationTestHarness, id: string): Promise<any> {
+    const states = (harness as any).states;
+    if (typeof states.getStateAsync === 'function') {
+        return states.getStateAsync(id);
+    }
+    return new Promise((resolve, reject) =>
+        states.getState(id, (err: Error | null | undefined, state: any) => (err ? reject(err) : resolve(state))),
+    );
+}
+
 /** Create (or overwrite) an ioBroker user object with a known password. */
 async function createUserWithPassword(harness: IntegrationTestHarness, user: string, password: string): Promise<void> {
     const id = `system.user.${user}`;
@@ -200,6 +222,7 @@ tests.integration(path.join(__dirname, '..'), {
                         defaultUser: 'admin',
                         allowSetState: true,
                         allowObjectChange: true,
+                        allowInstanceControl: true,
                     },
                 });
                 // Wait for info.connection === true => the HTTP server is listening.
@@ -263,6 +286,10 @@ tests.integration(path.join(__dirname, '..'), {
                         'delete_file',
                         'rename_file',
                         'mkdir',
+                        'start_instance',
+                        'stop_instance',
+                        'restart_instance',
+                        'set_log_level',
                     ],
                     'tool list',
                 );
@@ -446,6 +473,76 @@ tests.integration(path.join(__dirname, '..'), {
                     await client.callTool({ name: 'delete_object', arguments: { id: 'no.such.object.here' } }),
                 );
                 assert.strictEqual(res.ok, false, 'deleting a missing object fails');
+            });
+
+            it('instance tools: start, restart, set_log_level, stop', async function () {
+                this.timeout(15000);
+                // The harness runs only the databases, no js-controller host, so nothing really starts this
+                // instance: the test checks what the tools write into the instance object, which is what the
+                // controller reacts to (enabled starts/stops it, any other change restarts it).
+                const instance = 'mcpdummy.0';
+                const fullId = `system.adapter.${instance}`;
+                await writeObject(harness, fullId, {
+                    _id: fullId,
+                    type: 'instance',
+                    common: { name: 'mcpdummy', enabled: false, mode: 'daemon', loglevel: 'info' },
+                    native: { option: 1 },
+                });
+                await writeObject(harness, `${fullId}.logLevel`, {
+                    _id: `${fullId}.logLevel`,
+                    type: 'state',
+                    common: { name: 'logLevel', type: 'string', role: 'state', read: true, write: true },
+                    native: {},
+                });
+                const call = async (name: string, args: Record<string, unknown>): Promise<any> =>
+                    parseToolResult(await client.callTool({ name, arguments: args }));
+
+                const notRunning = await call('restart_instance', { id: instance });
+                assert.strictEqual(notRunning.ok, false, 'restarting a stopped instance fails');
+                assert.ok(/not enabled/.test(notRunning.error), `error names the cause (got ${notRunning.error})`);
+
+                const started = await call('start_instance', { id: instance });
+                assert.strictEqual(started.ok, true, `start_instance succeeds (got ${started.error})`);
+                assert.deepStrictEqual(started.data, { id: instance, enabled: true, changed: true });
+                assert.strictEqual((await readObject(harness, fullId)).common.enabled, true, 'instance enabled');
+                // The full ID works as well; an instance that already runs is left alone
+                const again = await call('start_instance', { id: fullId });
+                assert.deepStrictEqual(again.data, { id: instance, enabled: true, changed: false });
+
+                const before = await readObject(harness, fullId);
+                await new Promise(resolve => setTimeout(resolve, 20));
+                const restarted = await call('restart_instance', { id: instance });
+                assert.strictEqual(restarted.ok, true, `restart_instance succeeds (got ${restarted.error})`);
+                assert.deepStrictEqual(restarted.data, { id: instance, restarted: true });
+                const after = await readObject(harness, fullId);
+                assert.ok(after.ts > before.ts, 'restart_instance rewrote the instance object');
+                assert.deepStrictEqual(after.common, before.common, 'restart_instance keeps the settings');
+                assert.deepStrictEqual(after.native, before.native, 'restart_instance keeps the configuration');
+
+                const unknown = await call('restart_instance', { id: 'mcpnosuchadapter.0' });
+                assert.strictEqual(unknown.ok, false, 'restarting an unknown instance fails');
+                assert.ok(/not found/.test(unknown.error), `error names the cause (got ${unknown.error})`);
+                const invalid = await call('restart_instance', { id: 'not an instance' });
+                assert.strictEqual(invalid.ok, false, 'an invalid instance ID is rejected');
+                assert.ok(/Invalid instance/.test(invalid.error), `error names the cause (got ${invalid.error})`);
+
+                // Temporary: only the logLevel state, the instance object stays as it is
+                const temporary = await call('set_log_level', { id: instance, level: 'debug' });
+                assert.strictEqual(temporary.ok, true, `set_log_level succeeds (got ${temporary.error})`);
+                assert.strictEqual((await readState(harness, `${fullId}.logLevel`))?.val, 'debug', 'logLevel set');
+                assert.strictEqual((await readObject(harness, fullId)).common.loglevel, 'info', 'config unchanged');
+                const persistent = await call('set_log_level', { id: instance, level: 'warn', persistent: true });
+                assert.strictEqual(persistent.ok, true, `persistent set_log_level succeeds (got ${persistent.error})`);
+                assert.strictEqual((await readObject(harness, fullId)).common.loglevel, 'warn', 'config changed');
+
+                // The client has no elicitation, so stop_instance runs without asking
+                const stopped = await call('stop_instance', { id: instance });
+                assert.strictEqual(stopped.ok, true, `stop_instance succeeds (got ${stopped.error})`);
+                assert.deepStrictEqual(stopped.data, { id: instance, enabled: false, changed: true });
+                assert.strictEqual((await readObject(harness, fullId)).common.enabled, false, 'instance disabled');
+
+                const removed = await call('delete_object', { id: fullId, recursive: true });
+                assert.strictEqual(removed.ok, true, `the test instance is removed (got ${removed.error})`);
             });
 
             it('create_scene fails with a helpful error when no scene adapter is installed', async function () {
@@ -671,6 +768,11 @@ tests.integration(path.join(__dirname, '..'), {
                     'mkdir',
                 ]) {
                     assert.ok(!names.includes(tool), `${tool} hidden when writing is disabled`);
+                }
+
+                // Instance control is off by default.
+                for (const tool of ['start_instance', 'stop_instance', 'restart_instance', 'set_log_level']) {
+                    assert.ok(!names.includes(tool), `${tool} hidden when controlling instances is disabled`);
                 }
             });
 

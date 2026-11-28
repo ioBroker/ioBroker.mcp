@@ -10,6 +10,7 @@
   "Allow installing packages (developers only)": "Autoriser l'installation de paquets (développeurs uniquement)",
   "Allow managing adapters": "Autoriser la gestion des adaptateurs",
   "Allow messages to adapters": "Autoriser les messages aux adaptateurs",
+  "telegram, backitup.0": "telegram, backitup.0",
   "Allow object/file changes": "Autoriser les modifications d'objets/de fichiers",
   "Allow setting states": "Autoriser la définition des états",
   "As a web extension the selected web instance provides the login: OAuth must be enabled there as well ('Allow third-party clients'), otherwise MCP clients only get a redirect to the login page, which they cannot use.": "En tant qu'extension web, l'instance web sélectionnée fournit la connexion : OAuth doit y être activé également ('Allow third-party clients'), sinon les clients MCP ne reçoivent qu'une redirection vers la page de connexion, qu'ils ne peuvent pas utiliser.",
