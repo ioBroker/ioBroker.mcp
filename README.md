@@ -377,6 +377,9 @@ tools rather than as subscribable resources.)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) `set_object` no longer deletes the protected settings of an instance (`protectedNative`, e.g. the login and password of cloud and iot), stores a new password (`encryptedNative`) encrypted and writes the current user and time (`@iobroker/mcp-server` 1.10.1)
+
 ### 1.9.1 (2026-11-24)
 * (@GermanBluefox) Release of 1.9.0, which was not published because the tests failed with the newest js-controller nightly (no changes in the adapter)
 
